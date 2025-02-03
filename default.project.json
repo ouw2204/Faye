@@ -1,0 +1,15 @@
+{
+  "name": "Faye-Remastered",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "Faye": {
+        "$path": "src",
+        "Packages": {
+          "$path": "Packages"
+        }
+      }
+    }
+  }
+}

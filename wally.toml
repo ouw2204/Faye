@@ -1,0 +1,8 @@
+[package]
+name = "10101/faye-remastered"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+Signal = "lucasmzreal/fastsignal@10.3.2"
