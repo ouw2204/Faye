@@ -44,7 +44,7 @@ return function(FunctionToFire,Thread)
     
 
     function new:Initiate()
-        OnValueChanged();
+        task.spawn(OnValueChanged);
     end
     function new:Destroy()
         for k in ipairs(self.Connections) do
