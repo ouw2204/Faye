@@ -3,7 +3,7 @@ local to = typeof
 local tc = table.clear
 local sf = string.find
 local sb = string.sub
-
+local ValueClasses = require(script.Parent.Misc.ValueClasses)
 Compilers = require(script.Compilers)
 local function Recursive(Entity: {Instance: Instance}, Props: {})
     for i,v in pairs(Props) do
@@ -11,19 +11,30 @@ local function Recursive(Entity: {Instance: Instance}, Props: {})
         if Compilers[i] ~= nil then
             Compilers[i](Entity,i,v,Recursive)
         elseif to(v) == "table" then
-            if v.__type ~= nil and Compilers[v.__type] then 
-                Compilers[v.__type](Entity,i,v,Recursive);
+            local Type = nil;
+            if v.__type ~= nil then
+                if ValueClasses[v.__type] then
+                    Type = "Value"
+                else
+                    Type = v.__type;
+                end
+            end
+            if Type ~= nil and Compilers[Type] then 
+                Compilers[Type](Entity,i,v,Recursive);
             else
                 Recursive(Entity,v);
             end
+            Type = nil;
         elseif toi == "table" and Compilers[i.__type] then
             Compilers[i.__type](Entity,i,v,Recursive)
         else
             local onChangedIndex = sf(i,"OnChanged");
             if onChangedIndex ~= nil then
-                local prop = sb(0,onChangedIndex+1);
+                local prop = sb(i,0,onChangedIndex-1);
                 local Init = sf(i,"OnChangedInit") ~= nil;
-
+                if Props ~= nil then
+                    Compilers.OnChanged(Entity,prop,v,Recursive,Init)
+                end
                 prop = nil;
                 Init = nil;
             elseif to(Entity.Instance[i]) == "RBXScriptSignal" then

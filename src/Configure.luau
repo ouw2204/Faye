@@ -2,13 +2,12 @@ local PropertyTypes = require(script.Parent.Misc.PropertyTypes);
 
 local Compile = require(script.Parent.Compile)
 local Clean = require(script.Parent.Clean);
-local Defaults = require(script.Defaults);
-
+local ValueClasses = require(script.Parent.Misc.ValueClasses);
 --
 local tr = table.remove
 local tins = table.insert
 local tf = table.find
-
+local tof = typeof
 local mt = {__type = "Instance";}
 mt.__index = mt;
 
@@ -63,22 +62,33 @@ function mt:Destroy()
 end
 
 
---exclusive to create below
-return function(ClassName: string,Thread: {Add: (self: {},Entity: any) -> ()}?)
+--exclusive to configure below
+return function(Entity: any,Thread: {Add: (self: {},Entity: any) -> ()}?)
     return function(props: PropertyTypes.Property)
-        local Object = Instance.new(ClassName);
-        if Defaults[ClassName] ~= nil then
-            Defaults[ClassName](Object)
+        if tof(Entity) == "table" then
+            repeat
+                if Entity == nil then break end;
+                if Entity.__type ~= nil then
+                    if Entity.__type == "Instance" then
+                        Entity = Entity.Instance
+                    elseif ValueClasses[Entity.__type] ~= nil then
+                        Entity = Entity:Get()
+                    else
+                        break
+                    end
+                else
+                    break
+                end
+            until Entity == nil or tof(Entity) == "Instance";
+            if Entity == nil or tof(Entity) ~= "Instance" then warn(`Entity must be an instance for configure or a value that gives an instance - {debug.traceback()}`); return end;
         end
         local Wrapper = {
-            Instance = Object;
+            Instance = Entity;
             Props = props;
             Thread = Thread;
         };
         setmetatable(Wrapper,mt);
-        if props.Parent then
-            Wrapper:Compile();
-        end
+        Wrapper:Compile();
         if Thread ~= nil then
             if Thread["Add"] then
                 Thread:Add(Wrapper)

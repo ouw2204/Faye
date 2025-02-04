@@ -13,11 +13,17 @@ local Create = require(script.Parent.Create)
 function mt:Create(ClassName: string)
     return Create(ClassName,self)
 end
-
+--Configure
+local Configure = require(script.Parent.Configure)
+function mt:Configure(Entity: any)
+    return Configure(Entity,self)
+end
 --thread extension
-function mt:Extend() : {}
+function mt:Extend(NoAttachment) : {}
     local new = setmetatable({},mt);
-    table.insert(self,new);
+    if NoAttachment ~= true then
+        table.insert(self,new);
+    end
     return new :: typeof(self);
 end
 
@@ -64,6 +70,33 @@ end
 local Iterate = require(Utilities.Iterate)
 function mt:Iterate(Table: any, Function: (Index: any,Value: any,InnerThread: OtherTypes.ThreaderType?,Entity: Instance?) -> ())
     return Iterate(Table,Function,self)
+end
+--Delay value
+local Delay = require(Utilities.Delay)
+function mt:Delay(Value: OtherTypes.Value, Time: number)
+    return Delay(Value,Time,self)
+end
+
+--Property value
+local Propertyy = require(Utilities.Property)
+function mt:Property(Instance: any,Property: string)
+    return Propertyy(Instance,Property,false,self);
+end
+--Attribute
+function mt:Attribute(Instance: any,Property: string)
+    return Propertyy(Instance,Property,true,self);
+end
+
+--SetTo
+local SetTo = require(Utilities.SetTo)
+function mt:SetTo(Value: OtherTypes.Value)
+    return SetTo(Value,self)
+end
+
+--Event
+local Eventt = require(Utilities.Event)
+function mt:Event(Entity: any, Event: any, Function: () -> ()) : ()
+    return Eventt(Entity,Event,Function,self)
 end
 return function() : OtherTypes.ThreaderType
     local new = {}

@@ -66,7 +66,6 @@ function mt:Destroy()
         end
         self.Thread = nil;
     end
-    self.Initial = nil;
     self.Changed:Destroy();
     self.Changed = nil;
     self.Value = nil;

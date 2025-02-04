@@ -5,6 +5,12 @@ local ValueClasses = require(script.Parent.Parent.Misc.ValueClasses)
 local CleanModule = require(script.Parent.Parent.Clean)
 local tc = table.clear
 local m = {
+    SetTo = function(Entity,Index,Value)
+        if Value["Value"] ~= nil and Value.Value["Set"] ~= nil then
+            Value.Value:Set(Entity)
+        end
+        Value:Destroy();
+    end;
     Instance = function(Entity,Index,Value,Compile)
         local Props = Value.Props;
         if Props ~= nil then
@@ -13,7 +19,13 @@ local m = {
         end
     end;
     OnChanged = function(Entity,Index,Value,Compile,Init)
-        
+        local Thread = Entity.InnerThread or Entity.Thread
+        if Init == true then
+            Value(Entity.Instance[Index],Entity.Instance)
+        end
+        Thread:Connect(Entity.Instance:GetPropertyChangedSignal(Index),function()
+            Value(Entity.Instance[Index],Entity.Instance)
+        end)
     end;
     Iterate = function(Entity,Index,Value,Compile)
         local Thread = Entity.InnerThread or Entity.Thread
@@ -255,10 +267,14 @@ local m = {
                             else
                                 if NoAnim then
                                     NoAnim = nil;
-                                    Entity.Instance[Value.Property] = NewGoal;
+                                    if tof(Entity.Instance[Value.Property]) == tof(newnewGoal) then
+                                        Entity.Instance[Value.Property] = newnewGoal;
+                                    end
                                 else
-                                    Value.Elapsed = nil;
-                                    Value:Play(newnewGoal)
+                                    if tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
+                                        Value.Elapsed = nil;
+                                        Value:Play(newnewGoal)
+                                    end
                                 end
                             end
                         end
@@ -268,10 +284,14 @@ local m = {
                 else
                     if NoAnim then
                         NoAnim = nil;
-                        Entity.Instance[Value.Property] = NewGoal;
+                        if tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
+                            Entity.Instance[Value.Property] = NewGoal;
+                        end
                     else
-                        Value.Elapsed = nil;
-                        Value:Play(NewGoal)
+                        if tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
+                            Value.Elapsed = nil;
+                            Value:Play(NewGoal)
+                        end
                     end
                 end
             end
@@ -347,14 +367,26 @@ local m = {
                         if tof(newValue) == "table" then
                             warn(`Nested values only support up to 2 degrees of nesting - {debug.traceback()}`)
                         else
-                            Entity.Instance[Index] = newValue;
+                            local tofIndex = tof(Entity.Instance[Index])
+                            local tofNew = tof(newValue)
+                            if tofIndex == tofNew or ((tofIndex == "number" or tofIndex == "string") and (tofNew == "number" or tofNew == "string")) then
+                                Entity.Instance[Index] = newValue;
+                            end
+                            tofIndex = nil;
+                            tofNew = nil;
                         end
                     end
                     InnerUpdate(new:Get())
                     ChangedConnection = new.Changed:Connect(InnerUpdate) --connect change connection
                 end
             else
-                Entity.Instance[Index] = new;
+                local tofIndex = tof(Entity.Instance[Index])
+                local tofNew = tof(new)
+                if tofIndex == tofNew or ((tofIndex == "number" or tofIndex == "string") and (tofNew == "number" or tofNew == "string")) then
+                    Entity.Instance[Index] = new;
+                end
+                tofIndex = nil;
+                tofNew = nil;
             end
         end 
         --init

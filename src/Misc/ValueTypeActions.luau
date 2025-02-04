@@ -9,17 +9,22 @@ local function getIndex(tab, value)
     return nil;
 end
 
+local Rep = {
+    Add = function(tab, value)
+        tab.Value += value
+        return tab
+    end;
+    Remove = function(tab, value)
+        tab.Value -= value
+        return tab
+    end;
+}
 return {
-    number = {
-        Add = function(tab, value)
-            tab.Value += value
-            return tab
-        end,
-        Remove = function(tab, value)
-            tab.Value -= value
-            return tab
-        end
-    },
+    number = Rep;
+    Vector3 = Rep;
+    Vector2 = Rep;
+    UDim2 = Rep;
+    UDim = Rep;
     table = {
         Add = function(tab, Index, Value)
             if Index == nil then return end
