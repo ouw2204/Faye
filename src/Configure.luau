@@ -80,8 +80,8 @@ return function(Entity: any,Thread: {Add: (self: {},Entity: any) -> ()}?)
                     break
                 end
             until Entity == nil or tof(Entity) == "Instance";
-            if Entity == nil or tof(Entity) ~= "Instance" then warn(`Entity must be an instance for configure or a value that gives an instance - {debug.traceback()}`); return end;
         end
+        if Entity == nil or tof(Entity) ~= "Instance" then warn(`Entity must be an instance for configure or a value that gives an instance - {debug.traceback()}`); return end;
         local Wrapper = {
             Instance = Entity;
             Props = props;

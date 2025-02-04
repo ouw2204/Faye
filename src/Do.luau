@@ -32,7 +32,7 @@ return function(FunctionToFire,Thread)
         return Value:Get();
     end
     function OnValueChanged()
-        local result = new.Function(Grab)
+        local result = new.Function(Grab,(new.Entity ~= nil and new.Entity.Instance) or nil )
         if result ~= nil then
             if new.Property ~= nil then
                 Compile(new.Entity,{[new.Property] = result})

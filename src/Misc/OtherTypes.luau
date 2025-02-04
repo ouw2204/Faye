@@ -44,6 +44,8 @@ export type ThreaderType = {
     Delay: (self: any, Value: Value, Time: number) -> DelayType;
     SetTo: (self: any, Value: Value) -> {};
     Event: (self: any, Entity: any, Event: any, Function: <p1,p2,p3>(Event: string,p1,p2,p3) -> ()) -> {};
+    Add: (self: any,Entity: any) -> ();
+    Remove: (self: any,Entity: any) -> ();
 }
 
 return nil;

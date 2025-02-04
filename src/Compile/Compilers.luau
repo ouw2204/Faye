@@ -21,10 +21,10 @@ local m = {
     OnChanged = function(Entity,Index,Value,Compile,Init)
         local Thread = Entity.InnerThread or Entity.Thread
         if Init == true then
-            Value(Entity.Instance[Index],Entity.Instance)
+            Value(Entity.Instance,Entity.Instance[Index])
         end
         Thread:Connect(Entity.Instance:GetPropertyChangedSignal(Index),function()
-            Value(Entity.Instance[Index],Entity.Instance)
+            Value(Entity.Instance,Entity.Instance[Index])
         end)
     end;
     Iterate = function(Entity,Index,Value,Compile)
@@ -177,9 +177,9 @@ local m = {
                 tins(Thread,Value)
             end
         end
+        Value.Entity = Entity;
         if (tof(Index) ~= "number") then
             Value.Property = Index;
-            Value.Entity = Entity;
         end
         Value:Initiate();
     end;
@@ -341,12 +341,18 @@ local m = {
         local Thread = Entity.InnerThread or Entity.Thread -- fetching innerthread or thread with priority
         if Thread ~= nil then -- thread exist
             if Thread["Add"] ~= nil then -- is a specialized cleaner
-                Thread:Add(Entity.Instance[Index],Value)
+                Thread:Add(Entity.Instance[Index]:Connect(function(...)
+                    Value(Entity.Instance,...)
+                end))
             else
-                tins(Thread,Entity.Instance[Index]:Connect(Value)) -- is regular table
+                tins(Thread,Entity.Instance[Index]:Connect(function(...)
+                    Value(Entity.Instance,...)
+                end))
             end
         else -- no threads
-            Entity.Instance[Index]:Connect(Value)
+            Entity.Instance[Index]:Connect(function(...)
+                Value(Entity.Instance,...)
+            end)
         end
         Thread = nil;
     end;

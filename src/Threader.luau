@@ -1,6 +1,6 @@
 local mt = {};
 mt.__index = mt;
-
+local tins,tf,tr = table.insert,table.find,table.remove
 local Misc = script.Parent:WaitForChild("Misc")
 --types
 local OtherTypes = require(Misc.OtherTypes);
@@ -58,9 +58,21 @@ end
 
 --connect
 function mt:Connect(Connection: RBXScriptSignal,Function: () -> ())
-    table.insert(self,Connection:Connect(Function))
+    tins(self,Connection:Connect(Function))
 end
-
+--Add
+function mt:Add(Entity: any)
+    if Entity == nil then return end;
+    tins(self,Entity)
+end
+--Remove
+function mt:Remove(Entity: any)
+    if Entity == nil then return end;
+    local find = tf(self,Entity)
+    if find ~= nil then
+        tr(self,find)
+    end
+end
 --Do
 local Do = require(Utilities.Do)
 function mt:Do(Function: (Grab: any) -> ())
