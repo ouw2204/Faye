@@ -84,7 +84,7 @@ function mt:Play(To: any)
     end
     Prog /= self.Info.Time;
     --Apply info
-    local Pivot = 1;
+    local Pivot = nil;
     if ProgBefore ~= nil and NatureProg < ProgBefore then
         if self.Info.Reverse == true and direction == true then
             direction = false;
@@ -98,6 +98,8 @@ function mt:Play(To: any)
             elseif repeatleft >=1 then
                 repeatleft -=1
                 direction = true;
+            else
+                direction = true;
             end
         end
     else
@@ -109,7 +111,7 @@ function mt:Play(To: any)
         end
         --set
     end
-    if self.Entity ~= nil and self.Entity.Parent ~= nil and self.Property ~= nil then
+    if Pivot ~= nil and self.Entity ~= nil and self.Entity.Parent ~= nil and self.Property ~= nil then
         if propertyType == "number" then
             self.Entity[self.Property] = Default+ ((To-Default)*Pivot);
         elseif Lerps[propertyType] ~= nil then
