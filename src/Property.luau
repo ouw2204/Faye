@@ -1,4 +1,4 @@
-local Types = require(script.Parent.Misc.OtherTypes)
+local Types = require(script.Parent.Types)
 local mt = {};
 mt.__index = mt;
 local tof,tins,tr,tf = typeof,table.insert,table.remove,table.find
@@ -103,7 +103,10 @@ function mt:Destroy()
         end
         self.Thread = nil;
     end
-    self.Changed:Destroy();
+    if self.Changed ~= nil then
+        self.Changed:Destroy()
+        self.Changed = nil;
+    end
     if self.PropConnect1 ~= nil then
         self.PropConnect1:Disconnect();
         self.PropConnect1 = nil;
@@ -126,7 +129,7 @@ function mt:Destroy()
     end
     tc(self)
 end
-return function(Entity: any,Property: any,IsAttribute: boolean,Thread: Types.ThreadType)
+return function(Entity: any,Property: any,IsAttribute: boolean,Thread: Types.Thread)
     if Entity == nil or Property == nil then return end;
 
     local new = {

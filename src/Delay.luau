@@ -1,8 +1,43 @@
-local Types = require(script.Parent.Misc.OtherTypes)
+local Types = require(script.Parent.Types)
 local tof,tins,tf,tr,tc = typeof,table.insert,table.find,table.remove,table.clear
 local Signal = require(script.Parent.Packages.Signal);
 
-return function(Value: Types.Value, Time: number, Thread: Types.ThreadType)
+local mt = {};
+mt.__index = mt;
+
+function mt:Destroy()
+    local thread = self.Thread
+    if thread ~= nil then
+        if thread["Remove"] then
+            thread:Remove(self)
+        else
+            local pos = tf(thread, self)
+            if pos ~= nil then
+                tr(thread, pos)
+            end
+        end
+        self.Thread = nil
+    end
+    if self.Changed ~= nil then
+        self.Changed:Destroy()
+        self.Changed = nil;
+    end
+    if self.Connection ~= nil then
+        self.Connection:Disconnect()
+        self.Connection = nil
+    end
+    setmetatable(self,nil)
+    tc(self)
+end
+function mt:SetTime(New: number)
+    if New == nil or tof(New) ~= "number" then return end;
+    self.Time = New;
+end
+function mt:Get()
+    if self.Value == nil or self.Value.Initial == nil then return end;
+    return self.Value:Get()
+end
+return function(Value: Types.Value, Time: number, Thread: Types.Thread)
     if Value == nil or Time == nil then warn(`Value or Time parameter are missing - {debug.traceback()}`); return end;
     if tof(Value) ~= "table" and typeof(Time) ~= "number" then warn(`Parameters must be of the format: Value: Value, Time: number - {debug.traceback()}`); return end;
     local new = {
@@ -10,47 +45,18 @@ return function(Value: Types.Value, Time: number, Thread: Types.ThreadType)
         Initial = Value.Initial;
         Thread = Thread;
         Connection = nil;
+        Value = Value;
         Time = Time;
         IsActive = true;
         Changed = Signal.new();
     }
-    function new:SetTime(New: number)
-        if New == nil or tof(new) ~= "number" then return end;
-        new.Time = New;
-    end
-    function new:Get()
-        if Value == nil or Value.Initial == nil then return end;
-        return Value:Get()
-    end
+    setmetatable(new,mt);
     new.Connection = Value.Changed:Connect(function(...)
         if not new.IsActive then return end
         task.wait(new.Time)
         if not new.IsActive then return end
         new.Changed:Fire(...)
     end)
-    function new:Destroy()
-        local thread = self.Thread
-        if thread ~= nil then
-            if thread["Remove"] then
-                thread:Remove(self)
-            else
-                local pos = tf(thread, self)
-                if pos ~= nil then
-                    tr(thread, pos)
-                end
-            end
-            self.Thread = nil
-        end
-        
-        self.Changed:Destroy()
-        
-        if self.Connection ~= nil then
-            self.Connection:Disconnect()
-            self.Connection = nil
-        end
-    
-        tc(self)
-    end
     if Thread ~= nil then
         if Thread["Add"] then
             Thread:Add(new)

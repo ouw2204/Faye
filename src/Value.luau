@@ -1,3 +1,18 @@
+--[=[
+    @class Value
+    A class that represents a reactive state value. Values can be created with Threads(recommended) or directely by the value class. **Value Creating With Thread:**
+    ```lua
+    local Thread = Threader()
+    local Value = Thread:Value(Initial: any)
+    ```
+    **Directely From The Value Class**
+    ```lua
+    local Values = require(Faye.Value)
+
+    local Value = Values(Initial: any,Thread: Thread?)
+    ```
+]=]
+
 local Signal = require(script.Parent.Packages.Signal);
 local tins,tf,tr = table.insert,table.find,table.remove
 local tof = typeof
@@ -17,6 +32,12 @@ function mt.__add(self,value)
     self:Add(value)
     return self;
 end
+--[=[
+    @within Value
+    @method Add
+    @param Value any -- what/how much to add to the value
+    This method works with numbers, strings, vectors, UDims, and tables.
+]=]
 function mt:Add(Value: any,...)
     local tofCurrent = typeof(self.Value);
     local tofOnComing = typeof(Value);
@@ -28,6 +49,12 @@ function mt:Add(Value: any,...)
         warn(`Type mismatch for adding - {debug.traceback()}`)
     end
 end
+--[=[
+    @within Value
+    @method Remove
+    @param Value any -- what/how much to remove to the value
+    This method works with numbers, vectors, UDims, and tables.
+]=]
 function mt:Remove(Value: any,...)
     local tofCurrent = typeof(self.Value);
     local tofOnComing = typeof(Value);
@@ -66,12 +93,24 @@ function mt:Destroy()
         end
         self.Thread = nil;
     end
-    self.Changed:Destroy();
-    self.Changed = nil;
+    if self.Changed ~= nil then
+        self.Changed:Destroy()
+        self.Changed = nil;
+    end
     self.Value = nil;
     self.Initial = nil;
     tc(self)
     setmetatable(self,nil);
+end
+--[=[
+    @within Value
+    @method Reset
+    This method resets the value to its initial state.
+]=]
+function mt:Reset()
+    if self.Initial ~= nil then
+        self:Set(self.Initial)
+    end
 end
 local Counter = 0;
 return function (Initial: any,Thread: {Add: (self: any, Entity: any) -> ()}?)

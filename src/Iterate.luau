@@ -1,8 +1,8 @@
-local Types = require(script.Parent.Misc.OtherTypes)
+local Types = require(script.Parent.Types)
 local tins = table.insert
 local tf,tr = table.find,table.remove
 local tc = table.clear
-return function(Tab: {any: any},Func: (Index: any,Value: any,InnerThread: Types.ThreaderType?,Entity: Instance?) -> (),Thread: Types.ThreadType)
+return function(Tab: {any: any},Func: (Index: any,Value: any,InnerThread: Types.Thread?,Entity: Instance?) -> (),Thread: Types.Thread)
     if Tab == nil or Func == nil then return end;
 
     local new = {

@@ -214,6 +214,9 @@ local m = {
         local InfoConnect1,InfoConnect2,GoalConnect1,GoalConnect2 = nil,nil,nil,nil;
         do-- info
             local function setInfo(NewInfo)
+                if Value.Info ~= nil then
+                    Value.Info = nil;
+                end
                 if InfoConnect2 ~= nil then
                     InfoConnect2:Disconnect()
                     InfoConnect2 = nil;
@@ -222,6 +225,9 @@ local m = {
                     if NewInfo.__type ~= nil and ValueClasses[NewInfo.__type] ~= nil then
                         --inner value is another value
                         local function InnerUpdate(newnewValue)
+                            if Value.Info ~= nil then
+                                Value.Info = nil;
+                            end
                             --set value from nested value
                             if tof(newnewValue) == "table" and newnewValue.__type ~= nil then
                                 warn(`Nested values only support up to 2 degrees of nesting - {debug.traceback()}`)

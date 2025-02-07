@@ -1,9 +1,19 @@
+--[=[
+    @class Thread
+    Threads help us contain/clean our components.
+    ```lua
+    local Threader = require(Faye.Threader)
+    
+    local Thread = Threader();
+    ```
+    You will most likely use this for all of your components as it wraps the **Faye** features and automatically add them to the cleaner to be cleaned when it's necessary.
+
+]=]
 local mt = {};
 mt.__index = mt;
 local tins,tf,tr = table.insert,table.find,table.remove
-local Misc = script.Parent:WaitForChild("Misc")
 --types
-local OtherTypes = require(Misc.OtherTypes);
+local Types = require(script.Parent.Types);
 
 --utils
 local Utilities = script.Parent;
@@ -20,14 +30,19 @@ function mt:Configure(Entity: any)
 end
 --thread extension
 function mt:Extend(NoAttachment) : {}
-    local new = setmetatable({},mt);
+    local new = {};
+    setmetatable(new,mt);
     if NoAttachment ~= true then
         table.insert(self,new);
     end
     return new :: typeof(self);
 end
 
---clean
+--[=[
+    @within Thread
+    @method Clean
+    This method cleans everything added to the thread, and the thread itself. After this method gets called the thread is no longer useable.
+]=]
 local Clean = require(script.Parent.Clean)
 function mt:Clean() : ()
     Clean(self)
@@ -41,31 +56,39 @@ end
 
 --Animate
 local Animate = require(Utilities.Animate)
-function mt:Animate(Goal: any, Info: OtherTypes.Info | OtherTypes.SpringInfo)
+function mt:Animate(Goal: any, Info: Types.Info | Types.SpringInfo)
     return Animate(Goal,Info,self);
 end
 
 --TweenInfo
 local Info = require(Utilities.Info)
 function mt:Info(Time: number,EasingStyle: Enum.EasingStyle,EasingDirection: Enum.EasingDirection, RepeatCount: number,Reverse: boolean,DelayTime: number)
-   return Info(Time,EasingStyle,EasingDirection,RepeatCount,Reverse,DelayTime,self)
+   return Info(Time,EasingStyle,EasingDirection,RepeatCount,Reverse,DelayTime)
 end
 --SpringInfo
 local Spring = require(Utilities.SpringInfo)
 function mt:SpringInfo(Time: number,Frequency: number,Damping: number, RepeatCount: number,Reverse: boolean,DelayTime: number)
-    return Spring(Time,Frequency,Damping,RepeatCount,Reverse,DelayTime,self)
+    return Spring(Time,Frequency,Damping,RepeatCount,Reverse,DelayTime)
 end
 
 --connect
 function mt:Connect(Connection: RBXScriptSignal,Function: () -> ())
     tins(self,Connection:Connect(Function))
 end
---Add
+--[=[
+    @within Thread
+    @method Add
+    @param Entity any --The entity to add to the thread
+]=]
 function mt:Add(Entity: any)
     if Entity == nil then return end;
     tins(self,Entity)
 end
---Remove
+--[=[
+    @within Thread
+    @method Remove
+    @param Entity any --The entity to remove from the thread, meaning when the thread is cleaned it won't be cleaned with it.
+]=]
 function mt:Remove(Entity: any)
     if Entity == nil then return end;
     local find = tf(self,Entity)
@@ -80,12 +103,12 @@ function mt:Do(Function: (Grab: any) -> ())
 end
 --Iterate
 local Iterate = require(Utilities.Iterate)
-function mt:Iterate(Table: any, Function: (Index: any,Value: any,InnerThread: OtherTypes.ThreaderType?,Entity: Instance?) -> ())
+function mt:Iterate(Table: any, Function: (Index: any,Value: any,InnerThread: Types.Thread?,Entity: Instance?) -> ())
     return Iterate(Table,Function,self)
 end
 --Delay value
 local Delay = require(Utilities.Delay)
-function mt:Delay(Value: OtherTypes.Value, Time: number)
+function mt:Delay(Value: Types.Value, Time: number)
     return Delay(Value,Time,self)
 end
 
@@ -101,7 +124,7 @@ end
 
 --SetTo
 local SetTo = require(Utilities.SetTo)
-function mt:SetTo(Value: OtherTypes.Value)
+function mt:SetTo(Value: Types.Value)
     return SetTo(Value,self)
 end
 
@@ -110,7 +133,7 @@ local Eventt = require(Utilities.Event)
 function mt:Event(Entity: any, Event: any, Function: () -> ()) : ()
     return Eventt(Entity,Event,Function,self)
 end
-return function() : OtherTypes.ThreaderType
+return function() : Types.Thread
     local new = {}
     setmetatable(new,mt)
     return new :: any;

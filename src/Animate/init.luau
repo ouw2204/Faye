@@ -1,6 +1,6 @@
 local tc = table.clear
 local tof = typeof
-local OtherTypes = require(script.Parent.Misc.OtherTypes)
+local OtherTypes = require(script.Parent.Types)
 local RunService = game:GetService("RunService")
 local RunConnection = (RunService:IsServer() and RunService.Heartbeat) or RunService.RenderStepped
 local Lerps = require(script.Lerps)
@@ -45,6 +45,7 @@ function mt:Stop()
         self.RenderFunction:Disconnect();
         self.RenderFunction = nil;
     end
+    self.Elapsed = nil;
 end
 function mt:Play(To: any)
    if To == nil then return end;
@@ -64,15 +65,32 @@ function mt:Play(To: any)
    if self.Initial ~= nil and tof(self.Initial == tof(Default)) then
     Default = self.Initial;
    end
-   local propertyType = typeof(Default)
+   local propertyType = tof(Default)
    --loop connection
    self.RenderFunction = RunConnection:Connect(function(delta)
-    if self.Entity == nil or self.Property == nil then self:Destroy(); return end;
+    if self.Entity == nil or self.Property == nil then self:Destroy();
+    --
+    Through = nil;
+    ProgBefore = nil;
+    direction = nil;
+    repeatleft = nil;
+    Default = nil;
+    propertyType = nil;
+    return end;
     if Through == false then
         --Errored
         self.RenderFunction:Disconnect()
         self.RenderFunction = nil;
         self:Destroy()
+
+
+        --
+        Through = nil;
+        ProgBefore = nil;
+        direction = nil;
+        repeatleft = nil;
+        Default = nil;
+        propertyType = nil;
         return
     end
     Through = false;
@@ -95,6 +113,14 @@ function mt:Play(To: any)
                 else
                     self:Destroy()
                 end
+
+                --
+                Through = nil;
+                ProgBefore = nil;
+                direction = nil;
+                repeatleft = nil;
+                Default = nil;
+                propertyType = nil;
             elseif repeatleft >=1 then
                 repeatleft -=1
                 direction = true;
@@ -124,6 +150,13 @@ function mt:Play(To: any)
             else
                 self:Destroy()
             end
+            --
+            Through = nil;
+            ProgBefore = nil;
+            direction = nil;
+            repeatleft = nil;
+            Default = nil;
+            propertyType = nil;
         end
     end;
     --Keeping track of last value to trigger ending
@@ -136,7 +169,7 @@ function mt:From(Value: any)
     self.Initial = Value;
     return self;
 end
-return function(Goal: any,Info: OtherTypes.Info | OtherTypes.SpringInfo,Thread: OtherTypes.ThreadType?) : OtherTypes.AnimationType
+return function(Goal: any,Info: OtherTypes.Info | OtherTypes.SpringInfo,Thread: OtherTypes.Thread?) : OtherTypes.AnimationType
     local new = {
         __type = script.Name;
         Goal = Goal;
