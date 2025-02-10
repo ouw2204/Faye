@@ -4,8 +4,9 @@ function Recursive(Scope)
     if Scope["Destroy"] ~= nil then
         Scope:Destroy();
     else
-        for k,v in pairs(Scope) do
-            Scope[k] = false;
+        for k = #Scope,1,-1 do
+            local v = Scope[k]
+            Scope[k] = nil;
             local type = typeof(v)
             if (type == "table" and v["Destroy"] ~= nil) or type == "Instance" then
                 v:Destroy();
