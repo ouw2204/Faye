@@ -30,32 +30,54 @@ function mt:Destroy()
     tc(self)
 end
 function mt:SetTime(New: number)
-    if New == nil or tof(New) ~= "number" then return end;
+    if not (New == nil or tof(New) == "number") then return end;
     self.Time = New;
 end
 function mt:Get()
-    if self.Value == nil or self.Value.Initial == nil then return end;
+    if self.Value == nil then return end;
     return self.Value:Get()
+end
+function mt:Sensitive()
+    self.IsSensitive = true;
+    return self;
+end
+function mt:ResetTime()
+    self.Time = self.DefaultTime
+end
+local Id = 0;
+local curentUsageId = 0;
+local scriptName = script.Name;
+function mt.__tostring()
+    return scriptName;
 end
 return function(Value: Types.Value, Time: number, Thread: Types.Thread)
     if Value == nil or Time == nil then warn(`Value or Time parameter are missing - {debug.traceback()}`); return end;
     if tof(Value) ~= "table" and typeof(Time) ~= "number" then warn(`Parameters must be of the format: Value: Value, Time: number - {debug.traceback()}`); return end;
+    Id += 1;
     local new = {
         __type = script.Name;
         Initial = Value.Initial;
         Thread = Thread;
         Connection = nil;
         Value = Value;
+        DefaultTime = Time;
         Time = Time;
+        Id = "Delay-"..Id;
         IsActive = true;
         Changed = Signal.new();
     }
     setmetatable(new,mt);
     new.Connection = Value.Changed:Connect(function(...)
-        if not new.IsActive then return end
-        task.wait(new.Time)
-        if not new.IsActive then return end
-        new.Changed:Fire(...)
+        curentUsageId +=1;
+        new.currentId = curentUsageId;
+        if new.Time ~= nil then
+            if not new.IsActive then return end
+            task.wait(new.Time)
+            if not new.IsActive then return end
+        end;
+        if new.IsSensitive == nil or new.currentId == curentUsageId then
+            new.Changed:Fire(...)
+        end
     end)
     if Thread ~= nil then
         if Thread["Add"] then

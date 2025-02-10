@@ -19,8 +19,12 @@ function mt:Destroy()
         end
     end
     tc(self)
+    setmetatable(self,nil)
 end
-
+local scriptName = script.Name;
+function mt.__tostring()
+    return scriptName;
+end
 return function(Value: any,Thread: types.Thread) : any
     if Value == nil or tof(Value) ~= "table" or Value.__type == nil or ValueClasses[Value.__type] == nil then warn(`Pass a valid value object - {debug.traceback()}`); return end;
     local new = {

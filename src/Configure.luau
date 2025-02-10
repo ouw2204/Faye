@@ -61,25 +61,22 @@ function mt:Destroy()
     setmetatable(self,nil)
 end
 
-
+local scriptName = script.Name;
+function mt.__tostring()
+    return scriptName;
+end
 --exclusive to configure below
 return function(Entity: any,Thread: {Add: (self: {},Entity: any) -> ()}?)
     return function(props: PropertyTypes.Property)
         if tof(Entity) == "table" then
-            repeat
-                if Entity == nil then break end;
-                if Entity.__type ~= nil then
-                    if Entity.__type == "Instance" then
-                        Entity = Entity.Instance
-                    elseif ValueClasses[Entity.__type] ~= nil then
-                        Entity = Entity:Get()
-                    else
-                        break
-                    end
-                else
-                    break
+            if Entity.__type == "Instance" then
+                Entity = Entity.Instance;
+            elseif ValueClasses[Entity.__type] then
+                Entity = Entity:Get();
+                if tof(Entity) == "table" and Entity.__type == "Instance" then
+                    Entity = Entity.Instance;
                 end
-            until Entity == nil or tof(Entity) == "Instance";
+            end
         end
         if Entity == nil or tof(Entity) ~= "Instance" then warn(`Entity must be an instance for configure or a value that gives an instance - {debug.traceback()}`); return end;
         local Wrapper = {

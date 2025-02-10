@@ -91,6 +91,33 @@ function mt:Get()
     end
     return nil;
 end
+
+function mt:Reset()
+    local New = self.Initial;
+    if New == nil then return end;
+    if self.Instance ~= nil and self.Property ~= nil then
+        if self.IsAttribute then
+            self.Instance:SetAttribute(self.Property,New)
+            return New
+        else
+            self.Instance[self.Property] = New;
+            return New;
+        end
+    end
+    return;
+end
+
+
+function mt:Compare(Value: any)
+    if self.Instance ~= nil and self.Property ~= nil then
+        if self.IsAttribute then
+            return self.Instance:GetAttribute(self.Property) == Value
+        else
+            return self.Instance[self.Property] == Value
+        end
+    end
+    return false
+end
 function mt:Destroy()
     if self.Thread ~= nil then
         if self.Thread["Remove"] ~= nil then
@@ -128,6 +155,10 @@ function mt:Destroy()
         self.Connect3 = nil;
     end
     tc(self)
+end
+local scriptName = script.Name;
+function mt.__tostring()
+    return scriptName;
 end
 return function(Entity: any,Property: any,IsAttribute: boolean,Thread: Types.Thread)
     if Entity == nil or Property == nil then return end;

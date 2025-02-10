@@ -8,12 +8,14 @@ export type Value = {
     Initial: any;
     Changed: RBXScriptSignal;
     Reset: (self: Value) -> ();
+    Compare: (Value: any) -> boolean;
 }
 export type UserInputType = typeof(game:GetService("UserInputService"));
 export type BasicThread = {Remove: (self: any, Entity: any) -> (); Add: (self: any, Entity: any) -> ()}
 export type AnimationType = {
     From: (self: AnimationType, Value: any) -> AnimationType;
     Play: (self: AnimationType,To: any) -> ();
+    Skip: (self: AnimationType) -> ();
 }
 export type Info = {Time: number; EasingStyle: Enum.EasingStyle; EasingDirection: Enum.EasingDirection; RepeatCount: number; Reverse: boolean; DelayTime: number}
 export type SpringInfo = {Time: number; Frequency: number; Damping: number; RepeatCount: number; Reverse: boolean; DelayTime: number}
@@ -27,6 +29,8 @@ export type DelayType = {
     Get: (self: DelayType) -> ();
     Changed: RBXScriptSignal;
     SetTime: (self: DelayType, Time: number) -> ();
+    Sensitive: (self: DelayType) -> DelayType;
+    ResetTime: (self: DelayType) -> ();
 };
 export type Thread = {
     Create: (self: any, ClassName: string) -> (Properties: props.Property) -> {Instance: Instance, Thread: BasicThread};
@@ -38,7 +42,8 @@ export type Thread = {
     Info: (self: any, Time: number,EasingStyle: Enum.EasingStyle,EasingDirection: Enum.EasingDirection, RepeatCount: number,Reverse: boolean,DelayTime: number) -> Info;
     SpringInfo: (self: any, Time: number,Frequency: number,Damping: number, RepeatCount: number,Reverse: boolean,DelayTime: number) -> SpringInfo;
     Connect: (self: any, Connection: RBXScriptSignal,Function: () -> ()) -> ();
-    Do: (self: any, Function : (Grab: any) -> ()) -> ();
+    Do: (self: any, Function : (Grab: any) -> (),Entity: Instance) -> ();
+    State: (self: any, Function : (Grab: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
     Iterate: (self: any, Table: any,Function: (Index: any,Value: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
     Property: (self:any, Entity: any, Property: string) -> Value;
     Attribute: (self:any, Entity: any, Attribute: string) -> Value;

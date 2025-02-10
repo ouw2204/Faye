@@ -80,7 +80,9 @@ function mt:Get()
     end
     return Ret
 end
-
+function mt:Compare(Value: any)
+    return self.Value == Value
+end
 function mt:Destroy()
     if self.Thread ~= nil then
         if self.Thread["Remove"] then
@@ -108,9 +110,10 @@ end
     This method resets the value to its initial state.
 ]=]
 function mt:Reset()
-    if self.Initial ~= nil then
-        self:Set(self.Initial)
-    end
+    self:Set(self.Initial)
+end
+mt.__tostring = function(self)
+    return `Value: {self.Id}`
 end
 local Counter = 0;
 return function (Initial: any,Thread: {Add: (self: any, Entity: any) -> ()}?)
@@ -121,7 +124,7 @@ return function (Initial: any,Thread: {Add: (self: any, Entity: any) -> ()}?)
         Thread = Thread;
         Initial = Initial;
         Changed = Signal.new();
-        Id = Counter
+        Id = `{script.Name}-{Counter}`
     }
     setmetatable(new,mt)
     if Thread ~= nil then

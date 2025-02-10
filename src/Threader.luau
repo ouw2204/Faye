@@ -98,8 +98,13 @@ function mt:Remove(Entity: any)
 end
 --Do
 local Do = require(Utilities.Do)
-function mt:Do(Function: (Grab: any) -> ())
+function mt:Do(Function: (Grab: any, Entity: Instance) -> ())
     return Do(Function,self)
+end
+--State
+local State = require(Utilities.State)
+function mt:State(Function: (Grab: any, InnerThread: Types.Thread,Entity: Instance) -> ())
+    return State(Function,self)
 end
 --Iterate
 local Iterate = require(Utilities.Iterate)
@@ -132,6 +137,11 @@ end
 local Eventt = require(Utilities.Event)
 function mt:Event(Entity: any, Event: any, Function: () -> ()) : ()
     return Eventt(Entity,Event,Function,self)
+end
+
+local scriptName = script.Name;
+function mt.__tostring()
+    return scriptName;
 end
 return function() : Types.Thread
     local new = {}

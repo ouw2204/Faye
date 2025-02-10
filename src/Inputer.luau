@@ -3,7 +3,6 @@ local UserInputService = game:GetService("UserInputService");
 local IsRunning = RunService:IsRunning()
 local OtherType = require(script.Parent.Types)
 local GuiService = game:GetService("GuiService")
-local InsetsY = GuiService:GetGuiInset().Y
 local m = {}
 function m:Get(Target: Instance)
     if IsRunning == false and Target == nil then
@@ -16,6 +15,7 @@ function m:Type(Input: OtherType.UserInputType)
     if Input == nil then return end;
     return Input :: OtherType.UserInputType
 end
+
 function m:GetMousePosition(Input: OtherType.UserInputType, From: Vector3?)
     if Input == nil then return end;
     if IsRunning == false and From == nil then
@@ -26,7 +26,7 @@ function m:GetMousePosition(Input: OtherType.UserInputType, From: Vector3?)
         return vector.create(From.X,From.Y,0)-vector.create(Input.AbsolutePosition.X,Input.AbsolutePosition.Y,0)
     else
         local Get = Input:GetMouseLocation();
-
+        local InsetsY = GuiService:GetGuiInset().Y
         return vector.create(Get.X,Get.Y-InsetsY,0);
     end
 end

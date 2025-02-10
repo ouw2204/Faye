@@ -157,6 +157,8 @@ local m = {
         end
 
     end;
+
+    --<Do/State
     Do = function(Entity,Index,Value)
         local Thread = Entity.InnerThread or Entity.Thread
         if Thread ~= nil and Thread ~= Value.Thread then
@@ -183,6 +185,36 @@ local m = {
         end
         Value:Initiate();
     end;
+    State = function(Entity,Index,Value)
+        local Thread = Entity.InnerThread or Entity.Thread
+        if Thread ~= nil and Thread ~= Value.Thread then
+            if Value.Thread ~= nil then
+                if Value.Thread["Remove"] then
+                    Value.Thread:Remove(Value)
+                else
+                    local f = tf(Value.Thread,Value)
+                    if f ~= nil then
+                        tr(Value.Thread,f)
+                    end
+                end
+            end
+            Value.Thread = Thread;
+            if Thread["Add"] then
+                Thread:Add(Value)
+            else
+                tins(Thread,Value)
+            end
+        end
+        Value.Entity = Entity;
+        if (tof(Index) ~= "number") then
+            Value.Property = Index;
+        end
+        Value:Initiate();
+    end;
+    --> Do/State
+
+
+
     Animate = function(Entity,Index,Value)
         local Goal = Value.Goal;
         local Info = Value.Info;
@@ -271,7 +303,10 @@ local m = {
                                     warn(`Goal value can not be a table - {debug.traceback()}`)
                                 end
                             else
-                                if NoAnim then
+                                if NoAnim or Value.SkipFirstValue then
+                                    if NoAnim == nil then
+                                        Value.SkipFirstValue = nil;
+                                    end
                                     NoAnim = nil;
                                     if tof(Entity.Instance[Value.Property]) == tof(newnewGoal) then
                                         Entity.Instance[Value.Property] = newnewGoal;
@@ -288,7 +323,10 @@ local m = {
                         GoalConnect2 = NewGoal.Changed:Connect(InnerUpdate) --connect change connection
                     end
                 else
-                    if NoAnim then
+                    if NoAnim or Value.SkipFirstValue then
+                        if NoAnim == nil then
+                            Value.SkipFirstValue = nil;
+                        end
                         NoAnim = nil;
                         if tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
                             Entity.Instance[Value.Property] = NewGoal;

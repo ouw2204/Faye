@@ -47,6 +47,10 @@ function mt:Stop()
     end
     self.Elapsed = nil;
 end
+function mt:Skip()
+    self.SkipFirstValue = true;
+    return self;
+end
 function mt:Play(To: any)
    if To == nil then return end;
    if self.RenderFunction ~= nil then
@@ -68,7 +72,7 @@ function mt:Play(To: any)
    local propertyType = tof(Default)
    --loop connection
    self.RenderFunction = RunConnection:Connect(function(delta)
-    if self.Entity == nil or self.Property == nil then self:Destroy();
+    if self.Entity == nil or self.Property == nil or self.Info == nil then self:Destroy();
     --
     Through = nil;
     ProgBefore = nil;
@@ -157,6 +161,7 @@ function mt:Play(To: any)
             repeatleft = nil;
             Default = nil;
             propertyType = nil;
+            Pivot = nil;
         end
     end;
     --Keeping track of last value to trigger ending

@@ -6,6 +6,47 @@ local tins = table.insert
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
 local Compile = require(script.Parent.Compile)
 
+
+local mt = {}
+mt.__index = mt;
+
+
+function mt:Initiate()
+    task.spawn(self.OnValueChanged);
+end
+function mt:Destroy()
+    for k in ipairs(self.Connections) do
+        self.Connections[k]:Disconnect();
+    end
+    
+    tc(self.Connections)
+    tc(self.Listening)
+    self.Connections = nil
+    self.Listening = nil
+    
+    if self.Thread ~= nil then
+        if self.Thread["Remove"] ~= nil then
+            self.Thread:Remove(self)
+        else
+            local find = tf(self.Thread,self)
+            if find ~= nil then
+                tr(self.Thread,find)
+            end
+        end
+        self.Thread = nil
+    end
+    self.Property = nil;
+    self.Entity = nil;
+    self.Function = nil
+    self.Grab = nil;
+    self.OnValueChanged = nil;
+    tc(self)
+    setmetatable(self,nil);
+end
+local scriptName = script.Name;
+function mt.__tostring()
+    return scriptName;
+end
 return function(FunctionToFire,Thread)
     if FunctionToFire == nil then return  end;
     
@@ -18,60 +59,32 @@ return function(FunctionToFire,Thread)
         Property = nil;
         Entity = nil;
     }
-
-    local Grab;
-    local OnValueChanged;
-    function Grab(Value)
+    setmetatable(new,mt);
+    function new.Grab(Value)
         if Value == nil then return end;
         if Value == nil or tof(Value) ~= "table" or Value.__type == nil or ValueClasses[Value.__type] == nil then return end;
         if new.Listening[Value.Id] == nil then
             new.Listening[Value.Id] = true;
-            tins(new.Connections,Value.Changed:Connect(OnValueChanged))
+            tins(new.Connections,Value.Changed:Connect(new.OnValueChanged))
         end
 
         return Value:Get();
     end
-    function OnValueChanged()
-        local result = new.Function(Grab,(new.Entity ~= nil and new.Entity.Instance) or nil )
+    function new.OnValueChanged()
+        local result,r1 = new.Function(new.Grab,(new.Entity ~= nil and new.Entity.Instance) or nil )
         if result ~= nil then
             if new.Property ~= nil then
                 Compile(new.Entity,{[new.Property] = result})
             else
-                Compile(new.Entity,{result})
-            end
-        end
-    end
-    
-
-    function new:Initiate()
-        task.spawn(OnValueChanged);
-    end
-    function new:Destroy()
-        for k in ipairs(self.Connections) do
-            self.Connections[k]:Disconnect();
-        end
-        
-        tc(self.Connections)
-        tc(self.Listening)
-        self.Connections = nil
-        self.Listening = nil
-        
-        if self.Thread ~= nil then
-            if self.Thread["Remove"] ~= nil then
-                self.Thread:Remove(self)
-            else
-                local find = tf(self.Thread,self)
-                if find ~= nil then
-                    tr(self.Thread,find)
+                if r1 ~= nil then
+                    Compile(new.Entity,{[result] = r1})
+                else
+                    Compile(new.Entity,{result})
                 end
             end
-            self.Thread = nil
         end
-        self.Property = nil;
-        self.Entity = nil;
-        self.Function = nil
-        tc(self)
     end
+
     if Thread~= nil then
         if Thread["Add"] then
             Thread:Add(new)
