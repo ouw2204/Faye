@@ -173,6 +173,7 @@ return function(Entity: any,Property: any,IsAttribute: boolean,Thread: Types.Thr
         Initial = nil;
         IsAttribute = IsAttribute;
         Thread = Thread;
+        First = true;
     }
     if Thread ~= nil then
         if Thread["Add"] then
@@ -197,12 +198,11 @@ return function(Entity: any,Property: any,IsAttribute: boolean,Thread: Types.Thr
         end
     end
     do--< Property
-        local First = true;
         local function final(newv)
             if tof(newv) == "string" then
-                if First == true then
+                if new.First == true then
                     new.Property = newv;
-                    First = nil
+                    new.First = nil
                 else
                     upd()
                 end

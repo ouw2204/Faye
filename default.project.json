@@ -4,10 +4,13 @@
     "$className": "DataModel",
 
     "ReplicatedStorage": {
-      "Faye": {
-        "$path": "src",
-        "Packages": {
-          "$path": "Packages"
+      "CAM": {
+        "$className": "Folder",
+        "Faye": {
+          "$path": "src",
+          "Packages": {
+            "$path": "Packages"
+          }
         }
       }
     }

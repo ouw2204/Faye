@@ -6,7 +6,6 @@ function Recursive(Scope)
     else
         for k = #Scope,1,-1 do
             local v = Scope[k]
-            Scope[k] = nil;
             local type = typeof(v)
             if (type == "table" and v["Destroy"] ~= nil) or type == "Instance" then
                 v:Destroy();
@@ -25,6 +24,7 @@ function Recursive(Scope)
                     tc(v)
                 end
             end
+            Scope[k] = nil;
         end
         setmetatable(Scope,nil);
         tc(Scope)

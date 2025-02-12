@@ -32,10 +32,10 @@ function mt:Get()
     end
     return New;
 end
-local scriptName = script.Name;
+--[[local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;
-end
+end]]
 return function(Tab: {any: any},Func: (Index: any,Value: any,InnerThread: Types.Thread?,Entity: Instance?) -> (),Thread: Types.Thread)
     if Tab == nil or Func == nil then return end;
 

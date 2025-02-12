@@ -46,6 +46,8 @@ type Thread = {
 }
 
 export type Property = {
+	Video: string;
+	
 	Rotation: number;
 	Wraps: boolean;
 	CellSize: UDim2;

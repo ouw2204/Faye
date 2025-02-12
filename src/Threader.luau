@@ -94,7 +94,9 @@ function mt:Remove(Entity: any)
     local find = tf(self,Entity)
     if find ~= nil then
         tr(self,find)
+        return true;
     end
+    return
 end
 --Do
 local Do = require(Utilities.Do)

@@ -16,8 +16,9 @@ function mt:Initiate()
     task.spawn(self.OnValueChanged);
 end
 function mt:Destroy()
-    for k in ipairs(self.Connections) do
-        self.Connections[k]:Disconnect();
+    for i = #self.Connections,1,-1 do
+        self.Connections[i]:Disconnect()
+        self.Connections[i] = nil;
     end
     if self.CurrentCleaner ~= nil then
         Clean(self.CurrentCleaner)
@@ -79,6 +80,14 @@ return function(FunctionToFire,Thread)
     function new.OnValueChanged()
         if new.Entity == nil or new.Entity.Instance == nil then return end;
         if new.CurrentCleaner ~= nil then
+            if Thread["Remove"] then
+                Thread:Remove(new.CurrentCleaner)
+            else
+                local pos = tf(Thread,new.CurrentCleaner)
+                if pos ~= nil then
+                    tr(Thread,pos)
+                end
+            end
             Clean(new.CurrentCleaner)
             new.CurrentCleaner = nil;
         end

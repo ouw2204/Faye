@@ -47,7 +47,6 @@ function mt:Destroy()
         self.Instance = nil;
     end
     self.Props = nil;
-    
     if self.Thread ~= nil then
         if self.Thread["Remove"] then
             self.Thread:Remove(self)

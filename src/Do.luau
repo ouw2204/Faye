@@ -15,8 +15,9 @@ function mt:Initiate()
     task.spawn(self.OnValueChanged);
 end
 function mt:Destroy()
-    for k in ipairs(self.Connections) do
-        self.Connections[k]:Disconnect();
+    for i = #self.Connections,1,-1 do
+        self.Connections[i]:Disconnect()
+        self.Connections[i] = nil;
     end
     
     tc(self.Connections)
@@ -43,10 +44,10 @@ function mt:Destroy()
     tc(self)
     setmetatable(self,nil);
 end
-local scriptName = script.Name;
+--[[local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;
-end
+end]]
 return function(FunctionToFire,Thread)
     if FunctionToFire == nil then return  end;
     

@@ -3,6 +3,7 @@ local tof = typeof
 local OtherTypes = require(script.Parent.Types)
 local RunService = game:GetService("RunService")
 local RunConnection = (RunService:IsServer() and RunService.Heartbeat) or RunService.RenderStepped
+local ValueClasses = require(script.Parent.Misc.ValueClasses);
 local Lerps = require(script.Lerps)
 local Spring = require(script.Spring)
 local mt = {}
@@ -23,10 +24,7 @@ function mt:UpdateInfo(Info)
     self.Info = Info;
 end
 function mt:Destroy()
-    if self.RenderFunction ~= nil then
-        self.RenderFunction:Disconnect();
-        self.RenderFunction = nil;
-    end
+    self:Stop();
     self.Goal = nil;
     self.Thread = nil;
     self.Entity = nil;
@@ -50,6 +48,12 @@ end
 function mt:Skip()
     self.SkipFirstValue = true;
     return self;
+end
+function isValue(Goal)
+    if Goal ~= nil and tof(Goal) == "table" and Goal.__type ~= nil and ValueClasses[Goal.__type] then
+        return true;
+    end
+    return false
 end
 function mt:Play(To: any)
    if To == nil then return end;
@@ -112,7 +116,7 @@ function mt:Play(To: any)
             direction = false;
         else
             if repeatleft == 0 then
-                if tof(self.Goal) == "table" then
+                if isValue(self.Goal) then
                     self:Stop();
                 else
                     self:Destroy()
@@ -149,7 +153,7 @@ function mt:Play(To: any)
         else
             warn(`There's no tween support for {propertyType} property type.`)
             self.RenderFunction:Disconnect()
-            if tof(self.Goal) == "table" then
+            if isValue(self.Goal) then
                 self:Stop();
             else
                 self:Destroy()

@@ -99,8 +99,10 @@ function mt:Destroy()
         self.Changed:Destroy()
         self.Changed = nil;
     end
+    self.__type = nil;
     self.Value = nil;
     self.Initial = nil;
+    self.Id = nil;
     tc(self)
     setmetatable(self,nil);
 end

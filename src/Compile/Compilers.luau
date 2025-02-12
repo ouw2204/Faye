@@ -15,7 +15,7 @@ local m = {
         local Props = Value.Props;
         if Props ~= nil then
             Props.Parent = Props.Parent or Entity.Instance;
-            Compile(Value,Props)
+            Value:Compile()
         end
     end;
     OnChanged = function(Entity,Index,Value,Compile,Init)
@@ -51,13 +51,29 @@ local m = {
         local Connect1,Connect2 = nil,nil;
         local function CleanHolder()
             for i,v in pairs(Holder) do
-                CleanModule(v)
+                if Thread["Remove"] then
+                    Thread:Remove(v)
+                else
+                    local Pos = tf(Thread,v)
+                    if Pos then
+                        tr(Thread,Pos)
+                    end
+                end
+                v:Clean()
             end
             tc(Holder)
         end
         --< main
         local function upd(Ind,Val)
             if Holder[Ind] ~= nil then
+                if Thread["Remove"] then
+                    Thread:Remove(Holder[Ind])
+                else
+                    local Pos = tf(Thread,Holder[Ind])
+                    if Pos ~= nil then
+                        tr(Thread,Pos)
+                    end
+                end
                 Holder[Ind]:Clean()
                 Holder[Ind] = nil;
             end
@@ -101,6 +117,14 @@ local m = {
                                     else
                                         if newChangeType == 2 then
                                             if Holder[newIndex] ~= nil then
+                                                if Thread["Remove"] then
+                                                    Thread:Remove(Holder[newIndex])
+                                                else
+                                                    local Pos = tf(Thread,Holder[newIndex])
+                                                    if Pos ~= nil then
+                                                        tr(Thread,Pos)
+                                                    end
+                                                end
                                                 Holder[newIndex]:Clean();
                                                 Holder[newIndex] = nil;
                                             end
@@ -120,6 +144,16 @@ local m = {
                     else
                         if ChangeType == 2 then
                             if Holder[Index] ~= nil then
+
+                                if Thread["Remove"] then
+                                    Thread:Remove(Holder[Index])
+                                else
+                                    local Pos = tf(Thread,Holder[Index])
+                                    if Pos ~= nil then
+                                        tr(Thread,Pos)
+                                    end
+                                end
+                                
                                 Holder[Index]:Clean();
                                 Holder[Index] = nil;
                             end

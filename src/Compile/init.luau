@@ -1,11 +1,10 @@
 --
 local to = typeof
-local tc = table.clear
 local sf = string.find
 local sb = string.sub
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
 Compilers = require(script.Compilers)
-local function Recursive(Entity: {Instance: Instance}, Props: {})
+local function Recursive(Entity: {Instance: Instance}, Props: any)
     for i,v in pairs(Props) do
         local toi = to(i);
         if Compilers[i] ~= nil then
@@ -47,10 +46,10 @@ local function Recursive(Entity: {Instance: Instance}, Props: {})
             onChangedIndex = nil;
         end
         toi = nil;
-        Props[i] = false;
+        Props[i] = nil;
    end
-   tc(Props)
+   Props = nil;
 end
-return function(Entity: {Instance: Instance}, Props: {})
+return function(Entity: {Instance: Instance,Thread: any}, Props: {})
    Recursive(Entity,Props);
 end

@@ -27,6 +27,12 @@ function mt:Destroy()
         self.Connection = nil
     end
     setmetatable(self,nil)
+    self.Initial = nil;
+    self.Value = nil;
+    self.DefaultTime = nil;
+    self.Time = nil;
+    self.Id = nil;
+    self.IsActive = nil;
     tc(self)
 end
 function mt:SetTime(New: number)
