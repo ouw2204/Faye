@@ -2,7 +2,6 @@
 local tins,tf,tr = table.insert,table.find,table.remove
 local tof = typeof
 local ValueClasses = require(script.Parent.Parent.Misc.ValueClasses)
-local CleanModule = require(script.Parent.Parent.Clean)
 local tc = table.clear
 local m = {
     SetTo = function(Entity,Index,Value)

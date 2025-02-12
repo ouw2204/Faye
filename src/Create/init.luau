@@ -32,15 +32,19 @@ end
 --Destroy function
 function mt:Destroy()
     if self.OnClean ~= nil then
-        task.spawn(function()
-            self.OnClean(self.InnerThread,self.Instance);
-            if self.InnerThread ~= nil then
+        --< run the on clean function
+        self.InnerThread:Add(self.Instance)
+        self.OnClean(self.InnerThread,self.Instance);
+        if self.InnerThread ~= nil then
+            if self.InnerThread.AnimationsAmount == nil or self.InnerThread.AnimationsAmount <= 0 then
                 Clean(self.InnerThread)
-                self.InnerThread = nil;
+            else
+                self.InnerThread.CleanWhenDone = true;
             end
-            self.Instance:Destroy();
-            self.Instance = nil;
-        end)
+            self.InnerThread = nil;
+        end
+        self.Instance = nil;
+        --> run the onclean function
         self.OnClean = nil;
     else
         self.Instance:Destroy();

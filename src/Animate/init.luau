@@ -1,4 +1,4 @@
-local tc = table.clear
+local tc,tf,tr = table.clear,table.find,table.remove
 local tof = typeof
 local OtherTypes = require(script.Parent.Types)
 local RunService = game:GetService("RunService")
@@ -9,7 +9,7 @@ local Spring = require(script.Spring)
 local mt = {}
 mt.__index = mt;
 local Functions = require(script.Functions)
-
+local Cleaner = require(script.Parent.Clean)
 --math
 max = math.max
 
@@ -24,9 +24,22 @@ function mt:UpdateInfo(Info)
     self.Info = Info;
 end
 function mt:Destroy()
-    self:Stop();
+    local clean = self:Stop();
+    if self.Thread then
+        if self.Thread["Remove"] then
+            self.Thread:Remove(self)
+        else
+            local Pos = tf(self.Thread,self)
+            if Pos then
+                tr(self.Thread,Pos)
+            end
+        end
+        if clean then
+            Cleaner(self.Thread)
+        end
+        self.Thread = nil;
+    end
     self.Goal = nil;
-    self.Thread = nil;
     self.Entity = nil;
     self.Property = nil;
     self.Initial = nil;
@@ -39,11 +52,22 @@ function mt:Destroy()
     tc(self)
 end
 function mt:Stop()
+    local ret = nil;
+    if self.Thread ~= nil then
+        if self.Thread.AnimationsAmount ~= nil then
+            self.Thread.AnimationsAmount = math.max(self.Thread.AnimationsAmount - 1, 0)
+        end
+        if self.Thread.CleanWhenDone and self.Thread.AnimationsAmount <= 0 then
+            self.Thread.CleanWhenDone = nil;
+            ret = true;
+        end
+    end
     if self.RenderFunction ~= nil then
         self.RenderFunction:Disconnect();
         self.RenderFunction = nil;
     end
     self.Elapsed = nil;
+    return ret
 end
 function mt:Skip()
     self.SkipFirstValue = true;
@@ -57,13 +81,12 @@ function isValue(Goal)
 end
 function mt:Play(To: any)
    if To == nil then return end;
-   if self.RenderFunction ~= nil then
-    self.RenderFunction:Disconnect();
-    self.RenderFunction = nil;
-   end
+   self:Stop()
    if self.Info == nil then warn(`Info is missing - {debug.traceback()}`); return end;
-   if self.Entity == nil or self.Property == nil then warn(`Entity or property is missing - {debug.traceback}`); return end;
-
+   if self.Entity == nil or self.Property == nil then warn(`Entity or property is missing - {debug.traceback()}`); return end;
+   if self.Thread ~= nil then
+        self.Thread.AnimationsAmount = (self.Thread.AnimationsAmount or 0) + 1
+    end
    -- variables setup
    local Through = true;
    local ProgBefore = nil;
@@ -90,8 +113,6 @@ function mt:Play(To: any)
         self.RenderFunction:Disconnect()
         self.RenderFunction = nil;
         self:Destroy()
-
-
         --
         Through = nil;
         ProgBefore = nil;
