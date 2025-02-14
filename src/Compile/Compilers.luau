@@ -336,7 +336,7 @@ local m = {
                                     warn(`Goal value can not be a table - {debug.traceback()}`)
                                 end
                             else
-                                if NoAnim or Value.SkipFirstValue then
+                                if (NoAnim or Value.SkipFirstValue) and Value.Initial == nil then
                                     if NoAnim == nil then
                                         Value.SkipFirstValue = nil;
                                     end
@@ -356,7 +356,7 @@ local m = {
                         GoalConnect2 = NewGoal.Changed:Connect(InnerUpdate) --connect change connection
                     end
                 else
-                    if NoAnim or Value.SkipFirstValue then
+                    if (NoAnim or Value.SkipFirstValue) and Value.Initial == nil then
                         if NoAnim == nil then
                             Value.SkipFirstValue = nil;
                         end

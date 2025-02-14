@@ -54,7 +54,7 @@ end
 function mt:Stop()
     local ret = nil;
     if self.Thread ~= nil then
-        if self.Thread.AnimationsAmount ~= nil then
+        if self.Thread.AnimationsAmount ~= nil and self.RenderFunction ~= nil then
             self.Thread.AnimationsAmount = math.max(self.Thread.AnimationsAmount - 1, 0)
         end
         if self.Thread.CleanWhenDone and self.Thread.AnimationsAmount <= 0 then
@@ -95,6 +95,7 @@ function mt:Play(To: any)
    local Default = self.Entity[self.Property]
    if self.Initial ~= nil and tof(self.Initial == tof(Default)) then
     Default = self.Initial;
+    self.Initial = nil;
    end
    local propertyType = tof(Default)
    --loop connection
@@ -110,8 +111,6 @@ function mt:Play(To: any)
     return end;
     if Through == false then
         --Errored
-        self.RenderFunction:Disconnect()
-        self.RenderFunction = nil;
         self:Destroy()
         --
         Through = nil;
@@ -173,7 +172,6 @@ function mt:Play(To: any)
             self.Entity[self.Property] = Lerps[propertyType](Default,To)(Pivot)
         else
             warn(`There's no tween support for {propertyType} property type.`)
-            self.RenderFunction:Disconnect()
             if isValue(self.Goal) then
                 self:Stop();
             else
