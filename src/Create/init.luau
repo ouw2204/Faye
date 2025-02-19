@@ -23,6 +23,10 @@ function mt:Compile()
             self.OnClean = Props.OnClean;
             Props.OnClean = nil;
         end
+        if Props.CleanDelay ~= nil then
+            self.CleanDelay = Props.CleanDelay
+            Props.CleanDelay = nil;
+        end
         Compile(self,Props)
     else
         self:Destroy();
@@ -47,8 +51,16 @@ function mt:Destroy()
         --> run the onclean function
         self.OnClean = nil;
     else
-        self.Instance:Destroy();
-        self.Instance = nil;
+        if self.CleanDelay ~= nil then
+            task.delay(self.CleanDelay,function()
+                self.Instance:Destroy();
+                self.Instance = nil;
+            end)
+            self.CleanDelay = nil;
+        else
+            self.Instance:Destroy();
+            self.Instance = nil;
+        end
     end
     self.Props = nil;
     if self.Thread ~= nil then

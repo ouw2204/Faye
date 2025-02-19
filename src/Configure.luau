@@ -22,6 +22,10 @@ function mt:Compile()
             self.OnClean = Props.OnClean;
             Props.OnClean = nil;
         end
+        if Props.CleanDelay ~= nil then
+            self.CleanDelay = Props.CleanDelay
+            Props.CleanDelay = nil;
+        end
         Compile(self,Props)
     else
         self:Destroy();
@@ -32,6 +36,7 @@ end
 function mt:Destroy()
     if self.OnClean ~= nil then
         --< run the on clean function
+        self.InnerThread:Add(self.Instance)
         self.OnClean(self.InnerThread,self.Instance);
         if self.InnerThread ~= nil then
             if self.InnerThread.AnimationsAmount == nil or self.InnerThread.AnimationsAmount <= 0 then
@@ -41,13 +46,20 @@ function mt:Destroy()
             end
             self.InnerThread = nil;
         end
-        self.Instance:Destroy();
         self.Instance = nil;
         --> run the onclean function
         self.OnClean = nil;
     else
-        self.Instance:Destroy();
-        self.Instance = nil;
+        if self.CleanDelay ~= nil then
+            task.delay(self.CleanDelay,function()
+                self.Instance:Destroy();
+                self.Instance = nil;
+            end)
+            self.CleanDelay = nil;
+        else
+            self.Instance:Destroy();
+            self.Instance = nil;
+        end
     end
     self.Props = nil;
     if self.Thread ~= nil then

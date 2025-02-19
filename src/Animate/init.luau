@@ -160,7 +160,7 @@ function mt:Play(To: any)
         --Animate
         if self.__typeIndex == 1 then
             Pivot =  self.Function(Prog)
-        elseif propertyType ~= "number" and self.__typeIndex == 2 then
+        elseif self.__typeIndex == 2 then
             Pivot = Spring(Prog,self.Info.Frequency,self.Info.Damping)
         end
         --set

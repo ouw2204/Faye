@@ -12,7 +12,27 @@ local m = {
     end;
     Instance = function(Entity,Index,Value,Compile)
         local Props = Value.Props;
+        local Thread = Entity.Thread;
+        local InnerThread = Entity.InnerThread
         if Props ~= nil then
+            if Value.Props.OnClean == nil then
+                if InnerThread ~= nil and InnerThread ~= Thread then
+                    if Thread["Remove"] then
+                        Thread:Remove(Value)
+                    else
+                        local pos = tf(Thread,Value)
+                        if pos ~= nil then
+                            tr(Thread,pos)
+                        end
+                    end
+                    if InnerThread["Add"] then
+                        InnerThread:Add(Value)
+                    else
+                        tins(InnerThread,Value)
+                    end
+                    Value.InnerThread = InnerThread;
+                end
+            end;
             Props.Parent = Props.Parent or Entity.Instance;
             Value:Compile()
         end
@@ -58,7 +78,9 @@ local m = {
                         tr(Thread,Pos)
                     end
                 end
-                v:Clean()
+                if v ~= nil and v["Clean"] then
+                    v:Clean()
+                end
             end
             tc(Holder)
         end
@@ -336,40 +358,44 @@ local m = {
                                     warn(`Goal value can not be a table - {debug.traceback()}`)
                                 end
                             else
-                                if (NoAnim or Value.SkipFirstValue) and Value.Initial == nil then
-                                    if NoAnim == nil then
-                                        Value.SkipFirstValue = nil;
+                                if Entity ~= nil and Entity.Instance ~= nil then
+                                    if (NoAnim or Value.SkipFirstValue) and Value.Initial == nil then
+                                        if NoAnim == nil then
+                                            Value.SkipFirstValue = nil;
+                                        end
+                                        NoAnim = nil;
+                                        if tof(Entity.Instance[Value.Property]) == tof(newnewGoal) then
+                                            Entity.Instance[Value.Property] = newnewGoal;
+                                        end
+                                    else
+                                        if tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
+                                            Value.Elapsed = nil;
+                                            Value:Play(newnewGoal)
+                                        end
                                     end
-                                    NoAnim = nil;
-                                    if tof(Entity.Instance[Value.Property]) == tof(newnewGoal) then
-                                        Entity.Instance[Value.Property] = newnewGoal;
-                                    end
-                                else
-                                    if tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
-                                        Value.Elapsed = nil;
-                                        Value:Play(newnewGoal)
-                                    end
-                                end
+                                end;
                             end
                         end
                         InnerUpdate(NewGoal:Get())
                         GoalConnect2 = NewGoal.Changed:Connect(InnerUpdate) --connect change connection
                     end
                 else
-                    if (NoAnim or Value.SkipFirstValue) and Value.Initial == nil then
-                        if NoAnim == nil then
-                            Value.SkipFirstValue = nil;
+                    if Entity ~= nil and Entity.Instance ~= nil then
+                        if (NoAnim or Value.SkipFirstValue) and Value.Initial == nil then
+                            if NoAnim == nil then
+                                Value.SkipFirstValue = nil;
+                            end
+                            NoAnim = nil;
+                            if tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
+                                Entity.Instance[Value.Property] = NewGoal;
+                            end
+                        else
+                            if tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
+                                Value.Elapsed = nil;
+                                Value:Play(NewGoal)
+                            end
                         end
-                        NoAnim = nil;
-                        if tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
-                            Entity.Instance[Value.Property] = NewGoal;
-                        end
-                    else
-                        if tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
-                            Value.Elapsed = nil;
-                            Value:Play(NewGoal)
-                        end
-                    end
+                    end;
                 end
             end
             
@@ -450,26 +476,30 @@ local m = {
                         if tof(newValue) == "table" then
                             warn(`Nested values only support up to 2 degrees of nesting - {debug.traceback()}`)
                         else
-                            local tofIndex = tof(Entity.Instance[Index])
-                            local tofNew = tof(newValue)
-                            if tofIndex == tofNew or ((tofIndex == "number" or tofIndex == "string") and (tofNew == "number" or tofNew == "string")) then
-                                Entity.Instance[Index] = newValue;
-                            end
-                            tofIndex = nil;
-                            tofNew = nil;
+                            if Entity ~= nil and Entity.Instance ~= nil then
+                                local tofIndex = tof(Entity.Instance[Index])
+                                local tofNew = tof(newValue)
+                                if tofIndex == tofNew or ((tofIndex == "number" or tofIndex == "string") and (tofNew == "number" or tofNew == "string")) then
+                                    Entity.Instance[Index] = newValue;
+                                end
+                                tofIndex = nil;
+                                tofNew = nil;
+                            end;
                         end
                     end
                     InnerUpdate(new:Get())
                     ChangedConnection = new.Changed:Connect(InnerUpdate) --connect change connection
                 end
             else
-                local tofIndex = tof(Entity.Instance[Index])
-                local tofNew = tof(new)
-                if tofIndex == tofNew or ((tofIndex == "number" or tofIndex == "string") and (tofNew == "number" or tofNew == "string")) then
-                    Entity.Instance[Index] = new;
-                end
-                tofIndex = nil;
-                tofNew = nil;
+                if Entity ~= nil and Entity.Instance ~= nil then
+                    local tofIndex = tof(Entity.Instance[Index])
+                    local tofNew = tof(new)
+                    if tofIndex == tofNew or ((tofIndex == "number" or tofIndex == "string") and (tofNew == "number" or tofNew == "string")) then
+                        Entity.Instance[Index] = new;
+                    end
+                    tofIndex = nil;
+                    tofNew = nil;
+                end;
             end
         end 
         --init

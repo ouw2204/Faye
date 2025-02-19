@@ -16,18 +16,36 @@ function m:Type(Input: OtherType.UserInputType)
     return Input :: OtherType.UserInputType
 end
 
-function m:GetMousePosition(Input: OtherType.UserInputType, From: Vector3?)
-    if Input == nil then return end;
-    if IsRunning == false and From == nil then
-        warn("Must provide a from position while in edit mode. GetPosition(InputObject,Input.Position)")
-        return
-    end
-    if IsRunning == false then
-        return vector.create(From.X,From.Y,0)-vector.create(Input.AbsolutePosition.X,Input.AbsolutePosition.Y,0)
+
+function m:GetMousePositionNoInsets(Input: OtherType.UserInputType, From: Vector3?)
+	return m:GetMousePosition(Input,From,true)
+end
+function m:GetMousePosition(Input: OtherType.UserInputType, From: Vector3?,NoInsets:boolean)
+	if IsRunning == false then
+		if From == nil and _G.Dock ~= nil then
+			if _G.viewportview == nil or _G.viewportview == false then
+				From = _G.Dock:GetRelativeMousePosition()
+			elseif Input ~= nil then
+				From = Input:GetMouseLocation()
+			end
+		end
+		if From == nil then
+			return vector.create(0,0,0);
+		end
+		if Input ~= nil then
+       	 	return vector.create(From.X,From.Y,0)-vector.create(Input.AbsolutePosition.X,Input.AbsolutePosition.Y,0)
+		else
+			return vector.create(From.X,From.Y,0)
+		end
     else
-        local Get = Input:GetMouseLocation();
-        local InsetsY = GuiService:GetGuiInset().Y
-        return vector.create(Get.X,Get.Y-InsetsY,0);
+		if NoInsets then
+			local Get = UserInputService:GetMouseLocation();
+			return vector.create(Get.X,Get.Y,0);
+		else
+			local Get = UserInputService:GetMouseLocation();
+			local InsetsY = GuiService:GetGuiInset().Y
+			return vector.create(Get.X,Get.Y-InsetsY,0);
+		end
     end
 end
 return m :: OtherType.InputType;

@@ -23,6 +23,7 @@ export type InputType = {
     Get: (self: InputType, Target: Instance?) -> UserInputType;
     Type: (self: InputType, Input: UserInputType) -> UserInputType;
     GetMousePosition: (self: InputType, Input: UserInputType,From: Vector3?) -> Vector3;
+    GetMousePositionNoInsets: (self: InputType, Input: UserInputType,From: Vector3?) -> Vector3;
 }
 
 export type DelayType = {
