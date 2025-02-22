@@ -17,10 +17,10 @@ function m:Type(Input: OtherType.UserInputType)
 end
 
 
-function m:GetMousePositionNoInsets(Input: OtherType.UserInputType, From: Vector3?)
+function m:GetMousePositionNoInsets(Input: OtherType.UserInputType?, From: Vector3?)
 	return m:GetMousePosition(Input,From,true)
 end
-function m:GetMousePosition(Input: OtherType.UserInputType, From: Vector3?,NoInsets:boolean)
+function m:GetMousePosition(Input: OtherType.UserInputType?, From: Vector3?,NoInsets:boolean)
 	if IsRunning == false then
 		if From == nil and _G.Dock ~= nil then
 			if _G.viewportview == nil or _G.viewportview == false then

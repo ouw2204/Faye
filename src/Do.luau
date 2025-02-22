@@ -44,10 +44,10 @@ function mt:Destroy()
     tc(self)
     setmetatable(self,nil);
 end
---[[local scriptName = script.Name;
+local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;
-end]]
+end
 return function(FunctionToFire,Thread)
     if FunctionToFire == nil then return  end;
     

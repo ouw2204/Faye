@@ -29,6 +29,13 @@ function mt:Configure(Entity: any)
     return Configure(Entity,self)
 end
 --thread extension
+--[=[
+    @within Thread
+    @method Extend
+    @param NoLink boolean
+    @return Thread
+    Creates a sub-thread. Leave the NoLink to nil and the thread will be linked to the parent thread(will delete with parent), set NoLink to true for the thread to be independent.
+]=]
 function mt:Extend(NoAttachment) : {}
     local new = {};
     setmetatable(new,mt);

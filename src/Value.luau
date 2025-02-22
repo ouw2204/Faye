@@ -73,6 +73,7 @@ end
 --[=[
     @within Value
     @method Get
+    @return any
     Returns the current value.
 ]=]
 function mt:Get()
@@ -86,11 +87,25 @@ end
     @within Value
     @method Compare
     @param Value any
+    @return boolean
     Compares the value passed with the value's current state.
 ]=]
 function mt:Compare(Value: any)
     return self.Value == Value
 end
+--[=[
+    @within Value
+    @method Reset
+    This method resets the value to its initial state.
+]=]
+function mt:Reset()
+    self:Set(self.Initial)
+end
+--[=[
+    @within Value
+    @method Destroy
+    Destroys the value object.
+]=]
 function mt:Destroy()
     if self.Thread ~= nil then
         if self.Thread["Remove"] then
@@ -113,14 +128,6 @@ function mt:Destroy()
     self.Id = nil;
     tc(self)
     setmetatable(self,nil);
-end
---[=[
-    @within Value
-    @method Reset
-    This method resets the value to its initial state.
-]=]
-function mt:Reset()
-    self:Set(self.Initial)
 end
 mt.__tostring = function(self)
     return `Value: {self.Id}`

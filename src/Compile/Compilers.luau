@@ -364,11 +364,11 @@ local m = {
                                             Value.SkipFirstValue = nil;
                                         end
                                         NoAnim = nil;
-                                        if tof(Entity.Instance[Value.Property]) == tof(newnewGoal) then
+                                        if Value.Property ~= nil and tof(Entity.Instance[Value.Property]) == tof(newnewGoal) then
                                             Entity.Instance[Value.Property] = newnewGoal;
                                         end
                                     else
-                                        if tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
+                                        if Value.Property ~= nil and tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
                                             Value.Elapsed = nil;
                                             Value:Play(newnewGoal)
                                         end
@@ -386,11 +386,11 @@ local m = {
                                 Value.SkipFirstValue = nil;
                             end
                             NoAnim = nil;
-                            if tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
+                            if Value.Property ~= nil and tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
                                 Entity.Instance[Value.Property] = NewGoal;
                             end
                         else
-                            if tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
+                            if Value.Property ~= nil and tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
                                 Value.Elapsed = nil;
                                 Value:Play(NewGoal)
                             end
