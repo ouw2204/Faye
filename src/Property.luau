@@ -1,3 +1,6 @@
+--[=[
+    @class Property
+]=]
 local Types = require(script.Parent.Types)
 local mt = {};
 mt.__index = mt;

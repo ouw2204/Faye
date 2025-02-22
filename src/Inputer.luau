@@ -25,6 +25,15 @@ function m:GetMousePosition(Input: OtherType.UserInputType, From: Vector3?,NoIns
 		if From == nil and _G.Dock ~= nil then
 			if _G.viewportview == nil or _G.viewportview == false then
 				From = _G.Dock:GetRelativeMousePosition()
+			elseif _G.viewportview == true then
+				if NoInsets then
+					local Get = UserInputService:GetMouseLocation();
+					return vector.create(Get.X,Get.Y,0);
+				else
+					local Get = UserInputService:GetMouseLocation();
+					local InsetsY = GuiService:GetGuiInset().Y
+					return vector.create(Get.X,Get.Y-InsetsY,0);
+				end
 			elseif Input ~= nil then
 				From = Input:GetMouseLocation()
 			end

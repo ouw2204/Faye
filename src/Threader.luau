@@ -78,7 +78,8 @@ end
 --[=[
     @within Thread
     @method Add
-    @param Entity any --The entity to add to the thread
+    @param Entity any
+    The entity to add to the thread
 ]=]
 function mt:Add(Entity: any)
     if Entity == nil then return end;
@@ -87,7 +88,8 @@ end
 --[=[
     @within Thread
     @method Remove
-    @param Entity any --The entity to remove from the thread, meaning when the thread is cleaned it won't be cleaned with it.
+    @param Entity any
+    The entity to remove from the thread, meaning when the thread is cleaned it won't be cleaned with it.
 ]=]
 function mt:Remove(Entity: any)
     if Entity == nil then return end;

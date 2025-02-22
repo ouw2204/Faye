@@ -1,16 +1,7 @@
+
 --[=[
     @class Value
-    A class that represents a reactive state value. Values can be created with Threads(recommended) or directely by the value class. **Value Creating With Thread:**
-    ```lua
-    local Thread = Threader()
-    local Value = Thread:Value(Initial: any)
-    ```
-    **Directely From The Value Class**
-    ```lua
-    local Values = require(Faye.Value)
-
-    local Value = Values(Initial: any,Thread: Thread?)
-    ```
+    A class that represents a reactive state value. Values can be created with Threads(recommended) or directely by the value class.
 ]=]
 
 local Signal = require(script.Parent.Packages.Signal);
@@ -35,7 +26,7 @@ end
 --[=[
     @within Value
     @method Add
-    @param Value any -- what/how much to add to the value
+    @param Value any
     This method works with numbers, strings, vectors, UDims, and tables.
 ]=]
 function mt:Add(Value: any,...)
@@ -52,7 +43,7 @@ end
 --[=[
     @within Value
     @method Remove
-    @param Value any -- what/how much to remove to the value
+    @param Value any
     This method works with numbers, vectors, UDims, and tables.
 ]=]
 function mt:Remove(Value: any,...)
@@ -66,6 +57,12 @@ function mt:Remove(Value: any,...)
         warn(`Type mismatch for removing - {debug.traceback()}`)
     end
 end
+--[=[
+    @within Value
+    @method Set
+    @param Value any
+    Sets the value.
+]=]
 function mt:Set(newValue: any)
     if self.Value ~= newValue then
         self.Value = newValue;
@@ -73,6 +70,11 @@ function mt:Set(newValue: any)
     end
     return newValue;
 end
+--[=[
+    @within Value
+    @method Get
+    Returns the current value.
+]=]
 function mt:Get()
     local Ret = (self.Value == nil and "NULL") or self.Value;
     if Ret ~= nil and tof(Ret) == "table" and Ret.__type == "Instance" then
@@ -80,6 +82,12 @@ function mt:Get()
     end
     return Ret
 end
+--[=[
+    @within Value
+    @method Compare
+    @param Value any
+    Compares the value passed with the value's current state.
+]=]
 function mt:Compare(Value: any)
     return self.Value == Value
 end
