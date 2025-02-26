@@ -7,9 +7,10 @@ Compilers = require(script.Compilers)
 local function Recursive(Entity: {Instance: Instance}, Props: any)
     for i,v in pairs(Props) do
         local toi = to(i);
+        local tov = to(v);
         if Compilers[i] ~= nil then
             Compilers[i](Entity,i,v,Recursive)
-        elseif to(v) == "table" then
+        elseif tov == "table" then
             local Type = nil;
             if v.__type ~= nil then
                 if ValueClasses[v.__type] then
@@ -39,6 +40,8 @@ local function Recursive(Entity: {Instance: Instance}, Props: any)
             elseif to(Entity.Instance[i]) == "RBXScriptSignal" then
                 onChangedIndex = nil;
                 Compilers.Event(Entity,i,v,Recursive)
+            elseif tov == "function" then
+                v(Entity.Instance);
             else
                 onChangedIndex = nil;
                 Entity.Instance[i] = v;

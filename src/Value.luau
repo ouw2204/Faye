@@ -134,7 +134,6 @@ mt.__tostring = function(self)
 end
 local Counter = 0;
 return function (Initial: any,Thread: {Add: (self: any, Entity: any) -> ()}?)
-    Counter += 1
     local new = {
         __type = script.Name;
         Value = Initial;
@@ -143,6 +142,7 @@ return function (Initial: any,Thread: {Add: (self: any, Entity: any) -> ()}?)
         Changed = Signal.new();
         Id = `{script.Name}-{Counter}`
     }
+    Counter += 1
     setmetatable(new,mt)
     if Thread ~= nil then
         if Thread["Add"] ~= nil then

@@ -2,7 +2,9 @@ local Types = require(script.Parent.Types)
 local tins = table.insert
 local tf,tr = table.find,table.remove
 local tc = table.clear
-local mt = {}
+local mt = {
+    __type = script.Name;
+}
 mt.__index = mt;
 function mt:Destroy()
     if self.Thread ~= nil then
@@ -40,7 +42,6 @@ return function(Tab: {any: any},Func: (Index: any,Value: any,InnerThread: Types.
     if Tab == nil or Func == nil then return end;
 
     local new = {
-        __type = script.Name;
         Function = Func;
         Tab = Tab;
         Thread = Thread;

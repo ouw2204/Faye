@@ -14,7 +14,7 @@ mt.__index = mt;
 local tins,tf,tr = table.insert,table.find,table.remove
 --types
 local Types = require(script.Parent.Types);
-
+local properties = require(script.Parent.Misc.PropertyTypes);
 --utils
 local Utilities = script.Parent;
 
@@ -123,11 +123,15 @@ function mt:Iterate(Table: any, Function: (Index: any,Value: any,InnerThread: Ty
     return Iterate(Table,Function,self)
 end
 --Delay value
-local Delay = require(Utilities.Delay)
-function mt:Delay(Value: Types.Value, Time: number)
-    return Delay(Value,Time,self)
+local DelayValue = require(Utilities.DelayValue)
+function mt:DelayValue(Value: Types.Value, Time: number) : Types.DelayValueType
+    return DelayValue(Value,Time,self)
 end
-
+--Delay
+local Delay = require(Utilities.Delay)
+function mt:Delay(Time: number, Props: properties.Property) : Types.DelayValueType
+    return Delay(Time,Props,self)
+end
 --Property value
 local Propertyy = require(Utilities.Property)
 function mt:Property(Instance: any,Property: string)

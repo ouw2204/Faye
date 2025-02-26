@@ -2,7 +2,9 @@
     @class Property
 ]=]
 local Types = require(script.Parent.Types)
-local mt = {};
+local mt = {
+    __type = script.Name;
+};
 mt.__index = mt;
 local tof,tins,tr,tf = typeof,table.insert,table.remove,table.find
 local tc = table.clear
@@ -158,16 +160,16 @@ function mt:Destroy()
         self.Connect3 = nil;
     end
     tc(self)
+    setmetatable(self,nil);
 end
 local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;
 end
+local Counter = 0;
 return function(Entity: any,Property: any,IsAttribute: boolean,Thread: Types.Thread)
     if Entity == nil or Property == nil then return end;
-
     local new = {
-        __type = script.Name;
         Connect1 = nil,Connect2 = nil; Connect3 = nil;
         PropConnect1 = nil;PropConnect2 = nil;
         Changed = Signal.new();
@@ -177,7 +179,9 @@ return function(Entity: any,Property: any,IsAttribute: boolean,Thread: Types.Thr
         IsAttribute = IsAttribute;
         Thread = Thread;
         First = true;
+        Id = `{script.Name}-{Counter}`
     }
+    Counter +=1;
     if Thread ~= nil then
         if Thread["Add"] then
             Thread:Add(new)
@@ -188,6 +192,7 @@ return function(Entity: any,Property: any,IsAttribute: boolean,Thread: Types.Thr
     
     local function upd()
         local Instance,Prop = new.Instance,new.Property
+        if Instance == nil or Prop == nil then warn(`Instance or property is currently missing - {debug.traceback()}`); return end;
         if IsAttribute == false then
             new.Initial = Instance[Prop];
             new.Connect3 = Instance:GetPropertyChangedSignal(Prop):Connect(function()

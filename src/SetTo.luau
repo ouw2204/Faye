@@ -5,7 +5,9 @@ local tr,tf = table.remove,table.find
 local tins = table.insert
 local types = require(script.Parent.Types)
 
-local mt = {}
+local mt = {
+    __type = script.Name;
+}
 mt.__index = mt;
 function mt:Destroy()
     if self.Thread ~= nil then
@@ -28,7 +30,6 @@ end
 return function(Value: any,Thread: types.Thread) : any
     if Value == nil or tof(Value) ~= "table" or Value.__type == nil or ValueClasses[Value.__type] == nil then warn(`Pass a valid value object - {debug.traceback()}`); return end;
     local new = {
-        __type = script.Name;
         Value = Value;
         Thread = Thread;
     };

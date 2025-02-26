@@ -1,18 +1,14 @@
 local tc,tf,tr = table.clear,table.find,table.remove
-local tof = typeof
 local OtherTypes = require(script.Parent.Types)
-local RunService = game:GetService("RunService")
-local RunConnection = (RunService:IsServer() and RunService.Heartbeat) or RunService.RenderStepped
-local ValueClasses = require(script.Parent.Misc.ValueClasses);
-local Lerps = require(script.Lerps)
-local Spring = require(script.Spring)
-local mt = {}
+local mt = {
+    __type = script.Name;
+}
 mt.__index = mt;
 local Functions = require(script.Functions)
 local Cleaner = require(script.Parent.Clean)
 --math
 max = math.max
-
+local AnimsHandler = require(script.AnimsPlayer);
 function mt:UpdateInfo(Info)
     if Info == nil then return end;
     if Info.__typeIndex == 1 then
@@ -23,8 +19,10 @@ function mt:UpdateInfo(Info)
     self.__typeIndex = Info.__typeIndex;
     self.Info = Info;
 end
-function mt:Destroy()
-    local clean = self:Stop();
+function mt:Destroy(FromStop)
+    if FromStop ==nil then
+        self:Stop(true);
+    end
     if self.Thread then
         if self.Thread["Remove"] then
             self.Thread:Remove(self)
@@ -33,9 +31,6 @@ function mt:Destroy()
             if Pos then
                 tr(self.Thread,Pos)
             end
-        end
-        if clean then
-            Cleaner(self.Thread)
         end
         self.Thread = nil;
     end
@@ -47,150 +42,40 @@ function mt:Destroy()
         tc(self.Info)
     end
     self.Info = nil;
-    self.RenderFunction = nil;
     self.Function = nil;
     tc(self)
 end
-function mt:Stop()
-    local ret = nil;
+function mt:Stop(FromDestroy)
     if self.Thread ~= nil then
-        if self.Thread.AnimationsAmount ~= nil and self.RenderFunction ~= nil then
+        if self.Thread.AnimationsAmount ~= nil and self.Animating then
             self.Thread.AnimationsAmount = math.max(self.Thread.AnimationsAmount - 1, 0)
         end
-        if self.Thread.CleanWhenDone and self.Thread.AnimationsAmount <= 0 then
+        if self.Thread.CleanWhenDone and (self.Thread.AnimationsAmount == nil or self.Thread.AnimationsAmount <= 0) then
             self.Thread.CleanWhenDone = nil;
-            ret = true;
+            if FromDestroy == nil then
+                self:Destroy(true)
+            end
+            Cleaner(self.Thread)
         end
     end
-    if self.RenderFunction ~= nil then
-        self.RenderFunction:Disconnect();
-        self.RenderFunction = nil;
-    end
+    AnimsHandler:Remove(self);
+    self.Animating = nil;
     self.Elapsed = nil;
-    return ret
 end
 function mt:Skip()
     self.SkipFirstValue = true;
     return self;
 end
-function isValue(Goal)
-    if Goal ~= nil and tof(Goal) == "table" and Goal.__type ~= nil and ValueClasses[Goal.__type] then
-        return true;
-    end
-    return false
-end
 function mt:Play(To: any)
    if To == nil then return end;
-   self:Stop()
+   self:Stop();
    if self.Info == nil then warn(`Info is missing - {debug.traceback()}`); return end;
    if self.Entity == nil or self.Property == nil then warn(`Entity or property is missing - {debug.traceback()}`); return end;
    if self.Thread ~= nil then
         self.Thread.AnimationsAmount = (self.Thread.AnimationsAmount or 0) + 1
     end
-   -- variables setup
-   local Through = true;
-   local ProgBefore = nil;
-   local direction = true;
-   local repeatleft = self.Info.RepeatCount;
-   local Default = self.Entity[self.Property]
-   if self.Initial ~= nil and tof(self.Initial == tof(Default)) then
-    Default = self.Initial;
-    self.Initial = nil;
-   end
-   local propertyType = tof(Default)
-   --loop connection
-   self.RenderFunction = RunConnection:Connect(function(delta)
-    if self.Entity == nil or self.Property == nil or self.Info == nil then self:Destroy();
-    --
-    Through = nil;
-    ProgBefore = nil;
-    direction = nil;
-    repeatleft = nil;
-    Default = nil;
-    propertyType = nil;
-    return end;
-    if Through == false then
-        --Errored
-        self:Destroy()
-        --
-        Through = nil;
-        ProgBefore = nil;
-        direction = nil;
-        repeatleft = nil;
-        Default = nil;
-        propertyType = nil;
-        return
-    end
-    Through = false;
-    self.Elapsed = (self.Elapsed and self.Elapsed+delta) or delta
-    local Prog = max( ((self.Elapsed) % (self.Info.Time+self.Info.DelayTime))-self.Info.DelayTime,0)
-    local NatureProg = Prog
-    if direction == false then
-        Prog = self.Info.Time-Prog;
-    end
-    Prog /= self.Info.Time;
-    --Apply info
-    local Pivot = nil;
-    if ProgBefore ~= nil and NatureProg < ProgBefore then
-        if self.Info.Reverse == true and direction == true then
-            direction = false;
-        else
-            if repeatleft == 0 then
-                if isValue(self.Goal) then
-                    self:Stop();
-                else
-                    self:Destroy()
-                end
-
-                --
-                Through = nil;
-                ProgBefore = nil;
-                direction = nil;
-                repeatleft = nil;
-                Default = nil;
-                propertyType = nil;
-            elseif repeatleft >=1 then
-                repeatleft -=1
-                direction = true;
-            else
-                direction = true;
-            end
-        end
-    else
-        --Animate
-        if self.__typeIndex == 1 then
-            Pivot =  self.Function(Prog)
-        elseif self.__typeIndex == 2 then
-            Pivot = Spring(Prog,self.Info.Frequency,self.Info.Damping)
-        end
-        --set
-    end
-    if Pivot ~= nil and self.Entity ~= nil and self.Entity.Parent ~= nil and self.Property ~= nil then
-        if propertyType == "number" then
-            self.Entity[self.Property] = Default+ ((To-Default)*Pivot);
-        elseif Lerps[propertyType] ~= nil then
-            self.Entity[self.Property] = Lerps[propertyType](Default,To)(Pivot)
-        else
-            warn(`There's no tween support for {propertyType} property type.`)
-            if isValue(self.Goal) then
-                self:Stop();
-            else
-                self:Destroy()
-            end
-            --
-            Through = nil;
-            ProgBefore = nil;
-            direction = nil;
-            repeatleft = nil;
-            Default = nil;
-            propertyType = nil;
-            Pivot = nil;
-        end
-    end;
-    --Keeping track of last value to trigger ending
-    ProgBefore = NatureProg;
-    Through = true;
-end)
+    self.__To = To;
+    AnimsHandler:Add(self);
 end
 function mt:From(Value: any)
     if Value == nil then warn(`Must pass a from value - {debug.traceback()}`); return end;
@@ -199,7 +84,6 @@ function mt:From(Value: any)
 end
 return function(Goal: any,Info: OtherTypes.Info | OtherTypes.SpringInfo,Thread: OtherTypes.Thread?) : OtherTypes.AnimationType
     local new = {
-        __type = script.Name;
         Goal = Goal;
         Thread = Thread;
         Entity = nil;

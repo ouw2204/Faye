@@ -26,13 +26,16 @@ export type InputType = {
     GetMousePositionNoInsets: (self: InputType, Input: UserInputType,From: Vector3?) -> Vector3;
 }
 
-export type DelayType = {
-    Get: (self: DelayType) -> ();
+export type DelayValueType = {
+    Get: (self: DelayValueType) -> ();
     Changed: RBXScriptSignal;
-    SetTime: (self: DelayType, Time: number) -> ();
-    Sensitive: (self: DelayType) -> DelayType;
-    ResetTime: (self: DelayType) -> ();
+    SetTime: (self: DelayValueType, Time: number) -> ();
+    Sensitive: (self: DelayValueType) -> DelayValueType;
+    ResetTime: (self: DelayValueType) -> ();
 };
+export type DelayType = {
+    From: (self: DelayType, Props: props.Property) -> DelayType;
+}
 export type Thread = {
     Create: (self: any, ClassName: string) -> (Properties: props.Property) -> {Instance: Instance, Thread: BasicThread};
     Configure: (self: any, Entity: any) -> (Properties: props.Property) -> {Instance: Instance, Thread: BasicThread};
@@ -48,7 +51,8 @@ export type Thread = {
     Iterate: (self: any, Table: any,Function: (Index: any,Value: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
     Property: (self:any, Entity: any, Property: string) -> Value;
     Attribute: (self:any, Entity: any, Attribute: string) -> Value;
-    Delay: (self: any, Value: Value, Time: number) -> DelayType;
+    DelayValue: (self: any, Value: Value, Time: number) -> DelayValueType;
+    Delay: (self: any, Time: number, Props: props.Property) -> DelayType;
     SetTo: (self: any, Value: Value) -> {};
     Event: (self: any, Entity: any, Event: any, Function: <p1,p2,p3>(Event: string,p1,p2,p3) -> ()) -> {};
     Add: (self: any,Entity: any) -> ();

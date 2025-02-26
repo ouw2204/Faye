@@ -238,7 +238,7 @@ local m = {
         if (tof(Index) ~= "number") then
             Value.Property = Index;
         end
-        Value:Initiate();
+        task.spawn(Value.OnValueChanged)
     end;
     State = function(Entity,Index,Value)
         local Thread = Entity.InnerThread or Entity.Thread
@@ -264,12 +264,36 @@ local m = {
         if (tof(Index) ~= "number") then
             Value.Property = Index;
         end
-        Value:Initiate();
+        task.spawn(Value.OnValueChanged)
     end;
     --> Do/State
 
 
-
+    Delay = function(Entity,Index,Value,Compile)
+        local Init = Value.Init;
+        local ToCompile = Value.ToCompile;
+        if Init ~= nil then
+            if tof(Init) == "table" then
+                Compile(Entity,Init)
+                tc(Init)
+            else
+                Compile(Entity,{[Index] = Init})
+            end
+            Init = nil;
+        end
+        task.delay(Value.Time,function()
+            if Entity ~= nil and Entity.Instance ~= nil then
+                if tof(ToCompile) == "table" then
+                    Compile(Entity,ToCompile)
+                    tc(ToCompile)
+                else
+                    Compile(Entity,{[Index] = ToCompile})
+                end
+                ToCompile = nil;
+            end
+        end)
+        Value:Destroy();
+    end;
     Animate = function(Entity,Index,Value)
         local Goal = Value.Goal;
         local Info = Value.Info;

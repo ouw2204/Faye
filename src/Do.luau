@@ -1,19 +1,15 @@
 local tf = table.find
 local tr = table.remove
 local tc = table.clear
-local tof = typeof
 local tins = table.insert
-local ValueClasses = require(script.Parent.Misc.ValueClasses)
 local Compile = require(script.Parent.Compile)
 
 
-local mt = {}
+local mt = {
+    __type = script.Name;
+}
 mt.__index = mt;
 
-
-function mt:Initiate()
-    task.spawn(self.OnValueChanged);
-end
 function mt:Destroy()
     for i = #self.Connections,1,-1 do
         self.Connections[i]:Disconnect()
@@ -52,7 +48,6 @@ return function(FunctionToFire,Thread)
     if FunctionToFire == nil then return  end;
     
     local new = {
-        __type = script.Name;
         Thread = Thread;
         Function = FunctionToFire;
         Listening = {};
@@ -63,7 +58,6 @@ return function(FunctionToFire,Thread)
     setmetatable(new,mt);
     function new.Grab(Value)
         if Value == nil then return end;
-        if Value == nil or tof(Value) ~= "table" or Value.__type == nil or ValueClasses[Value.__type] == nil then return end;
         if new.Listening[Value.Id] == nil then
             new.Listening[Value.Id] = true;
             tins(new.Connections,Value.Changed:Connect(new.OnValueChanged))
