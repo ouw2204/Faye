@@ -28,25 +28,27 @@ local function Recursive(Entity: {Instance: Instance}, Props: any)
         elseif toi == "table" and Compilers[i.__type] then
             Compilers[i.__type](Entity,i,v,Recursive)
         else
-            local onChangedIndex = sf(i,"OnChanged");
-            if onChangedIndex ~= nil then
-                local prop = sb(i,0,onChangedIndex-1);
-                local Init = sf(i,"OnChangedInit") ~= nil;
-                if Props ~= nil then
-                    Compilers.OnChanged(Entity,prop,v,Recursive,Init)
-                end
-                prop = nil;
-                Init = nil;
-            elseif to(Entity.Instance[i]) == "RBXScriptSignal" then
-                onChangedIndex = nil;
-                Compilers.Event(Entity,i,v,Recursive)
-            elseif tov == "function" then
+            if tov == "function" then
                 v(Entity.Instance);
             else
+                local onChangedIndex = sf(i,"OnChanged");
+                if onChangedIndex ~= nil then
+                    local prop = sb(i,0,onChangedIndex-1);
+                    local Init = sf(i,"OnChangedInit") ~= nil;
+                    if Props ~= nil then
+                        Compilers.OnChanged(Entity,prop,v,Recursive,Init)
+                    end
+                    prop = nil;
+                    Init = nil;
+                elseif to(Entity.Instance[i]) == "RBXScriptSignal" then
+                    onChangedIndex = nil;
+                    Compilers.Event(Entity,i,v,Recursive)
+                else
+                    onChangedIndex = nil;
+                    Entity.Instance[i] = v;
+                end
                 onChangedIndex = nil;
-                Entity.Instance[i] = v;
             end
-            onChangedIndex = nil;
         end
         toi = nil;
         Props[i] = nil;
