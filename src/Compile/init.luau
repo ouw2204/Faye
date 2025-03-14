@@ -4,7 +4,7 @@ local sf = string.find
 local sb = string.sub
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
 Compilers = require(script.Compilers)
-local function Recursive(Entity: {Instance: Instance}, Props: any)
+local function Recursive(Entity: {Instance: Instance,Thread: any, InnerThread: any}, Props: any)
     for i,v in pairs(Props) do
         local toi = to(i);
         local tov = to(v);
@@ -28,8 +28,15 @@ local function Recursive(Entity: {Instance: Instance}, Props: any)
         elseif toi == "table" and Compilers[i.__type] then
             Compilers[i.__type](Entity,i,v,Recursive)
         else
-            if tov == "function" then
-                v(Entity.Instance);
+            if tov == "function" and toi == "number" then
+                local ret = v(Entity.InnerThread or Entity.Thread,Entity.Instance);
+                if ret ~= nil then
+                    if to(ret) == "table" and ret.__type == nil then
+                        Recursive(Entity,ret)
+                    else
+                        Recursive(Entity,{ret})
+                    end
+                end
             else
                 local onChangedIndex = sf(i,"OnChanged");
                 if onChangedIndex ~= nil then
@@ -55,6 +62,6 @@ local function Recursive(Entity: {Instance: Instance}, Props: any)
    end
    Props = nil;
 end
-return function(Entity: {Instance: Instance,Thread: any}, Props: {})
+return function(Entity: {Instance: Instance,Thread: any, InnerThread: any}, Props: {})
    Recursive(Entity,Props);
 end

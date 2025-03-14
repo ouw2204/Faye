@@ -22,20 +22,26 @@ function AnimsHandler.Update(delta)
     for i = 1,AnimsHandler.Count do
         local Anim = AnimsHandler.Holder[i];
         if Anim == nil then continue end;
-
+        if Anim.__Time == nil or Anim.__DelayTime == nil then if Anim["Stop"] ~= nil then Anim:Stop() else AnimsHandler:Remove(Anim) end; continue end;
+        if Anim.__Ran == false then
+            warn(` was stopped due to a error in its previous run. - {debug.traceback()}`)
+            Anim:Stop();
+            continue;
+        end
+        Anim.__Ran = false;
         Anim.Elapsed = (Anim.Elapsed and Anim.Elapsed+delta) or delta
-        local Prog = max( ((Anim.Elapsed) % (Anim.Info.Time+Anim.Info.DelayTime))-Anim.Info.DelayTime,0)
+        local Prog = max( ((Anim.Elapsed) % (Anim.__Time+Anim.__DelayTime))-Anim.__DelayTime,0)
         local NatureProg = Prog
         local MaxProg = 1;
         if Anim.__direction == false then
             MaxProg = 0;
-            Prog = Anim.Info.Time-Prog;
+            Prog = Anim.__Time-Prog;
         end
-        Prog /= Anim.Info.Time;
+        Prog /= Anim.__Time;
         local EndReached = nil;
         local Pivot = MaxProg;
         if Anim.__ProgBefore ~= nil and NatureProg < Anim.__ProgBefore then
-            if Anim.Info.Reverse == true and Anim.__direction == true then
+            if Anim.__Reverse == true and Anim.__direction == true then
                 Anim.__direction = false;
             else
                 if Anim.__repeatleft == 0 then
@@ -52,7 +58,7 @@ function AnimsHandler.Update(delta)
             if Anim.__typeIndex == 1 then
                 Pivot =  Anim.Function(Prog)
             elseif Anim.__typeIndex == 2 then
-                Pivot = Spring(Prog,Anim.Info.Frequency,Anim.Info.Damping)
+                Pivot = Spring(Prog,Anim.__Frequency,Anim.__Damping)
             end
             --set
         end
@@ -68,13 +74,6 @@ function AnimsHandler.Update(delta)
                 else
                     Anim:Destroy()
                 end
-
-                Anim.__To = nil;
-                Anim.__ProgBefore = nil;
-                Anim.__direction = nil;
-                Anim.__repeatleft = nil;
-                Anim.__Default = nil;
-                Anim.__propertyType = nil;
             end
         end;
         if EndReached then
@@ -83,33 +82,27 @@ function AnimsHandler.Update(delta)
             else
                 Anim:Destroy()
             end
-
-            --
-            Anim.__ProgBefore = nil;
-            Anim.__direction = nil;
-            Anim.__repeatleft = nil;
-            Anim.__To = nil;
-            Anim.__Default = nil;
-            Anim.__propertyType = nil;
         end
         EndReached = nil;
         MaxProg = nil;
         Pivot = nil;
         Anim.__ProgBefore = NatureProg;
+        Anim.__Ran = true;
     end
 end
 function AnimsHandler:Add(Anim)
     if Anim == nil then return end;
-    if Anim.Animating == true then
-        self:Remove(Anim);
-    end
+    self:Remove(Anim);
     Anim.__ProgBefore = nil;
     if Anim.__Default == nil then
         Anim.__Default = Anim.Entity[Anim.Property]
 
         if Anim.Initial ~= nil and tof(Anim.Initial == tof(Anim.__Default)) then
             Anim.__Default = Anim.Initial;
-            Anim.Initial = nil;
+            Anim.Entity[Anim.Property] = Anim.Initial;
+            if Anim.DontResetInitial == nil then
+                Anim.Initial = nil;
+            end
         end
            
     end
@@ -117,9 +110,8 @@ function AnimsHandler:Add(Anim)
         Anim.__propertyType = tof(Anim.__Default);
     end
     Anim.__direction = true;
-    Anim.__repeatleft = Anim.Info.RepeatCount;
-    Anim.Animating = true;
-    
+    Anim.__repeatleft = Anim.__RepeatCount;
+    Anim.__Ran = true;
     tins(self.Holder,Anim);
     if self.Count == 0 then
         self.Anim = RunConnection:Connect(self.Update)
@@ -138,8 +130,8 @@ function AnimsHandler:Remove(Anim)
         Anim.__repeatleft = nil;
         Anim.__Default = nil;
         Anim.__propertyType = nil;
-
-
+        Anim.__To = nil;
+        Anim.__Ran = nil;
         if self.Count-1 <= 0 then
             self.Count = 0;
             if self.Anim ~= nil then
@@ -149,8 +141,8 @@ function AnimsHandler:Remove(Anim)
         elseif self.Count >0 then
             self.Count -= 1;
         end
+        return true;
     end
-    Anim.Animating = nil;
-    
+    return false;
 end
 return AnimsHandler;

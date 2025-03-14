@@ -9,6 +9,11 @@ local m = {
         Instance.Size = UDim2.fromOffset(100,100);
         Instance.BorderSizePixel = 0;
     end;
+    ViewportFrame = function(Instance)
+        Instance.BackgroundColor3 = Color3.new(1,1,1);
+        Instance.Size = UDim2.fromOffset(100,100);
+        Instance.BorderSizePixel = 0;
+    end;
     TextLabel = function(Instance)
         Instance.BackgroundColor3 = Color3.new(1,1,1);
         Instance.Size = UDim2.fromOffset(100,100);

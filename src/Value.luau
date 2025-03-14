@@ -66,7 +66,7 @@ end
 function mt:Set(newValue: any)
     if self.Value ~= newValue then
         self.Value = newValue;
-        self.Changed:Fire( (newValue == nil and "NULL") or newValue )
+        self.Changed:Fire(newValue)
     end
     return newValue;
 end
@@ -77,7 +77,7 @@ end
     Returns the current value.
 ]=]
 function mt:Get()
-    local Ret = (self.Value == nil and "NULL") or self.Value;
+    local Ret = self.Value;
     if Ret ~= nil and tof(Ret) == "table" and Ret.__type == "Instance" then
         Ret = Ret.Instance
     end
@@ -128,6 +128,14 @@ function mt:Destroy()
     self.Id = nil;
     tc(self)
     setmetatable(self,nil);
+end
+--[=[
+    @within Value
+    @method Refresh
+    Triggers changed signal
+]=]
+function mt:Refresh()
+    self.Changed:Fire(self:Get())
 end
 mt.__tostring = function(self)
     return `Value: {self.Id}`

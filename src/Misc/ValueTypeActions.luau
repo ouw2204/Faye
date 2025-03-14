@@ -11,11 +11,13 @@ end
 
 local Rep = {
     Add = function(tab, value)
-        tab.Value += value
+		tab.Value += value
+		tab.Changed:Fire(tab.Value)
         return tab
     end;
     Remove = function(tab, value)
-        tab.Value -= value
+		tab.Value -= value
+		tab.Changed:Fire(tab.Value)
         return tab
     end;
 }

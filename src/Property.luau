@@ -8,7 +8,6 @@ local mt = {
 mt.__index = mt;
 local tof,tins,tr,tf = typeof,table.insert,table.remove,table.find
 local tc = table.clear
-local ValueClasses = require(script.Parent.Misc.ValueClasses)
 local Signal = require(script.Parent.Packages.Signal)
 local Actions = require(script.Parent.Misc.PropertyAttributeActions)
 function mt.__add(tab,am)
@@ -69,7 +68,6 @@ function mt:Remove(amount)
 end
 --set
 function mt:Set(New)
-    if New == nil then return end;
     if self.Instance ~= nil and self.Property ~= nil then
         if self.IsAttribute then
             self.Instance:SetAttribute(self.Property,New)
@@ -77,7 +75,7 @@ function mt:Set(New)
         else
             local tofIndex = tof(self.Instance[self.Property])
             local tofNew = tof(New)
-            if tofIndex == tofNew or ((tofIndex == "number" or tofIndex == "string") and (tofNew == "number" or tofNew == "string")) then
+            if tofIndex == tofNew or ((tofIndex == "Instance" or tofIndex == "nil") and (tofNew == "Instance" or tofNew == "nil")) or ((tofIndex == "number" or tofIndex == "string") and (tofNew == "number" or tofNew == "string")) then
                 self.Instance[self.Property] = New;
                 return New;
             end
@@ -99,7 +97,6 @@ end
 
 function mt:Reset()
     local New = self.Initial;
-    if New == nil then return end;
     if self.Instance ~= nil and self.Property ~= nil then
         if self.IsAttribute then
             self.Instance:SetAttribute(self.Property,New)
@@ -123,6 +120,14 @@ function mt:Compare(Value: any)
     end
     return false
 end
+--[=[
+    @within Property
+    @method Refresh
+    Triggers changed signal
+]=]
+function mt:Refresh()
+    self.Changed:Fire(self:Get())
+end
 function mt:Destroy()
     if self.Thread ~= nil then
         if self.Thread["Remove"] ~= nil then
@@ -139,25 +144,9 @@ function mt:Destroy()
         self.Changed:Destroy()
         self.Changed = nil;
     end
-    if self.PropConnect1 ~= nil then
-        self.PropConnect1:Disconnect();
-        self.PropConnect1 = nil;
-    end
-    if self.PropConnect2 ~= nil then
-        self.PropConnect2:Disconnect();
-        self.PropConnect2 = nil;
-    end
-    if self.Connect1 ~= nil then
-        self.Connect1:Disconnect();
-        self.Connect1 = nil;
-    end
-    if self.Connect2 ~= nil then
-        self.Connect2:Disconnect();
-        self.Connect2 = nil;
-    end
-    if self.Connect3 ~= nil then
-        self.Connect3:Disconnect();
-        self.Connect3 = nil;
+    if self.ChangeListener ~= nil then
+        self.ChangeListener:Disconnect();
+        self.ChangeListener = nil;
     end
     tc(self)
     setmetatable(self,nil);
@@ -168,13 +157,14 @@ function mt.__tostring()
 end
 local Counter = 0;
 return function(Entity: any,Property: any,IsAttribute: boolean,Thread: Types.Thread)
-    if Entity == nil or Property == nil then return end;
+    if Entity == nil or Property == nil then warn(`Entity and Property parameter must exist - {debug.traceback()}`); return end;
+    if not (tof(Entity) == "Instance" and tof(Property) == "string") then warn(`Entity param must be an instance and Proeprty param must be a string - {debug.traceback()}`); return end;
     local new = {
         Connect1 = nil,Connect2 = nil; Connect3 = nil;
         PropConnect1 = nil;PropConnect2 = nil;
         Changed = Signal.new();
-        Instance = nil;
-        Property = nil;
+        Instance = Entity;
+        Property = Property;
         Initial = nil;
         IsAttribute = IsAttribute;
         Thread = Thread;
@@ -189,99 +179,17 @@ return function(Entity: any,Property: any,IsAttribute: boolean,Thread: Types.Thr
             tins(Thread,new)
         end
     end
-    
-    local function upd()
-        local Instance,Prop = new.Instance,new.Property
-        if Instance == nil or Prop == nil then warn(`Instance or property is currently missing - {debug.traceback()}`); return end;
-        if IsAttribute == false then
-            new.Initial = Instance[Prop];
-            new.Connect3 = Instance:GetPropertyChangedSignal(Prop):Connect(function()
-                new.Changed:Fire(Instance[Prop])
-            end)
-        else
-            new.Initial = Instance:GetAttribute(Prop);
-            new.Connect3 = Instance:GetAttributeChangedSignal(Prop):Connect(function()
-                new.Changed:Fire(Instance:GetAttribute(Prop))
-            end)
-        end
+    if IsAttribute == false then
+        new.Initial = Entity[Property];
+        new.ChangeListener = Entity:GetPropertyChangedSignal(Property):Connect(function()
+            new.Changed:Fire(Entity[Property])
+        end)
+    else
+        new.Initial = Entity:GetAttribute(Property);
+        new.ChangeListener = Entity:GetAttributeChangedSignal(Property):Connect(function()
+            new.Changed:Fire(Entity:GetAttribute(Property))
+        end)
     end
-    do--< Property
-        local function final(newv)
-            if tof(newv) == "string" then
-                if new.First == true then
-                    new.Property = newv;
-                    new.First = nil
-                else
-                    upd()
-                end
-            else
-                warn(`Property must be a string or a value at the 1st-2nd degree which give a string - {debug.traceback()}`)
-            end
-        end
-        local function Setup(newv)
-            if new.PropConnect2 ~= nil then
-                new.PropConnect2:Disconnect()
-                new.PropConnect2 = nil;
-            end
-            if tof(newv) == "table" then
-                if newv.__type ~= nil and ValueClasses[newv.__type] ~= nil then
-                    final(newv:Get())
-                    new.Connect2 = newv.Changed:Connect(final)
-                end
-            else
-                final(newv)
-            end
-        end
-        if tof(Property) == "table" then
-            if Property.__type ~= nil and ValueClasses[Property.__type] then
-                Setup(Property:Get())
-                new.PropConnect1 = Property.Changed:Connect(Setup)
-            end
-        else
-            Setup(Property)
-        end
-    end-->
-    do--Entity
-        local function FinalSetup(Worker)
-            if new.Connect3 ~= nil then
-                new.Connect3:Disconnect();
-                new.Connect3 = nil;
-            end
-            local Type = tof(Worker)
-            if Type == "Instance" then
-                new.Instance = Worker
-                upd();
-            elseif Type == "table" then
-                warn(`Entity must be an instance or a value at the 1st-2nd degree which give an Instance - {debug.traceback()}`)
-            end
-        end
-        local function Setup(newV)
-            if new.Connect2 ~= nil then
-                new.Connect2:Disconnect();
-                new.Connect2 = nil;
-            end
-            if new.Connect3 ~= nil then
-                new.Connect3:Disconnect();
-                new.Connect3 = nil;
-            end
-            if tof(newV) == "table" then
-                if newV.__type ~= nil and ValueClasses[newV.__type] then
-                    FinalSetup(newV:Get())
-                    new.Connect2 = newV.Changed:Connect(FinalSetup)
-                end
-            else
-                FinalSetup(newV)
-            end
-        end
-        if tof(Entity) == "table" then
-            if Entity.__type ~= nil and ValueClasses[Entity.__type] then
-                Setup(Entity:Get())
-                new.Connect1 = Entity.Changed:Connect(Setup)
-            end
-        else
-            Setup(Entity)
-        end
-    end-->
     setmetatable(new,mt)
     return new;
 end

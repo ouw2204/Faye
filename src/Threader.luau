@@ -36,13 +36,20 @@ end
     @return Thread
     Creates a sub-thread. Leave the NoLink to nil and the thread will be linked to the parent thread(will delete with parent), set NoLink to true for the thread to be independent.
 ]=]
-function mt:Extend(NoAttachment) : {}
-    local new = {};
+function mt:Extend(NoAttachment) : Types.Thread
+    local new: any = {};
     setmetatable(new,mt);
     if NoAttachment ~= true then
         table.insert(self,new);
+    else
+        if self.ConnectionsThread ~= nil then
+            new.ConnectionsThread = self.ConnectionsThread
+        else
+            new.ConnectionsThread = self;
+        end
     end
-    return new :: typeof(self);
+    new.ParentThread = self
+    return new;
 end
 
 --[=[
@@ -52,9 +59,12 @@ end
 ]=]
 local Clean = require(script.Parent.Clean)
 function mt:Clean() : ()
+    if self.ParentThread ~= nil then
+        self.ParentThread:Remove(self)
+        self.ParentThread = nil;
+    end
     Clean(self)
 end
-
 --Value
 local Value = require(Utilities.Value);
 function mt:Value(Initial: any)
@@ -70,17 +80,21 @@ end
 --TweenInfo
 local Info = require(Utilities.Info)
 function mt:Info(Time: number,EasingStyle: Enum.EasingStyle,EasingDirection: Enum.EasingDirection, RepeatCount: number,Reverse: boolean,DelayTime: number)
-   return Info(Time,EasingStyle,EasingDirection,RepeatCount,Reverse,DelayTime)
+    local Ret = Info(Time,EasingStyle,EasingDirection,RepeatCount,Reverse,DelayTime);
+    self:Add(Ret);
+   return Ret
 end
 --SpringInfo
 local Spring = require(Utilities.SpringInfo)
 function mt:SpringInfo(Time: number,Frequency: number,Damping: number, RepeatCount: number,Reverse: boolean,DelayTime: number)
-    return Spring(Time,Frequency,Damping,RepeatCount,Reverse,DelayTime)
+    local Ret = Spring(Time,Frequency,Damping,RepeatCount,Reverse,DelayTime);
+    self:Add(Ret);
+    return Ret
 end
 
 --connect
 function mt:Connect(Connection: RBXScriptSignal,Function: () -> ())
-    tins(self,Connection:Connect(Function))
+    self:Add(Connection:Connect(Function),true)
 end
 --[=[
     @within Thread
@@ -88,9 +102,15 @@ end
     @param Entity any
     The entity to add to the thread
 ]=]
-function mt:Add(Entity: any)
+
+function mt:Add(Entity: any,IsConnection)
     if Entity == nil then return end;
-    tins(self,Entity)
+    --print("Add to thread")
+    if IsConnection and self.ConnectionsThread ~= nil then
+        tins(self.ConnectionsThread,Entity)
+    else
+        tins(self,Entity)
+    end
 end
 --[=[
     @within Thread

@@ -19,6 +19,18 @@ function mt:Destroy()
         self.Connections[i] = nil;
     end
     if self.CurrentCleaner ~= nil then
+        --< remove current cleaner from table
+        if self.Thread ~= nil then
+            if self.Thread["Remove"] ~= nil then
+                self.Thread:Remove(self.CurrentCleaner)
+            else
+                local find = tf(self.Thread,self.CurrentCleaner)
+                if find ~= nil then
+                    tr(self.Thread,find)
+                end
+            end
+        end
+        --> remove current cleaner from table
         Clean(self.CurrentCleaner)
         self.CurrentCleaner = nil;
     end
@@ -76,18 +88,19 @@ return function(FunctionToFire,Thread)
     function new.OnValueChanged()
         if new.Entity == nil or new.Entity.Instance == nil then return end;
         if new.CurrentCleaner ~= nil then
-            if Thread["Remove"] then
-                Thread:Remove(new.CurrentCleaner)
+            if new.Thread["Remove"] then
+                new.Thread:Remove(new.CurrentCleaner)
             else
-                local pos = tf(Thread,new.CurrentCleaner)
+                local pos = tf(new.Thread,new.CurrentCleaner)
                 if pos ~= nil then
-                    tr(Thread,pos)
+                    tr(new.Thread,pos)
                 end
             end
             Clean(new.CurrentCleaner)
             new.CurrentCleaner = nil;
         end
         new.CurrentCleaner = new.Thread:Extend();
+        new.CurrentCleaner._isCleanAncestor = new.Thread._isCleanAncestor
         local result,r1 = new.Function(new.Grab,new.CurrentCleaner,(new.Entity ~= nil and new.Entity.Instance) or nil )
         local Entity = {Instance = new.Entity.Instance,Thread = new.CurrentCleaner};
         --[[

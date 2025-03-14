@@ -5,11 +5,11 @@ local OtherType = require(script.Parent.Types)
 local GuiService = game:GetService("GuiService")
 local m = {}
 function m:Get(Target: Instance)
-    if IsRunning == false and Target == nil then
-        warn("You have to provide the root/target UI element while in edit mode for Input to work. Input = Input:Get(target).")
-        return
-    end
-    return (IsRunning == false and Target) or UserInputService :: OtherType.UserInputType
+	if not (_G.Dock ~= nil and _G.viewportview) and IsRunning == false then
+		return Target or UserInputService :: OtherType.UserInputType
+	else
+		return UserInputService :: OtherType.UserInputType
+	end
 end
 function m:Type(Input: OtherType.UserInputType)
     if Input == nil then return end;
@@ -46,7 +46,7 @@ function m:GetMousePosition(Input: OtherType.UserInputType?, From: Vector3?,NoIn
 		else
 			return vector.create(From.X,From.Y,0)
 		end
-    else
+	else
 		if NoInsets then
 			local Get = UserInputService:GetMouseLocation();
 			return vector.create(Get.X,Get.Y,0);

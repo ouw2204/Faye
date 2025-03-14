@@ -74,6 +74,7 @@ export type Property = {
 	VerticalAlignment: Enum.VerticalAlignment;
 	FillDirection: Enum.FillDirection;
 	TextTransparency: number;
+	TextStrokeTransparency: number;
 	ClipsDescendants: boolean;
 	SortOrder: Enum.SortOrder;
 	AspectRatio: number;
@@ -89,10 +90,12 @@ export type Property = {
 	Transparency: number?,
 	Thickness: number;
 	Shape: Enum.PartType?, -- Specific to parts like Part, Ball, Cylinder
-
+	RichText: boolean;
 	-- BasePart Events
 	Touched: (otherPart: BasePart) -> (), -- Triggered when something touches the part
 	TouchEnded: (otherPart: BasePart) -> (), -- Triggered when something stops touching the part
+	CleanDelay: number;
+	CleanFunction: (InnerThread: Thread, Entity: Instance) -> ();
 	OnClean: (InnerThread: Thread, entity: Instance) -> (), -- replaces clean function
 	-- Generic Instance Properties
 	Archivable: boolean?,

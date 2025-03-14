@@ -1,8 +1,8 @@
---
 local tins,tf,tr = table.insert,table.find,table.remove
 local tof = typeof
 local ValueClasses = require(script.Parent.Parent.Misc.ValueClasses)
 local tc = table.clear
+
 local m = {
     SetTo = function(Entity,Index,Value)
         if Value["Value"] ~= nil and Value.Value["Set"] ~= nil then
@@ -10,12 +10,12 @@ local m = {
         end
         Value:Destroy();
     end;
-    Instance = function(Entity,Index,Value,Compile)
+    Instance = function(Entity,Index,Value,Compile,From)
         local Props = Value.Props;
         local Thread = Entity.Thread;
         local InnerThread = Entity.InnerThread
         if Props ~= nil then
-            if Value.Props.OnClean == nil then
+            if Value.Props.OnClean == nil and Value.Props.CleanDelay == nil then
                 if InnerThread ~= nil and InnerThread ~= Thread then
                     if Thread["Remove"] then
                         Thread:Remove(Value)
@@ -86,6 +86,7 @@ local m = {
         end
         --< main
         local function upd(Ind,Val)
+            if Ind == nil or Val == nil then return end;
             if Holder[Ind] ~= nil then
                 if Thread["Remove"] then
                     Thread:Remove(Holder[Ind])
@@ -99,6 +100,7 @@ local m = {
                 Holder[Ind] = nil;
             end
             local NewThread = Thread:Extend();
+            NewThread._isCleanAncestor = Thread._isCleanAncestor;
             local I,V = Value.Function(Ind,Val,NewThread,Entity.Instance)
             local NewCompile = {}
             if V == nil then
@@ -298,7 +300,6 @@ local m = {
         local Goal = Value.Goal;
         local Info = Value.Info;
         local Thread = Entity.InnerThread or Entity.Thread
-
         --switching threads
         if Thread ~= nil and (Value.Thread == nil or Thread ~= Value.Thread) then
             if Value.Thread ~= nil then
@@ -343,14 +344,18 @@ local m = {
                             if tof(newnewValue) == "table" and newnewValue.__type ~= nil then
                                 warn(`Nested values only support up to 2 degrees of nesting - {debug.traceback()}`)
                             else
-                                Value:UpdateInfo(newnewValue)
+                                if Value ~= nil and Value["UpdateInfo"] ~= nil then
+                                    Value:UpdateInfo(newnewValue)
+                                end
                             end
                         end
                         InnerUpdate(NewInfo:Get())
                         InfoConnect2 = NewInfo.Changed:Connect(InnerUpdate) --connect change connection
                     else
                         --is reg table
-                        Value:UpdateInfo(NewInfo)
+                        if Value ~= nil and Value["UpdateInfo"] ~= nil then
+                            Value:UpdateInfo(NewInfo)
+                        end
                     end
                 else
                     warn(`Info to set is not a table - {debug.traceback()}`)
@@ -383,9 +388,9 @@ local m = {
                                 end
                             else
                                 if Entity ~= nil and Entity.Instance ~= nil then
-                                    if (NoAnim or Value.SkipFirstValue) and Value.Initial == nil then
+                                    if (NoAnim or Value.SkipToGoal) and Value.Initial == nil then
                                         if NoAnim == nil then
-                                            Value.SkipFirstValue = nil;
+                                            Value.SkipToGoal = nil;
                                         end
                                         NoAnim = nil;
                                         if Value.Property ~= nil and tof(Entity.Instance[Value.Property]) == tof(newnewGoal) then
@@ -405,9 +410,9 @@ local m = {
                     end
                 else
                     if Entity ~= nil and Entity.Instance ~= nil then
-                        if (NoAnim or Value.SkipFirstValue) and Value.Initial == nil then
+                        if (NoAnim or Value.SkipToGoal) and Value.Initial == nil then
                             if NoAnim == nil then
-                                Value.SkipFirstValue = nil;
+                                Value.SkipToGoal = nil;
                             end
                             NoAnim = nil;
                             if Value.Property ~= nil and tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
@@ -470,7 +475,7 @@ local m = {
             if Thread["Add"] ~= nil then -- is a specialized cleaner
                 Thread:Add(Entity.Instance[Index]:Connect(function(...)
                     Value(Entity.Instance,...)
-                end))
+                end),true)
             else
                 tins(Thread,Entity.Instance[Index]:Connect(function(...)
                     Value(Entity.Instance,...)
@@ -551,6 +556,5 @@ local m = {
         Thread = nil;
     end
 }
-
 
 return m;

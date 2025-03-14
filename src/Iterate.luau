@@ -40,7 +40,6 @@ function mt.__tostring()
 end
 return function(Tab: {any: any},Func: (Index: any,Value: any,InnerThread: Types.Thread?,Entity: Instance?) -> (),Thread: Types.Thread)
     if Tab == nil or Func == nil then return end;
-
     local new = {
         Function = Func;
         Tab = Tab;

@@ -1,3 +1,6 @@
+--[=[
+    @class DelayValue
+]=]
 local Types = require(script.Parent.Types)
 local tof,tins,tf,tr,tc = typeof,table.insert,table.find,table.remove,table.clear
 local Signal = require(script.Parent.Packages.Signal);
@@ -44,6 +47,15 @@ end
 function mt:Get()
     if self.Value == nil then return end;
     return self.Value:Get()
+end
+--[=[
+    @within DelayValue
+    @method Refresh
+    Triggers changed signal
+]=]
+function mt:Refresh()
+    if self.Value == nil then return end;
+    self.Value.Changed:Fire(self:Get())
 end
 function mt:Sensitive()
     self.IsSensitive = true;

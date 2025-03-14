@@ -46,7 +46,6 @@ function mt.__tostring()
 end
 return function(FunctionToFire,Thread)
     if FunctionToFire == nil then return  end;
-    
     local new = {
         Thread = Thread;
         Function = FunctionToFire;

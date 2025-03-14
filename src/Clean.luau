@@ -1,6 +1,7 @@
---add a __isThread = true variable in all your custom threads to make sure this cleans nested threads instead of just clearing nested tables without cleaning the components in it.
+--add a __isThread = true variable in all your custom threads that don't have a destroy function
 local tc = table.clear
-function Recursive(Scope)
+function Recursive(Scope,NoDeletion: boolean?)
+    if Scope == nil then return end;
     if Scope["Destroy"] ~= nil then
         Scope:Destroy();
     else
@@ -26,10 +27,17 @@ function Recursive(Scope)
             end
             Scope[k] = nil;
         end
-        setmetatable(Scope,nil);
-        tc(Scope)
+        Scope._hc = nil;
+        Scope.ParentThread = nil;
+        Scope.ConnectionsThread = nil;
+        Scope._isCleanAncestor = nil;
+        Scope.AnimationsAmount = nil;
+        Scope.CleanWhenDone = nil;
+        if NoDeletion == nil then
+            setmetatable(Scope,nil);
+        end
     end
 end
-return function(Scope)
-    Recursive(Scope)
+return function(Scope, NoDeletion: boolean?)
+    Recursive(Scope,NoDeletion)
 end
