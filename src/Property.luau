@@ -1,5 +1,6 @@
 --[=[
     @class Property
+    A class that represents a property with various actions and threading.
 ]=]
 local Types = require(script.Parent.Types)
 local mt = {
@@ -10,15 +11,39 @@ local tof,tins,tr,tf = typeof,table.insert,table.remove,table.find
 local tc = table.clear
 local Signal = require(script.Parent.Packages.Signal)
 local Actions = require(script.Parent.Misc.PropertyAttributeActions)
+
+--[=[
+    @method __add
+    @within Property
+    @param tab Property
+    @param am any
+    Adds a value to the property.
+    @return Property
+]=]
 function mt.__add(tab,am)
     tab:Add(am)
     return tab;
 end
+
+--[=[
+    @method __sub
+    @within Property
+    @param tab Property
+    @param am any
+    Removes a value from the property.
+    @return Property
+]=]
 function mt.__sub(tab,am)
     tab:Remove(am)
     return tab;
 end
---add
+
+--[=[
+    @method Add
+    @within Property
+    @param amount any
+    Adds a value to the property.
+]=]
 function mt:Add(amount)
     if self.Instance ~= nil and self.Property ~= nil then
         if self.IsAttribute then
@@ -42,7 +67,13 @@ function mt:Add(amount)
         end
     end
 end
---remove
+
+--[=[
+    @method Remove
+    @within Property
+    @param amount any
+    Removes a value from the property.
+]=]
 function mt:Remove(amount)
     if self.Instance ~= nil and self.Property ~= nil then
         if self.IsAttribute then
@@ -66,7 +97,14 @@ function mt:Remove(amount)
         end
     end
 end
---set
+
+--[=[
+    @method Set
+    @within Property
+    @param New any
+    Sets the property to a new value.
+    @return any
+]=]
 function mt:Set(New)
     if self.Instance ~= nil and self.Property ~= nil then
         if self.IsAttribute then
@@ -83,7 +121,13 @@ function mt:Set(New)
     end
     return;
 end
---get
+
+--[=[
+    @method Get
+    @within Property
+    @return any
+    Returns the current value of the property.
+]=]
 function mt:Get()
     if self.Instance ~= nil and self.Property ~= nil then
         if self.IsAttribute then
@@ -95,6 +139,12 @@ function mt:Get()
     return nil;
 end
 
+--[=[
+    @method Reset
+    @within Property
+    Resets the property to its initial value.
+    @return any
+]=]
 function mt:Reset()
     local New = self.Initial;
     if self.Instance ~= nil and self.Property ~= nil then
@@ -109,7 +159,13 @@ function mt:Reset()
     return;
 end
 
-
+--[=[
+    @method Compare
+    @within Property
+    @param Value any
+    @return boolean
+    Compares the property value with the given value.
+]=]
 function mt:Compare(Value: any)
     if self.Instance ~= nil and self.Property ~= nil then
         if self.IsAttribute then
@@ -120,14 +176,21 @@ function mt:Compare(Value: any)
     end
     return false
 end
+
 --[=[
-    @within Property
     @method Refresh
-    Triggers changed signal
+    @within Property
+    Triggers the changed signal.
 ]=]
 function mt:Refresh()
     self.Changed:Fire(self:Get())
 end
+
+--[=[
+    @method Destroy
+    @within Property
+    Destroys the property object and cleans up its resources.
+]=]
 function mt:Destroy()
     if self.Thread ~= nil then
         if self.Thread["Remove"] ~= nil then
@@ -151,11 +214,25 @@ function mt:Destroy()
     tc(self)
     setmetatable(self,nil);
 end
+
 local scriptName = script.Name;
+
 function mt.__tostring()
     return scriptName;
 end
+
 local Counter = 0;
+
+--[=[
+    @function Property
+    @within Property
+    @param Entity any
+    @param Property any
+    @param IsAttribute boolean
+    @param Thread Types.Thread
+    @return Property
+    Creates a new property object.
+]=]
 return function(Entity: any,Property: any,IsAttribute: boolean,Thread: Types.Thread)
     if Entity == nil or Property == nil then warn(`Entity and Property parameter must exist - {debug.traceback()}`); return end;
     if not (tof(Entity) == "Instance" and tof(Property) == "string") then warn(`Entity param must be an instance and Proeprty param must be a string - {debug.traceback()}`); return end;

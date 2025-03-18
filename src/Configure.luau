@@ -1,3 +1,8 @@
+--[=[
+    @class Configure
+    A class that handles the configuration of entities.
+]=]
+
 local PropertyTypes = require(script.Parent.Misc.PropertyTypes);
 
 local Compile = require(script.Parent.Compile)
@@ -28,6 +33,12 @@ function removefunc(t: any, v: any)
     return false
 end
 
+--[=[
+    @method Compile
+    @within Configure
+    Compiles the properties of the instance.
+]=]
+
 function mt:Compile()
     local Props = self.Props;
     if Props ~= nil then
@@ -38,8 +49,10 @@ function mt:Compile()
         self.Props = nil;
         local AddClean = nil;
         if Props.CleanDelay ~= nil or Props.OnClean ~= nil then
-            self.Thread._hc = true; --hc = hasclean
-            self.Thread._isCleanAncestor = true;
+            if self.Thread ~= nil then
+                self.Thread._hc = true; --hc = hasclean
+                self.Thread._isCleanAncestor = true;
+            end;
             if self.InnerThread == nil then
                 self.InnerThread = (self.Thread ~= nil and self.Thread:Extend(true)) or {}
                 self.InnerThread._isCleanAncestor = true
@@ -63,7 +76,7 @@ function mt:Compile()
             end
         end
         if AddClean == true then
-            if self.Thread._isCleanAncestor then
+            if self.Thread ~= nil and self.Thread._isCleanAncestor then
                 local f = Props.CleanFunction;
                 local eq = self.Thread;
                 local connected = {};
@@ -103,9 +116,12 @@ function mt:Compile()
     end
 end
 
---Destroy function
+--[=[
+    @method Destroy
+    @within Configure
+    Destroys the instance.
+]=]
 function mt:Destroy()
-
     if self.Thread ~= nil then
         if self.Thread["Remove"] then
             self.Thread:Remove(self)
@@ -117,14 +133,16 @@ function mt:Destroy()
         end
     end
 
-
     if self.CleanFunction ~= nil then
         self.CleanFunction(self.InnerThread or self.Thread,self.Instance)
         self.CleanFunction = nil;
     end 
     if self.OnClean ~= nil then
-        --< run the on clean function
-        self.InnerThread:Add(self.Instance)
+        if self.InnerThread["Add"] then
+            self.InnerThread:Add(self.Instance)
+        else
+            table.insert(self.InnerThread,self.Instance)
+        end
         self.OnClean(self.InnerThread,self.Instance);
         if self.InnerThread ~= nil then
             if self.InnerThread.AnimationsAmount == nil or self.InnerThread.AnimationsAmount <= 0 then
@@ -135,7 +153,6 @@ function mt:Destroy()
             self.InnerThread = nil;
         end
         self.Instance = nil;
-        --> run the onclean function
         self.OnClean = nil;
     else
         if self.CleanDelay ~= nil then
@@ -169,6 +186,15 @@ function mt.__tostring()
     return scriptName;
 end
 --exclusive to configure below
+
+--[=[
+    @function Configure
+    @within Configure
+    @param Entity any
+    @param Thread {Add: (self: {},Entity: any) -> ()}?
+    @return function
+    Returns a function that configures an entity with the given properties.
+]=]
 return function(Entity: any,Thread: {Add: (self: {},Entity: any) -> ()}?)
     return function(props: PropertyTypes.Property)
         if tof(Entity) == "table" then

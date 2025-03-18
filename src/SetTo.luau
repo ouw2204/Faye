@@ -1,3 +1,8 @@
+--[=[
+    @class SetTo
+    A class that sets values.
+]=]
+
 local tof = typeof
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
 local tc = table.clear
@@ -9,6 +14,12 @@ local mt = {
     __type = script.Name;
 }
 mt.__index = mt;
+
+--[=[
+    @method Destroy
+    @within SetTo
+    Destroys the object and cleans up resources.
+]=]
 function mt:Destroy()
     if self.Thread ~= nil then
         if self.Thread["Remove"] ~= nil then
@@ -27,6 +38,15 @@ local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;
 end
+
+--[=[
+    @function SetTo
+    @within SetTo
+    @param Value any
+    @param Thread any?
+    @return SetTo
+    Creates a new SetTo object that sets the given value.
+]=]
 return function(Value: any,Thread: types.Thread) : any
     if Value == nil or tof(Value) ~= "table" or Value.__type == nil or ValueClasses[Value.__type] == nil then warn(`Pass a valid value object - {debug.traceback()}`); return end;
     local new = {

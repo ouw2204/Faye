@@ -41,7 +41,7 @@ function m:GetMousePosition(Input: OtherType.UserInputType?, From: Vector3?,NoIn
 		if From == nil then
 			return vector.create(0,0,0);
 		end
-		if Input ~= nil then
+		if Input ~= nil and Input:IsA("GuiBase") then
        	 	return vector.create(From.X,From.Y,0)-vector.create(Input.AbsolutePosition.X,Input.AbsolutePosition.Y,0)
 		else
 			return vector.create(From.X,From.Y,0)

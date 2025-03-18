@@ -1,20 +1,21 @@
+--[=[
+    @class Create
+    A class that handles the creation of instances.
+]=]
+
 local PropertyTypes = require(script.Parent.Misc.PropertyTypes);
 
 local Compile = require(script.Parent.Compile)
 local Clean = require(script.Parent.Clean);
 local Defaults = require(script.Defaults);
 
---
 local tr = table.remove
 local tins = table.insert
 local tf = table.find
 
-
 local mt = {__type = "Instance";}
 mt.__index = mt;
 
-
---Object open function
 local tc = table.clear
 function removefunc(t: any, v: any)
     if t == nil or v == nil then return end;
@@ -29,6 +30,11 @@ function removefunc(t: any, v: any)
     return false
 end
 
+--[=[
+    @method Compile
+    @within Create
+    Compiles the properties of the instance.
+]=]
 function mt:Compile()
     local Props = self.Props;
     if Props ~= nil then
@@ -39,8 +45,10 @@ function mt:Compile()
         self.Props = nil;
         local AddClean = nil;
         if Props.CleanDelay ~= nil or Props.OnClean ~= nil then
-            self.Thread._hc = true; --hc = hasclean
-            self.Thread._isCleanAncestor = true;
+            if self.Thread ~= nil then
+                self.Thread._hc = true; --hc = hasclean
+                self.Thread._isCleanAncestor = true;
+            end;
             if self.InnerThread == nil then
                 self.InnerThread = (self.Thread ~= nil and self.Thread:Extend(true)) or {}
                 self.InnerThread._isCleanAncestor = true
@@ -64,7 +72,7 @@ function mt:Compile()
             end
         end
         if AddClean == true then
-            if self.Thread._isCleanAncestor then
+            if self.Thread ~= nil and self.Thread._isCleanAncestor then
                 local f = Props.CleanFunction;
                 local eq = self.Thread;
                 local connected = {};
@@ -104,9 +112,12 @@ function mt:Compile()
     end
 end
 
---Destroy function
+--[=[
+    @method Destroy
+    @within Create
+    Destroys the instance.
+]=]
 function mt:Destroy()
-
     if self.Thread ~= nil then
         if self.Thread["Remove"] then
             self.Thread:Remove(self)
@@ -118,14 +129,16 @@ function mt:Destroy()
         end
     end
 
-
     if self.CleanFunction ~= nil then
         self.CleanFunction(self.InnerThread or self.Thread,self.Instance)
         self.CleanFunction = nil;
     end 
     if self.OnClean ~= nil then
-        --< run the on clean function
-        self.InnerThread:Add(self.Instance)
+        if self.InnerThread["Add"] then
+            self.InnerThread:Add(self.Instance)
+        else
+            table.insert(self.InnerThread,self.Instance)
+        end
         self.OnClean(self.InnerThread,self.Instance);
         if self.InnerThread ~= nil then
             if self.InnerThread.AnimationsAmount == nil or self.InnerThread.AnimationsAmount <= 0 then
@@ -136,7 +149,6 @@ function mt:Destroy()
             self.InnerThread = nil;
         end
         self.Instance = nil;
-        --> run the onclean function
         self.OnClean = nil;
     else
         if self.CleanDelay ~= nil then
@@ -164,11 +176,20 @@ function mt:Destroy()
     self.Thread = nil;
     setmetatable(self,nil)
 end
+
 local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;
 end
---exclusive to create below
+
+--[=[
+    @function Create
+    @within Create
+    @param ClassName string
+    @param Thread {Add: (self: {},Entity: any) -> ()}?
+    @return (props: PropertyTypes.Property) -> Create
+    Creates a new instance object.
+]=]
 return function(ClassName: string,Thread: {Add: (self: {},Entity: any) -> ()}?)
     return function(props: PropertyTypes.Property)
         local Object = Instance.new(ClassName);

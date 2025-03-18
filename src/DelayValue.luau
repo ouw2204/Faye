@@ -1,5 +1,6 @@
 --[=[
     @class DelayValue
+    A class that represents a value with a delay and threading.
 ]=]
 local Types = require(script.Parent.Types)
 local tof,tins,tf,tr,tc = typeof,table.insert,table.find,table.remove,table.clear
@@ -10,6 +11,11 @@ local mt = {
 };
 mt.__index = mt;
 
+--[=[
+    @method Destroy
+    @within DelayValue
+    Destroys the delay value object and cleans up its resources.
+]=]
 function mt:Destroy()
     local thread = self.Thread
     if thread ~= nil then
@@ -40,36 +46,76 @@ function mt:Destroy()
     self.IsActive = nil;
     tc(self)
 end
+
+--[=[
+    @method SetTime
+    @within DelayValue
+    @param New number
+    Sets the delay time.
+]=]
 function mt:SetTime(New: number)
     if not (New == nil or tof(New) == "number") then return end;
     self.Time = New;
 end
+
+--[=[
+    @method Get
+    @within DelayValue
+    @return any
+    Returns the current value.
+]=]
 function mt:Get()
     if self.Value == nil then return end;
     return self.Value:Get()
 end
+
 --[=[
-    @within DelayValue
     @method Refresh
-    Triggers changed signal
+    @within DelayValue
+    Triggers the changed signal.
 ]=]
 function mt:Refresh()
     if self.Value == nil then return end;
     self.Value.Changed:Fire(self:Get())
 end
+
+--[=[
+    @method Sensitive
+    @within DelayValue
+    Marks the delay value as sensitive.
+    @return DelayValue
+]=]
 function mt:Sensitive()
     self.IsSensitive = true;
     return self;
 end
+
+--[=[
+    @method ResetTime
+    @within DelayValue
+    Resets the delay time to the default time.
+]=]
 function mt:ResetTime()
     self.Time = self.DefaultTime
 end
+
 local Id = 0;
 local curentUsageId = 0;
 local scriptName = script.Name;
+
 function mt.__tostring()
     return scriptName;
 end
+
+--[=[
+    @function DelayValue
+    @within DelayValue
+    @param Value Types.Value
+    @param Time number
+    @param Thread Types.Thread
+    @return DelayValue
+    Creates a new delay value object.
+]=]
 return function(Value: Types.Value, Time: number, Thread: Types.Thread)
     if Value == nil or Time == nil then warn(`Value or Time parameter are missing - {debug.traceback()}`); return end;
     if tof(Value) ~= "table" and typeof(Time) ~= "number" then warn(`Parameters must be of the format: Value: Value, Time: number - {debug.traceback()}`); return end;

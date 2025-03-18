@@ -10,6 +10,16 @@ local tf = table.find
 local tr = table.remove
 local tc = table.clear
 
+--[=[
+    @class Delay
+    A class that represents a delay with properties and threading.
+]=]
+
+--[=[
+    @method Destroy
+    @within Delay
+    Destroys the delay object and cleans up its resources.
+]=]
 function mt:Destroy()
     if self.Thread ~= nil then
         if self.Thread["Remove"] then
@@ -27,10 +37,28 @@ function mt:Destroy()
     tc(self)
     setmetatable(self,nil);
 end
+
+--[=[
+    @method From
+    @within Delay
+    @param Props PropsTypes.Property
+    Initializes the delay object with the given properties.
+    @return Delay
+]=]
 function mt:From(Props: PropsTypes.Property)
     self.Init = Props;
     return self;
 end
+
+--[=[
+    @function Delay
+    @within Delay
+    @param Time number
+    @param Props PropsTypes.Property
+    @param Thread Types.Thread
+    @return Delay
+    Creates a new delay object.
+]=]
 return function(Time: number,Props: PropsTypes.Property,Thread: Types.Thread)
     if Time == nil or Props == nil then warn(`Time or properties is missing - {debug.traceback()}`); return end;
     local new = setmetatable({

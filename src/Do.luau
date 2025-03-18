@@ -1,3 +1,8 @@
+--[=[
+    @class Do
+    A class that handles the execution of functions.
+]=]
+
 local tf = table.find
 local tr = table.remove
 local tc = table.clear
@@ -10,6 +15,11 @@ local mt = {
 }
 mt.__index = mt;
 
+--[=[
+    @method Destroy
+    @within Do
+    Destroys the object and cleans up resources.
+]=]
 function mt:Destroy()
     for i = #self.Connections,1,-1 do
         self.Connections[i]:Disconnect()
@@ -44,6 +54,15 @@ local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;
 end
+
+--[=[
+    @function Do
+    @within Do
+    @param FunctionToFire function
+    @param Thread any?
+    @return Do
+    Creates a new Do object that executes the given function.
+]=]
 return function(FunctionToFire,Thread)
     if FunctionToFire == nil then return  end;
     local new = {

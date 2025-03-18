@@ -1,5 +1,17 @@
 classOrder = [
 	"Thread",
     "Value",
-    "Property"
+    "Property",
+    "Animate",
+    "Create",
+    "Configure",
+    "Iterate",
+    "DelayValue",
+    "Delay",
+    "Do",
+    "State",
+    "Event",
+    "Info",
+    "SpringInfo",
+    "SetTo",
 ]

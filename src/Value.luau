@@ -1,7 +1,6 @@
-
 --[=[
     @class Value
-    A class that represents a reactive state value. Values can be created with Threads(recommended) or directely by the value class.
+    A class that represents a reactive state value. Values can be created with Threads(recommended) or directly by the value class.
 ]=]
 
 local Signal = require(script.Parent.Packages.Signal);
@@ -13,19 +12,22 @@ local Actions = require(script.Parent.Misc.ValueTypeActions);
 
 local mt = {};
 mt.__index = mt;
+
 function mt.__sub(self,value)
     if value == nil then return end;
     self:Remove(value)
     return self;
 end
+
 function mt.__add(self,value)
     if value == nil then return end;
     self:Add(value)
     return self;
 end
+
 --[=[
-    @within Value
     @method Add
+    @within Value
     @param Value any
     This method works with numbers, strings, vectors, UDims, and tables.
 ]=]
@@ -40,9 +42,10 @@ function mt:Add(Value: any,...)
         warn(`Type mismatch for adding - {debug.traceback()}`)
     end
 end
+
 --[=[
-    @within Value
     @method Remove
+    @within Value
     @param Value any
     This method works with numbers, vectors, UDims, and tables.
 ]=]
@@ -57,9 +60,10 @@ function mt:Remove(Value: any,...)
         warn(`Type mismatch for removing - {debug.traceback()}`)
     end
 end
+
 --[=[
-    @within Value
     @method Set
+    @within Value
     @param Value any
     Sets the value.
 ]=]
@@ -70,9 +74,10 @@ function mt:Set(newValue: any)
     end
     return newValue;
 end
+
 --[=[
-    @within Value
     @method Get
+    @within Value
     @return any
     Returns the current value.
 ]=]
@@ -83,9 +88,10 @@ function mt:Get()
     end
     return Ret
 end
+
 --[=[
-    @within Value
     @method Compare
+    @within Value
     @param Value any
     @return boolean
     Compares the value passed with the value's current state.
@@ -93,17 +99,19 @@ end
 function mt:Compare(Value: any)
     return self.Value == Value
 end
+
 --[=[
-    @within Value
     @method Reset
+    @within Value
     This method resets the value to its initial state.
 ]=]
 function mt:Reset()
     self:Set(self.Initial)
 end
+
 --[=[
-    @within Value
     @method Destroy
+    @within Value
     Destroys the value object.
 ]=]
 function mt:Destroy()
@@ -129,18 +137,30 @@ function mt:Destroy()
     tc(self)
     setmetatable(self,nil);
 end
+
 --[=[
-    @within Value
     @method Refresh
-    Triggers changed signal
+    @within Value
+    Triggers changed signal.
 ]=]
 function mt:Refresh()
     self.Changed:Fire(self:Get())
 end
+
 mt.__tostring = function(self)
     return `Value: {self.Id}`
 end
+
 local Counter = 0;
+
+--[=[
+    @function Value
+    @within Value
+    @param Initial any
+    @param Thread {Add: (self: any, Entity: any) -> ()}?
+    @return Value
+    Creates a new value object.
+]=]
 return function (Initial: any,Thread: {Add: (self: any, Entity: any) -> ()}?)
     local new = {
         __type = script.Name;

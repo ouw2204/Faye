@@ -2,61 +2,88 @@
 local to = typeof
 local sf = string.find
 local sb = string.sub
+
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
 Compilers = require(script.Compilers)
-local function Recursive(Entity: {Instance: Instance,Thread: any, InnerThread: any}, Props: any)
-    for i,v in pairs(Props) do
-        local toi = to(i);
-        local tov = to(v);
-        if Compilers[i] ~= nil then
-            Compilers[i](Entity,i,v,Recursive)
-        elseif tov == "table" then
-            local Type = nil;
-            if v.__type ~= nil then
-                if ValueClasses[v.__type] then
-                    Type = "Value"
-                else
-                    Type = v.__type;
-                end
-            end
-            if Type ~= nil and Compilers[Type] then 
-                Compilers[Type](Entity,i,v,Recursive);
+
+-- Priority compilation
+local Priority = require(script.Parent.Misc.PriorityProperties)
+local PriorityCount = #Priority;
+
+
+local compute = function(i,v,toi,tov,Entity: {Instance: any,Thread: any, InnerThread: any}, Props: any,Recursive)
+
+    if Compilers[i] ~= nil then
+        Compilers[i](Entity,i,v,Recursive)
+    elseif tov == "table" then
+        local Type = nil;
+        if v.__type ~= nil then
+            if ValueClasses[v.__type] then
+                Type = "Value"
             else
-                Recursive(Entity,v);
-            end
-            Type = nil;
-        elseif toi == "table" and Compilers[i.__type] then
-            Compilers[i.__type](Entity,i,v,Recursive)
-        else
-            if tov == "function" and toi == "number" then
-                local ret = v(Entity.InnerThread or Entity.Thread,Entity.Instance);
-                if ret ~= nil then
-                    if to(ret) == "table" and ret.__type == nil then
-                        Recursive(Entity,ret)
-                    else
-                        Recursive(Entity,{ret})
-                    end
-                end
-            else
-                local onChangedIndex = sf(i,"OnChanged");
-                if onChangedIndex ~= nil then
-                    local prop = sb(i,0,onChangedIndex-1);
-                    local Init = sf(i,"OnChangedInit") ~= nil;
-                    if Props ~= nil then
-                        Compilers.OnChanged(Entity,prop,v,Recursive,Init)
-                    end
-                    prop = nil;
-                    Init = nil;
-                elseif to(Entity.Instance[i]) == "RBXScriptSignal" then
-                    onChangedIndex = nil;
-                    Compilers.Event(Entity,i,v,Recursive)
-                else
-                    onChangedIndex = nil;
-                    Entity.Instance[i] = v;
-                end
-                onChangedIndex = nil;
+                Type = v.__type;
             end
         end
+        if Type ~= nil and Compilers[Type] then 
+            Compilers[Type](Entity,i,v,Recursive);
+        else
+            Recursive(Entity,v);
+        end
+        Type = nil;
+    elseif toi == "table" and Compilers[i.__type] then
+        Compilers[i.__type](Entity,i,v,Recursive)
+    else
+        if tov == "function" and toi == "number" then
+            local ret = v(Entity.InnerThread or Entity.Thread,Entity.Instance);
+            if ret ~= nil then
+                if to(ret) == "table" and ret.__type == nil then
+                    Recursive(Entity,ret)
+                else
+                    Recursive(Entity,{ret})
+                end
+            end
+        else
+            local onChangedIndex = sf(i,"OnChanged");
+            if onChangedIndex ~= nil then
+                local prop = sb(i,0,onChangedIndex-1);
+                local Init = sf(i,"OnChangedInit") ~= nil;
+                if Props ~= nil then
+                    Compilers.OnChanged(Entity,prop,v,Recursive,Init)
+                end
+                prop = nil;
+                Init = nil;
+            elseif to(Entity.Instance[i]) == "RBXScriptSignal" then
+                onChangedIndex = nil;
+                Compilers.Event(Entity,i,v,Recursive)
+            else
+                onChangedIndex = nil;
+                Entity.Instance[i] = v;
+            end
+            onChangedIndex = nil;
+        end
+    end
+
+end
+
+
+local function Recursive(Entity: {Instance: any,Thread: any, InnerThread: any}, Props: any)
+    for i = 1,PriorityCount do
+        local v = Priority[i];
+        if v == nil then continue end;
+        if Props == nil or Props[v] == nil then continue end;
+        local type = to(Props[v]);
+        if (type ~= "table" and type ~= "function") then
+            Entity.Instance[v] = Props[v];
+            Props[v] = nil;
+        end
+    end
+
+    --main loop
+   for i,v in pairs(Props) do
+        local toi = to(i);
+        local tov = to(v);
+        compute(i,v,toi,tov,Entity,Props,Recursive);
+        tov = nil;
         toi = nil;
         Props[i] = nil;
    end

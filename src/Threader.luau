@@ -105,7 +105,6 @@ end
 
 function mt:Add(Entity: any,IsConnection)
     if Entity == nil then return end;
-    --print("Add to thread")
     if IsConnection and self.ConnectionsThread ~= nil then
         tins(self.ConnectionsThread,Entity)
     else

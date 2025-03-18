@@ -1,3 +1,8 @@
+--[=[
+    @class State
+    A class that handles state management.
+]=]
+
 local Clean = require(script.Parent.Clean)
 local tf = table.find
 local tr = table.remove
@@ -13,6 +18,11 @@ local mt = {
 }
 mt.__index = mt;
 
+--[=[
+    @method Destroy
+    @within State
+    Destroys the object and cleans up resources.
+]=]
 function mt:Destroy()
     for i = #self.Connections,1,-1 do
         self.Connections[i]:Disconnect()
@@ -63,6 +73,15 @@ local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;
 end
+
+--[=[
+    @function State
+    @within State
+    @param FunctionToFire function
+    @param Thread any?
+    @return State
+    Creates a new State object that manages the given function.
+]=]
 return function(FunctionToFire,Thread)
     if FunctionToFire == nil then return  end;
     
