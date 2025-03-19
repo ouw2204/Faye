@@ -33,7 +33,7 @@ function mt:Destroy()
         self.Changed:Destroy()
         self.Changed = nil;
     end
-    if self.Connection ~= nil then
+    if self.Connection ~= nil and self.Connection["Disconnect"] ~= nil then
         self.Connection:Disconnect()
         self.Connection = nil
     end

@@ -172,11 +172,11 @@ local Eventt = require(Utilities.Event)
 function mt:Event(Entity: any, Event: any, Function: () -> ()) : ()
     return Eventt(Entity,Event,Function,self)
 end
-
+--[[
 local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;
-end
+end]]
 return function() : Types.Thread
     local new = {}
     setmetatable(new,mt)

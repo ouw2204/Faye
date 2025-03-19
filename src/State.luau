@@ -25,8 +25,12 @@ mt.__index = mt;
 ]=]
 function mt:Destroy()
     for i = #self.Connections,1,-1 do
-        self.Connections[i]:Disconnect()
+        local Connection = self.Connections[i]
         self.Connections[i] = nil;
+        if Connection["Disconnect"] ~= nil then
+            Connection:Disconnect()
+        end
+        Connection = nil;
     end
     if self.CurrentCleaner ~= nil then
         --< remove current cleaner from table
@@ -128,12 +132,12 @@ return function(FunctionToFire,Thread)
         ]]
         if result ~= nil then
             if new.Property ~= nil then
-                Compile(Entity,{[new.Property] = result})
+                Compile(Entity,{[new.Property] = result},new.CurrentCleaner)
             else
                 if r1 ~= nil then
-                    Compile(Entity,{[result] = r1})
+                    Compile(Entity,{[result] = r1},new.CurrentCleaner)
                 else
-                    Compile(Entity,{result})
+                    Compile(Entity,{result},new.CurrentCleaner)
                 end
             end
         end

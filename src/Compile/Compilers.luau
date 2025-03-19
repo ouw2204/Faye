@@ -33,20 +33,24 @@ local m = {
                     Value.InnerThread = InnerThread;
                 end
             end;
-            Props.Parent = Props.Parent or Entity.Instance;
+            if Props.Parent == nil then
+                Props.Parent = Entity.Instance;
+            end
             Value:Compile()
         end
     end;
     OnChanged = function(Entity,Index,Value,Compile,Init)
+        local Instance = Entity.Instance;
         local Thread = Entity.InnerThread or Entity.Thread
         if Init == true then
-            Value(Entity.Instance,Entity.Instance[Index])
+            Value(Instance,Instance[Index])
         end
-        Thread:Connect(Entity.Instance:GetPropertyChangedSignal(Index),function()
-            Value(Entity.Instance,Entity.Instance[Index])
+        Thread:Connect(Instance:GetPropertyChangedSignal(Index),function()
+            Value(Instance,Instance[Index])
         end)
     end;
     Iterate = function(Entity,Index,Value,Compile)
+        local Instance = Entity.Instance;
         local Thread = Entity.InnerThread or Entity.Thread
         if Thread ~= nil and Thread ~= Value.Thread then
             if Value.Thread ~= nil then
@@ -101,7 +105,7 @@ local m = {
             end
             local NewThread = Thread:Extend();
             NewThread._isCleanAncestor = Thread._isCleanAncestor;
-            local I,V = Value.Function(Ind,Val,NewThread,Entity.Instance)
+            local I,V = Value.Function(Ind,Val,NewThread,Instance)
             local NewCompile = {}
             if V == nil then
                 tins(NewCompile,I)
@@ -109,7 +113,7 @@ local m = {
                 NewCompile[I] = V;
             end
             Holder[Ind] = NewThread;
-            Compile(Entity,NewCompile)
+            Compile(Entity,NewCompile,NewThread)
         end
         -->
         if Value.Tab ~= nil then
@@ -118,7 +122,7 @@ local m = {
                 local function step(Index,Value,ChangeType)
                     if Value == nil then
                         CleanHolder()
-                        if Connect2 ~= nil then
+                        if Connect2 ~= nil and Connect2["Disconnect"] ~= nil then
                             Connect2:Disconnect()
                             Connect2 = nil;
                         end
@@ -196,11 +200,11 @@ local m = {
         end
         if Thread ~= nil then
             local function Clean()
-                if Connect1 then
+                if Connect1 and Connect1["Disconnect"] ~= nil then
                     Connect1:Disconnect();
                     Connect1 = nil;
                 end
-                if Connect2 then
+                if Connect2 and Connect2["Disconnect"] ~= nil then
                     Connect2:Disconnect();
                     Connect2 = nil;
                 end
@@ -272,6 +276,7 @@ local m = {
 
 
     Delay = function(Entity,Index,Value,Compile)
+        local Instance = Entity.Instance;
         local Init = Value.Init;
         local ToCompile = Value.ToCompile;
         if Init ~= nil then
@@ -284,7 +289,7 @@ local m = {
             Init = nil;
         end
         task.delay(Value.Time,function()
-            if Entity ~= nil and Entity.Instance ~= nil then
+            if Entity ~= nil and Instance ~= nil then
                 if tof(ToCompile) == "table" then
                     Compile(Entity,ToCompile)
                     tc(ToCompile)
@@ -297,6 +302,7 @@ local m = {
         Value:Destroy();
     end;
     Animate = function(Entity,Index,Value)
+        local Instance = Entity.Instance;
         local Goal = Value.Goal;
         local Info = Value.Info;
         local Thread = Entity.InnerThread or Entity.Thread
@@ -329,7 +335,7 @@ local m = {
                 if Value.Info ~= nil then
                     Value.Info = nil;
                 end
-                if InfoConnect2 ~= nil then
+                if InfoConnect2 ~= nil and InfoConnect2["Disconnect"] ~= nil then
                     InfoConnect2:Disconnect()
                     InfoConnect2 = nil;
                 end
@@ -371,7 +377,7 @@ local m = {
         end
         do -- Goal
             local function setGoal(NewGoal,NoAnim)
-                if GoalConnect2 ~= nil then
+                if GoalConnect2 ~= nil and GoalConnect2["Disconnect"] ~= nil then
                     GoalConnect2:Disconnect()
                     GoalConnect2 = nil;
                 end
@@ -387,17 +393,17 @@ local m = {
                                     warn(`Goal value can not be a table - {debug.traceback()}`)
                                 end
                             else
-                                if Entity ~= nil and Entity.Instance ~= nil then
+                                if Entity ~= nil and Instance ~= nil then
                                     if (NoAnim or Value.SkipToGoal) and Value.Initial == nil then
                                         if NoAnim == nil then
                                             Value.SkipToGoal = nil;
                                         end
                                         NoAnim = nil;
-                                        if Value.Property ~= nil and tof(Entity.Instance[Value.Property]) == tof(newnewGoal) then
-                                            Entity.Instance[Value.Property] = newnewGoal;
+                                        if Value.Property ~= nil and tof(Instance[Value.Property]) == tof(newnewGoal) then
+                                            Instance[Value.Property] = newnewGoal;
                                         end
                                     else
-                                        if Value.Property ~= nil and tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
+                                        if Value.Property ~= nil and tof(Instance[Value.Property]) == tof(NewGoal) then
                                             Value.Elapsed = nil;
                                             Value:Play(newnewGoal)
                                         end
@@ -409,17 +415,17 @@ local m = {
                         GoalConnect2 = NewGoal.Changed:Connect(InnerUpdate) --connect change connection
                     end
                 else
-                    if Entity ~= nil and Entity.Instance ~= nil then
+                    if Entity ~= nil and Instance ~= nil then
                         if (NoAnim or Value.SkipToGoal) and Value.Initial == nil then
                             if NoAnim == nil then
                                 Value.SkipToGoal = nil;
                             end
                             NoAnim = nil;
-                            if Value.Property ~= nil and tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
-                                Entity.Instance[Value.Property] = NewGoal;
+                            if Value.Property ~= nil and tof(Instance[Value.Property]) == tof(NewGoal) then
+                                Instance[Value.Property] = NewGoal;
                             end
                         else
-                            if Value.Property ~= nil and tof(Entity.Instance[Value.Property]) == tof(NewGoal) then
+                            if Value.Property ~= nil and tof(Instance[Value.Property]) == tof(NewGoal) then
                                 Value.Elapsed = nil;
                                 Value:Play(NewGoal)
                             end
@@ -441,20 +447,20 @@ local m = {
         --clean
         if Thread ~= nil then 
             local cleanFunction = function() -- clean function setup
-                if InfoConnect1 ~= nil then -- main update signal disconnect
+                if InfoConnect1 ~= nil and InfoConnect1["Disconnect"] ~= nil then -- main update signal disconnect
                     InfoConnect1:Disconnect()
                     InfoConnect1 = nil;
                 end
-                if InfoConnect2 ~= nil then -- nested update signal disconnect
+                if InfoConnect2 ~= nil and InfoConnect2["Disconnect"] ~= nil then -- nested update signal disconnect
                     InfoConnect2:Disconnect();
                     InfoConnect2 = nil;
                 end
 
-                if GoalConnect1 ~= nil then -- main update signal disconnect
+                if GoalConnect1 ~= nil and GoalConnect1["Disconnect"] ~= nil then -- main update signal disconnect
                     GoalConnect1:Disconnect()
                     GoalConnect1 = nil;
                 end
-                if GoalConnect2 ~= nil then -- nested update signal disconnect
+                if GoalConnect2 ~= nil and GoalConnect2["Disconnect"] ~= nil then -- nested update signal disconnect
                     GoalConnect2:Disconnect();
                     GoalConnect2 = nil;
                 end
@@ -470,29 +476,31 @@ local m = {
         Thread = nil;
     end;
     Event = function(Entity,Index,Value)
+        local Instance = Entity.Instance;
         local Thread = Entity.InnerThread or Entity.Thread -- fetching innerthread or thread with priority
         if Thread ~= nil then -- thread exist
             if Thread["Add"] ~= nil then -- is a specialized cleaner
-                Thread:Add(Entity.Instance[Index]:Connect(function(...)
-                    Value(Entity.Instance,...)
+                Thread:Add(Instance[Index]:Connect(function(...)
+                    Value(Instance,...)
                 end),true)
             else
-                tins(Thread,Entity.Instance[Index]:Connect(function(...)
-                    Value(Entity.Instance,...)
+                tins(Thread,Instance[Index]:Connect(function(...)
+                    Value(Instance,...)
                 end))
             end
         else -- no threads
-            Entity.Instance[Index]:Connect(function(...)
-                Value(Entity.Instance,...)
+            Instance[Index]:Connect(function(...)
+                Value(Instance,...)
             end)
         end
         Thread = nil;
     end;
     Value = function(Entity,Index,Value)
+        local Instance = Entity.Instance;
         local ChangedConnection = nil;
         local function updateValue(new)
             --setting the value
-            if ChangedConnection ~= nil then
+            if ChangedConnection ~= nil and ChangedConnection["Disconnect"] ~= nil then
                 ChangedConnection:Disconnect();
                 ChangedConnection = nil;
             end
@@ -505,11 +513,11 @@ local m = {
                         if tof(newValue) == "table" then
                             warn(`Nested values only support up to 2 degrees of nesting - {debug.traceback()}`)
                         else
-                            if Entity ~= nil and Entity.Instance ~= nil then
-                                local tofIndex = tof(Entity.Instance[Index])
+                            if Entity ~= nil and Instance ~= nil then
+                                local tofIndex = tof(Instance[Index])
                                 local tofNew = tof(newValue)
                                 if tofIndex == tofNew or ((tofIndex == "number" or tofIndex == "string") and (tofNew == "number" or tofNew == "string")) then
-                                    Entity.Instance[Index] = newValue;
+                                    Instance[Index] = newValue;
                                 end
                                 tofIndex = nil;
                                 tofNew = nil;
@@ -520,11 +528,11 @@ local m = {
                     ChangedConnection = new.Changed:Connect(InnerUpdate) --connect change connection
                 end
             else
-                if Entity ~= nil and Entity.Instance ~= nil then
-                    local tofIndex = tof(Entity.Instance[Index])
+                if Entity ~= nil and Instance ~= nil then
+                    local tofIndex = tof(Instance[Index])
                     local tofNew = tof(new)
                     if tofIndex == tofNew or ((tofIndex == "number" or tofIndex == "string") and (tofNew == "number" or tofNew == "string")) then
-                        Entity.Instance[Index] = new;
+                        Instance[Index] = new;
                     end
                     tofIndex = nil;
                     tofNew = nil;
@@ -538,11 +546,11 @@ local m = {
         local Thread = Entity.InnerThread or Entity.Thread --innerthread or thread
         if Thread ~= nil then 
             local cleanFunction = function() -- clean function setup
-                if connectMain ~= nil then -- main update signal disconnect
+                if connectMain ~= nil and connectMain["Disconnect"] ~= nil then -- main update signal disconnect
                     connectMain:Disconnect()
                     connectMain = nil;
                 end
-                if ChangedConnection ~= nil then -- nested update signal disconnect
+                if ChangedConnection ~= nil and ChangedConnection["Disconnect"] ~= nil then -- nested update signal disconnect
                     ChangedConnection:Disconnect();
                     ChangedConnection = nil;
                 end

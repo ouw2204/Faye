@@ -207,7 +207,7 @@ function mt:Destroy()
         self.Changed:Destroy()
         self.Changed = nil;
     end
-    if self.ChangeListener ~= nil then
+    if self.ChangeListener ~= nil and self.ChangeListener["Disconnect"] ~= nil then
         self.ChangeListener:Disconnect();
         self.ChangeListener = nil;
     end

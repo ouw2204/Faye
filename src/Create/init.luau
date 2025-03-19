@@ -9,6 +9,7 @@ local Compile = require(script.Parent.Compile)
 local Clean = require(script.Parent.Clean);
 local Defaults = require(script.Defaults);
 
+local tof = typeof
 local tr = table.remove
 local tins = table.insert
 local tf = table.find
@@ -196,22 +197,39 @@ return function(ClassName: string,Thread: {Add: (self: {},Entity: any) -> ()}?)
         if Defaults[ClassName] ~= nil then
             Defaults[ClassName](Object)
         end
-        local Wrapper = {
-            Instance = Object;
-            Props = props;
-            Thread = Thread;
-        };
-        setmetatable(Wrapper,mt);
-        if props.Parent then
-            Wrapper:Compile();
-        end
-        if Thread ~= nil then
-            if Thread["Add"] then
-                Thread:Add(Wrapper)
+
+        local Simple = true;
+        for i,v in pairs(props) do
+            local tov= tof(v)
+            if tov ~= "function" and tov ~= "table" and i ~= "CleanDelay" and tov ~= "Instance" then
+                Object[i] = v;
+                props[i] = nil;
             else
-                tins(Thread,Wrapper);
+                Simple = false;
             end
         end
-        return Wrapper;
+        
+        if Simple then
+            return Object;
+        else
+            local Wrapper = {
+                Instance = Object;
+                Props = props;
+                Thread = Thread;
+            };
+            setmetatable(Wrapper,mt);
+            if props.Parent then
+                Wrapper:Compile();
+            end
+            if Thread ~= nil then
+                if Thread["Add"] then
+                    Thread:Add(Wrapper)
+                else
+                    tins(Thread,Wrapper);
+                end
+            end
+            return Wrapper;
+        end
+        
     end
 end

@@ -1,1 +1,1 @@
-return require(script.Parent._Index["lucasmzreal_fastsignal@10.3.2"]["fastsignal"])
+return require(script.Parent._Index["prophetouw_simplesignal@1.0.5"]["simplesignal"])

@@ -22,8 +22,12 @@ mt.__index = mt;
 ]=]
 function mt:Destroy()
     for i = #self.Connections,1,-1 do
-        self.Connections[i]:Disconnect()
+        local Connection = self.Connections[i]
         self.Connections[i] = nil;
+        if Connection["Disconnect"] ~= nil then
+            Connection:Disconnect()
+        end
+        Connection = nil;
     end
     
     tc(self.Connections)

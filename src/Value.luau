@@ -32,11 +32,10 @@ end
     This method works with numbers, strings, vectors, UDims, and tables.
 ]=]
 function mt:Add(Value: any,...)
-    local tofCurrent = typeof(self.Value);
     local tofOnComing = typeof(Value);
-    if tofCurrent == "table" or tofCurrent == tofOnComing then
-        if Actions[tofCurrent] ~= nil and Actions[tofCurrent]["Add"] ~= nil then
-            Actions[tofCurrent].Add(self,Value,...)
+    if self.ValueType == "table" or self.ValueType == tofOnComing then
+        if Actions[self.ValueType] ~= nil and Actions[self.ValueType]["Add"] ~= nil then
+            Actions[self.ValueType].Add(self,Value,...)
         end
     else
         warn(`Type mismatch for adding - {debug.traceback()}`)
@@ -50,11 +49,10 @@ end
     This method works with numbers, vectors, UDims, and tables.
 ]=]
 function mt:Remove(Value: any,...)
-    local tofCurrent = typeof(self.Value);
     local tofOnComing = typeof(Value);
-    if tofCurrent == "table" or tofCurrent == tofOnComing then
-        if Actions[tofCurrent] ~= nil and Actions[tofCurrent]["Remove"] ~= nil then
-            Actions[tofCurrent].Remove(self,Value,...)
+    if self.ValueType == "table" or self.ValueType == tofOnComing then
+        if Actions[self.ValueType] ~= nil and Actions[self.ValueType]["Remove"] ~= nil then
+            Actions[self.ValueType].Remove(self,Value,...)
         end
     else
         warn(`Type mismatch for removing - {debug.traceback()}`)
@@ -72,6 +70,7 @@ function mt:Set(newValue: any)
         self.Value = newValue;
         self.Changed:Fire(newValue)
     end
+    self.ValueType = tof(newValue)
     return newValue;
 end
 
@@ -83,7 +82,7 @@ end
 ]=]
 function mt:Get()
     local Ret = self.Value;
-    if Ret ~= nil and tof(Ret) == "table" and Ret.__type == "Instance" then
+    if self.ValueType == "table" and Ret.__type == "Instance" then
         Ret = Ret.Instance
     end
     return Ret
@@ -130,6 +129,7 @@ function mt:Destroy()
         self.Changed:Destroy()
         self.Changed = nil;
     end
+    self.ValueType = nil;
     self.__type = nil;
     self.Value = nil;
     self.Initial = nil;
@@ -164,6 +164,7 @@ local Counter = 0;
 return function (Initial: any,Thread: {Add: (self: any, Entity: any) -> ()}?)
     local new = {
         __type = script.Name;
+        ValueType = tof(Initial);
         Value = Initial;
         Thread = Thread;
         Initial = Initial;

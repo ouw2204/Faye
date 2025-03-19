@@ -1,0 +1,8 @@
+[package]
+name = "prophetouw/simplesignal"
+version = "1.0.5"
+registry = "https://github.com/ProphetOuw/SimpleSignal"
+realm = "shared"
+license = "MIT"
+description = "A simple signaler"
+authors = ["ProphetOuw <ouwproduction@gmail.com>"]

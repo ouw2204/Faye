@@ -208,20 +208,37 @@ return function(Entity: any,Thread: {Add: (self: {},Entity: any) -> ()}?)
             end
         end
         if Entity == nil or tof(Entity) ~= "Instance" then warn(`Entity must be an instance for configure or a value that gives an instance - {debug.traceback()}`); return end;
-        local Wrapper = {
-            Instance = Entity;
-            Props = props;
-            Thread = Thread;
-        };
-        setmetatable(Wrapper,mt);
-        Wrapper:Compile();
-        if Thread ~= nil then
-            if Thread["Add"] then
-                Thread:Add(Wrapper)
+
+
+        local Simple = true;
+        for i,v in pairs(props) do
+            local tov= tof(v)
+            if tov ~= "function" and tov ~= "table" and i ~= "CleanDelay" and tov ~= "Instance" then
+                Entity[i] = v;
+                props[i] = nil;
             else
-                tins(Thread,Wrapper);
+                Simple = false;
             end
         end
-        return Wrapper;
+        
+        if Simple then
+            return Entity;
+        else
+            local Wrapper = {
+                Instance = Entity;
+                Props = props;
+                Thread = Thread;
+            };
+            setmetatable(Wrapper,mt);
+            Wrapper:Compile();
+            if Thread ~= nil then
+                if Thread["Add"] then
+                    Thread:Add(Wrapper)
+                else
+                    tins(Thread,Wrapper);
+                end
+            end
+            return Wrapper;
+        end;
     end
 end
