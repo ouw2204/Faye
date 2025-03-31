@@ -76,13 +76,22 @@ end
 ]=]
 function mt:Refresh()
     if self.Value == nil then return end;
-    self.Value.Changed:Fire(self:Get())
+    if self.SignalEnabled == nil or self.SignalEnabled == true then
+        self.Value.Changed:Fire(self:Get())
+    end
 end
-
+--[=[
+    @method SetSignalEnabled
+    @within DelayValue
+    @param Enabled boolean
+]=]
+function mt:SetSignalEnabled(Enabled: boolean)
+    self.SignalEnabled = Enabled;
+end
 --[=[
     @method Sensitive
     @within DelayValue
-    Marks the delay value as sensitive.
+    Marks the delay value as sensitive, meaning it won't send a signal if another update is in queue.
     @return DelayValue
 ]=]
 function mt:Sensitive()
@@ -108,13 +117,13 @@ function mt.__tostring()
 end
 
 --[=[
-    @function DelayValue
-    @within DelayValue
+    @method DelayValue
+    @within Thread
     @param Value Types.Value
     @param Time number
     @param Thread Types.Thread
     @return DelayValue
-    Creates a new delay value object.
+    [Creates a new delay value object.](/docs/Utilities/DelayValue)
 ]=]
 return function(Value: Types.Value, Time: number, Thread: Types.Thread)
     if Value == nil or Time == nil then warn(`Value or Time parameter are missing - {debug.traceback()}`); return end;
@@ -133,6 +142,7 @@ return function(Value: Types.Value, Time: number, Thread: Types.Thread)
     }
     setmetatable(new,mt);
     new.Connection = Value.Changed:Connect(function(...)
+        if new.SignalEnabled == false then return end;
         curentUsageId +=1;
         local currentId = curentUsageId;
         if new.Time ~= nil then

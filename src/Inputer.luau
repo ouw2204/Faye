@@ -4,22 +4,40 @@ local IsRunning = RunService:IsRunning()
 local OtherType = require(script.Parent.Types)
 local GuiService = game:GetService("GuiService")
 local m = {}
-function m:Get(Target: Instance)
+--[=[
+	@class Inputer
+	```lua
+	local Inputer = require(Faye.Inputer)
+	```
+	Inputer is not attached to any cleaning handler.
+]=]
+
+--[=[
+	@method Get
+	@within Inputer
+	@param Target Instance?
+	@return UserInputService
+	This method gets the input handler, pass a target if you are doing it in a UI viewing window and not viewport.
+]=]
+function m:Get(Target: Instance?)
 	if not (_G.Dock ~= nil and _G.viewportview) and IsRunning == false then
 		return Target or UserInputService :: OtherType.UserInputType
 	else
 		return UserInputService :: OtherType.UserInputType
 	end
 end
-function m:Type(Input: OtherType.UserInputType)
-    if Input == nil then return end;
-    return Input :: OtherType.UserInputType
-end
-
 
 function m:GetMousePositionNoInsets(Input: OtherType.UserInputType?, From: Vector3?)
 	return m:GetMousePosition(Input,From,true)
 end
+--[=[
+	@method GetMousePosition
+	@within Inputer
+	@param Input Instance?
+	@param From vector3?
+	@return mouse pos
+	Gets the mouse position, no param needed if used in the viewport, otherwise, you must pass the Input object that you got with the :Get() function. From is used if you want to get the relative position, pass an absolute position of some ui.
+]=]
 function m:GetMousePosition(Input: OtherType.UserInputType?, From: Vector3?,NoInsets:boolean)
 	if IsRunning == false then
 		if From == nil and _G.Dock ~= nil then

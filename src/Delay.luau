@@ -51,13 +51,13 @@ function mt:From(Props: PropsTypes.Property)
 end
 
 --[=[
-    @function Delay
-    @within Delay
+    @method Delay
+    @within Thread
     @param Time number
     @param Props PropsTypes.Property
     @param Thread Types.Thread
     @return Delay
-    Creates a new delay object.
+    [Creates a new delay object.](/docs/Utilities/Delay)
 ]=]
 return function(Time: number,Props: PropsTypes.Property,Thread: Types.Thread)
     if Time == nil or Props == nil then warn(`Time or properties is missing - {debug.traceback()}`); return end;

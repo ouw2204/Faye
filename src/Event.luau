@@ -1,17 +1,13 @@
---[=[
-    @class Event
-    Connects a function to an event on an entity.
-]=]
 local tof = typeof
 
 --[=[
-    @function Event
-    @within Event
+    @method Event
+    @within Thread
     @param Entity any
     @param Event(s) any
     @param Function function
     @param Thread any?
-    Connects the given function to the specified event(s) on the entity.
+    [Connects the given function to the specified event(s) on the entity.](/docs/Utilities/Event)
 ]=]
 return function(Entity: any, Event: any,Function: (any: any) -> (),Thread) : ()
     if Entity == nil or Event == nil or Function == nil then return end;

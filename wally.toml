@@ -1,8 +1,9 @@
 [package]
-name = "10101/faye-remastered"
-version = "0.1.0"
-registry = "https://github.com/UpliftGames/wally-index"
+name = "prophetouw/faye"
+version = "1.1.0"
+registry = "https://github.com/ProphetOuw/Faye"
 realm = "shared"
-
+license = "MIT"
+description = "reactive UI framework."
 [dependencies]
-Signal = "prophetouw/simplesignal@1.0.5"
+Signal = "prophetouw/simplesignal@1.0.6"

@@ -188,12 +188,12 @@ end
 --exclusive to configure below
 
 --[=[
-    @function Configure
-    @within Configure
+    @method Configure
+    @within Thread
     @param Entity any
     @param Thread {Add: (self: {},Entity: any) -> ()}?
     @return function
-    Returns a function that configures an entity with the given properties.
+    [Allows configuration on an existing physical or none physical component.](/docs/Instancing/Create)
 ]=]
 return function(Entity: any,Thread: {Add: (self: {},Entity: any) -> ()}?)
     return function(props: PropertyTypes.Property)
@@ -211,6 +211,12 @@ return function(Entity: any,Thread: {Add: (self: {},Entity: any) -> ()}?)
 
 
         local Simple = true;
+        if props.Properties ~= nil then
+            for i,v in pairs(props.Properties) do
+                props[i] = v;
+            end
+            props.Properties = nil;
+        end
         for i,v in pairs(props) do
             local tov= tof(v)
             if tov ~= "function" and tov ~= "table" and i ~= "CleanDelay" and tov ~= "Instance" then

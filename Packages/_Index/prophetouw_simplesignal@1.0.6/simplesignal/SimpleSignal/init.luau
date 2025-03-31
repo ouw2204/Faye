@@ -23,6 +23,12 @@ function mt:Connect(func: () -> ())
     tins(self,t)
     return t;
 end
+function mt:Once(func: () -> ())
+    if self.Destroying == true then return end;
+    local t = setmetatable({func = func,signal = self,Once = true},disconnectmt)
+    tins(self,t)
+    return t;
+end
 --Destroy
 function mt:Destroy()
     if self.Destroying then return end;
@@ -42,6 +48,9 @@ end
 function mt:Fire(...)
     for i = #self,1,-1 do
         task.spawn(self[i].func,...)
+        if self[i].Once == true then
+            self[i]:Disconnect();
+        end
     end
 end
 export type Connection = {
@@ -51,6 +60,7 @@ export type Connection = {
 export type Signal = {
     Fire: (self: Signal) -> (),
     Connect: (self: Signal, func: () -> ()) -> Connection,
+    Once: (self: Signal, func: () -> ()) -> Connection,
     DisconnectAll: (self: Signal) -> (),
     Destroy: (self: Signal) -> ()
 }

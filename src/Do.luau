@@ -6,6 +6,7 @@
 local tf = table.find
 local tr = table.remove
 local tc = table.clear
+local tof = typeof
 local tins = table.insert
 local Compile = require(script.Parent.Compile)
 
@@ -15,6 +16,14 @@ local mt = {
 }
 mt.__index = mt;
 
+--[[
+    @method Run
+    within Do
+    Runs the do block manuelly.
+]]
+function mt:Run()
+    task.spawn(self.OnValueChanged)
+end
 --[=[
     @method Destroy
     @within Do
@@ -60,12 +69,12 @@ function mt.__tostring()
 end
 
 --[=[
-    @function Do
-    @within Do
+    @method Do
+    @within Thread
     @param FunctionToFire function
     @param Thread any?
     @return Do
-    Creates a new Do object that executes the given function.
+    [Creates a new Do object that executes the given function.](/docs/Utilities/Do)
 ]=]
 return function(FunctionToFire,Thread)
     if FunctionToFire == nil then return  end;
@@ -89,9 +98,13 @@ return function(FunctionToFire,Thread)
     end
     function new.OnValueChanged()
         local result,r1 = new.Function(new.Grab,(new.Entity ~= nil and new.Entity.Instance) or nil )
-        if result ~= nil then
+        if result ~= nil and new.Entity ~= nil then
             if new.Property ~= nil then
-                Compile(new.Entity,{[new.Property] = result})
+                if tof(result) == "table" then
+                    Compile(new.Entity,{[new.Property] = result})
+                else
+                    new.Entity.Instance[new.Property] = result;
+                end
             else
                 if r1 ~= nil then
                     Compile(new.Entity,{[result] = r1})

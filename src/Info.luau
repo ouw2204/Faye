@@ -1,12 +1,9 @@
---[=[
-    @class Info
-    A class that contains information about the tween.
-]=]
+
 local ThreadType = require(script.Parent.Types)
 
 --[=[
-    @function Info
-    @within Info
+    @method Info
+    @within Thread
     @param Time number
     @param EasingStyle Enum.EasingStyle
     @param EasingDirection Enum.EasingDirection
@@ -14,7 +11,7 @@ local ThreadType = require(script.Parent.Types)
     @param Reverse boolean
     @param DelayTime number
     @return Info
-    Creates a new Info object with the given parameters.
+    [Creates a new Info object with the given parameters.](/docs/Utilities/AnimInfo)
 ]=]
 return function(Time: number,EasingStyle: Enum.EasingStyle,EasingDirection: Enum.EasingDirection, RepeatCount: number,Reverse: boolean,DelayTime: number)
     local new = {

@@ -171,7 +171,6 @@ local m = {
                     else
                         if ChangeType == 2 then
                             if Holder[Index] ~= nil then
-
                                 if Thread["Remove"] then
                                     Thread:Remove(Holder[Index])
                                 else

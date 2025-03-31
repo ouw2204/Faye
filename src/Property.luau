@@ -1,6 +1,7 @@
 --[=[
     @class Property
     A class that represents a property with various actions and threading.
+    `Add and Remove also work with the + and - operator. So Property + value, and  Property - value.`
 ]=]
 local Types = require(script.Parent.Types)
 local mt = {
@@ -12,27 +13,11 @@ local tc = table.clear
 local Signal = require(script.Parent.Packages.Signal)
 local Actions = require(script.Parent.Misc.PropertyAttributeActions)
 
---[=[
-    @method __add
-    @within Property
-    @param tab Property
-    @param am any
-    Adds a value to the property.
-    @return Property
-]=]
 function mt.__add(tab,am)
     tab:Add(am)
     return tab;
 end
 
---[=[
-    @method __sub
-    @within Property
-    @param tab Property
-    @param am any
-    Removes a value from the property.
-    @return Property
-]=]
 function mt.__sub(tab,am)
     tab:Remove(am)
     return tab;
@@ -183,9 +168,18 @@ end
     Triggers the changed signal.
 ]=]
 function mt:Refresh()
-    self.Changed:Fire(self:Get())
+    if self.SignalEnabled == nil or self.SignalEnabled == true then
+        self.Changed:Fire(self:Get())
+    end
 end
-
+--[=[
+    @method SetSignalEnabled
+    @within Property
+    @param Enabled boolean
+]=]
+function mt:SetSignalEnabled(Enabled: boolean)
+    self.SignalEnabled = Enabled;
+end
 --[=[
     @method Destroy
     @within Property
@@ -224,14 +218,14 @@ end
 local Counter = 0;
 
 --[=[
-    @function Property
-    @within Property
+    @method Property
+    @within Thread
     @param Entity any
     @param Property any
     @param IsAttribute boolean
     @param Thread Types.Thread
     @return Property
-    Creates a new property object.
+    [Creates a new instance property sync.](/docs/Utilities/Property)
 ]=]
 return function(Entity: any,Property: any,IsAttribute: boolean,Thread: Types.Thread)
     if Entity == nil or Property == nil then warn(`Entity and Property parameter must exist - {debug.traceback()}`); return end;
@@ -246,7 +240,8 @@ return function(Entity: any,Property: any,IsAttribute: boolean,Thread: Types.Thr
         IsAttribute = IsAttribute;
         Thread = Thread;
         First = true;
-        Id = `{script.Name}-{Counter}`
+        Id = `{script.Name}-{Counter}`;
+        SignalEnabled = nil;
     }
     Counter +=1;
     if Thread ~= nil then
@@ -259,12 +254,16 @@ return function(Entity: any,Property: any,IsAttribute: boolean,Thread: Types.Thr
     if IsAttribute == false then
         new.Initial = Entity[Property];
         new.ChangeListener = Entity:GetPropertyChangedSignal(Property):Connect(function()
-            new.Changed:Fire(Entity[Property])
+            if new.SignalEnabled == nil or new.SignalEnabled == true then
+                new.Changed:Fire(Entity[Property])
+            end
         end)
     else
         new.Initial = Entity:GetAttribute(Property);
         new.ChangeListener = Entity:GetAttributeChangedSignal(Property):Connect(function()
-            new.Changed:Fire(Entity:GetAttribute(Property))
+            if new.SignalEnabled == nil or new.SignalEnabled == true then
+                new.Changed:Fire(Entity:GetAttribute(Property))
+            end
         end)
     end
     setmetatable(new,mt)

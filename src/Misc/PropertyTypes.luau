@@ -46,40 +46,41 @@ type Thread = {
 }
 
 export type Property = {
-	Video: string;
+	Video: string?;
 	
-	Rotation: number;
-	Wraps: boolean;
-	CellSize: UDim2;
-	Padding: UDim;
-	CellPadding: UDim2;
-	ZIndex: number;
-	PlaceholderText: string;
-	AbsolutePosition: Vector2;
-	AbsoluteSize: Vector2;
-	AbsoluteContentSize: Vector2;
-	TextBounds: Vector2;
-	DisplayOrder: number;
-	FontFace: any;
-	ScrollBarImageColor3: Color3;
-	ScrollBarTransparency: number;
-	TopImage: string;
-	MidImage: string;
-	BottomImage: string;
-	ScrollBarThickness: number;
-	TextSize: number;
-	CanvasSize: UDim2;
-	CanvasPosition: Vector2;
-	HorizontalAlignment: Enum.HorizontalAlignment;
-	VerticalAlignment: Enum.VerticalAlignment;
-	FillDirection: Enum.FillDirection;
-	TextTransparency: number;
-	TextStrokeTransparency: number;
-	ClipsDescendants: boolean;
-	SortOrder: Enum.SortOrder;
-	AspectRatio: number;
-	Name: string;
-	Parent: Instance;
+	Rotation: number?;
+	Wraps: boolean?;
+	CellSize: UDim2?;
+	Padding: UDim?;
+	CellPadding: UDim2?;
+	ZIndex: number?;
+	PlaceholderText: string?;
+	AbsolutePosition: Vector2?;
+	AbsoluteSize: Vector2?;
+	AbsoluteContentSize: Vector2?;
+	TextBounds: Vector2?;
+	DisplayOrder: number?;
+	FontFace: any?;
+	ScrollBarImageColor3: Color3?;
+	ScrollBarTransparency: number?;
+	TopImage: string?;
+	MidImage: string?;
+	BottomImage: string?;
+	ScrollBarThickness: number?;
+	TextSize: number?;
+	CanvasSize: UDim2?;
+	CanvasPosition: Vector2?;
+	HorizontalAlignment: Enum.HorizontalAlignment?;
+	VerticalAlignment: Enum.VerticalAlignment?;
+	FillDirection: Enum.FillDirection?;
+	TextTransparency: number?;
+	TextStrokeTransparency: number?;
+	ClipsDescendants: boolean?;
+	SortOrder: Enum.SortOrder?;
+	AspectRatio: number?;
+	Properties: Property?;
+	Name: string?;
+	Parent: Instance?;
 	Anchored: boolean?,
 	BrickColor: BrickColor?,
 	CanCollide: boolean?,
@@ -88,23 +89,23 @@ export type Property = {
 	Material: Enum.Material?,
 	Reflectance: number?,
 	Transparency: number?,
-	Thickness: number;
+	Thickness: number?;
 	Shape: Enum.PartType?, -- Specific to parts like Part, Ball, Cylinder
-	RichText: boolean;
+	RichText: boolean?;
 	-- BasePart Events
-	Touched: (otherPart: BasePart) -> (), -- Triggered when something touches the part
-	TouchEnded: (otherPart: BasePart) -> (), -- Triggered when something stops touching the part
-	CleanDelay: number;
-	CleanFunction: (InnerThread: Thread, Entity: Instance) -> ();
-	OnClean: (InnerThread: Thread, entity: Instance) -> (), -- replaces clean function
+	Touched: (otherPart: BasePart) -> ()?, -- Triggered when something touches the part
+	TouchEnded: (otherPart: BasePart) -> ()?, -- Triggered when something stops touching the part
+	CleanDelay: number?;
+	CleanFunction: (InnerThread: Thread, Entity: Instance) -> ()?;
+	OnClean: (InnerThread: Thread, entity: Instance) -> ()?, -- replaces clean function
 	-- Generic Instance Properties
 	Archivable: boolean?,
 
 	-- Generic Instance Events
-	Destroying: () -> (), -- Triggered before the instance is destroyed
-	AncestryChanged: (child: Instance, parent: Instance?) -> (), -- Triggered when the instance's parent changes
-	Changed: (property: string) -> (), -- Triggered when a property of the instance changes
-	AttributeChanged: (attribute: string) -> (), -- Triggered when an attribute changes
+	Destroying: () -> ()?, -- Triggered before the instance is destroyed
+	AncestryChanged: (child: Instance, parent: Instance?) -> ()?, -- Triggered when the instance's parent changes
+	Changed: (property: string) -> ()?, -- Triggered when a property of the instance changes
+	AttributeChanged: (attribute: string) -> ()?, -- Triggered when an attribute changes
 
 	-- Model Properties
 	PrimaryPart: BasePart?,
@@ -116,8 +117,8 @@ export type Property = {
 	FieldOfView: number?,
 	Focus: CFrame?,
 	
-	TextXAlignment: Enum.TextXAlignment;
-	TextYAlignment: Enum.TextYAlignment;
+	TextXAlignment: Enum.TextXAlignment?;
+	TextYAlignment: Enum.TextYAlignment?;
 	-- UI Element Properties (TextLabel, TextButton, ImageLabel, ImageButton, etc.)
 	Text: string?,
 	TextColor3: Color3?,
@@ -139,24 +140,21 @@ export type Property = {
 	AutoButtonColor: boolean?, -- For TextButton and ImageButton
 
 	-- UI Events (TextLabel, TextButton, ImageLabel, ImageButton, etc.)
-	MouseEnter: () -> (), -- Triggered when the mouse enters the UI element
-	MouseLeave: () -> (), -- Triggered when the mouse leaves the UI element
-	MouseMoved: (x: number, y: number) -> (), -- Triggered when the mouse moves over the element
-	MouseWheelForward: () -> (), -- Triggered when the mouse wheel scrolls forward
-	MouseWheelBackward: () -> (), -- Triggered when the mouse wheel scrolls backward
-	InputBegan: (input: InputObject) -> (), -- Triggered when an input begins (e.g., key press)
-	InputEnded: (input: InputObject) -> (), -- Triggered when an input ends (e.g., key release)
-	InputChanged: (input: InputObject) -> (), -- Triggered when an input changes (e.g., mouse move)
-	MouseButton1Click: () -> (), -- Triggered when the left mouse button is clicked
-	MouseButton2Click: () -> (), -- Triggered when the right mouse button is clicked
-	MouseButton1Down: () -> (), -- Triggered when the left mouse button is pressed down
-	MouseButton1Up: () -> (), -- Triggered when the left mouse button is released
-	MouseButton2Down: () -> (), -- Triggered when the right mouse button is pressed down
-	MouseButton2Up: () -> (), -- Triggered when the right mouse button is released
-
-	CleanDelay: number;
-
-	Offset: vector;
+	MouseEnter: () -> ()?, -- Triggered when the mouse enters the UI element
+	MouseLeave: () -> ()?, -- Triggered when the mouse leaves the UI element
+	MouseMoved: (x: number, y: number) -> ()?, -- Triggered when the mouse moves over the element
+	MouseWheelForward: () -> ()?, -- Triggered when the mouse wheel scrolls forward
+	MouseWheelBackward: () -> ()?, -- Triggered when the mouse wheel scrolls backward
+	InputBegan: (input: InputObject) -> ()?, -- Triggered when an input begins (e.g., key press)
+	InputEnded: (input: InputObject) -> ()?, -- Triggered when an input ends (e.g., key release)
+	InputChanged: (input: InputObject) -> ()?, -- Triggered when an input changes (e.g., mouse move)
+	MouseButton1Click: () -> ()?, -- Triggered when the left mouse button is clicked
+	MouseButton2Click: () -> ()?, -- Triggered when the right mouse button is clicked
+	MouseButton1Down: () -> ()?, -- Triggered when the left mouse button is pressed down
+	MouseButton1Up: () -> ()?, -- Triggered when the left mouse button is released
+	MouseButton2Down: () -> ()?, -- Triggered when the right mouse button is pressed down
+	MouseButton2Up: () -> ()?, -- Triggered when the right mouse button is released
+	Offset: vector?;
 
 	-- BillboardGui Properties
 	Adornee: Instance?,
@@ -166,10 +164,10 @@ export type Property = {
 	AlwaysOnTop: boolean?,
 	
 	-- UICorner
-	CornerRadius: UDim;
+	CornerRadius: UDim?;
 	
 	-- BillboardGui Events
-	AdorneeChanged: (adornee: Instance?) -> (), -- Triggered when the Adornee property changes
+	AdorneeChanged: (adornee: Instance?) -> ()?, -- Triggered when the Adornee property changes
 
 	-- Tool Properties
 	RequiresHandle: boolean?,
@@ -177,10 +175,10 @@ export type Property = {
 	Enabled: boolean?,
 
 	-- Tool Events
-	Activated: () -> (), -- Triggered when the tool is activated
-	Deactivated: () -> (), -- Triggered when the tool is deactivated
-	Equipped: (mouse: Mouse) -> (), -- Triggered when the tool is equipped
-	Unequipped: () -> (), -- Triggered when the tool is unequipped
+	Activated: () -> ()?, -- Triggered when the tool is activated
+	Deactivated: () -> ()?, -- Triggered when the tool is deactivated
+	Equipped: (mouse: Mouse) -> ()?, -- Triggered when the tool is equipped
+	Unequipped: () -> ()?, -- Triggered when the tool is unequipped
 
 	-- Sound Properties
 	SoundId: string?,
@@ -193,15 +191,15 @@ export type Property = {
 	MinDistance: number?,
 
 	-- Sound Events
-	Played: () -> (), -- Triggered when the sound starts playing
-	Stopped: () -> (), -- Triggered when the sound stops
-	Ended: () -> (), -- Triggered when the sound finishes playing
-	Looped: () -> (), -- Triggered when the sound loops
+	Played: () -> ()?, -- Triggered when the sound starts playing
+	Stopped: () -> ()?, -- Triggered when the sound stops
+	Ended: () -> ()?, -- Triggered when the sound finishes playing
+	Looped: () -> ()?, -- Triggered when the sound loops
 
 	-- Animation Properties
 	AnimationId: string?,
 
 	-- Animation Events
-	KeyframeReached: (keyframeName: string) -> (), -- Triggered when a specific keyframe is reached
+	KeyframeReached: (keyframeName: string) -> ()?, -- Triggered when a specific keyframe is reached
 }
 return nil;

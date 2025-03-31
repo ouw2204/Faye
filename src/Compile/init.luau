@@ -1,7 +1,7 @@
 local to = typeof
 local sf = string.find
 local sb = string.sub
-local tc = table.clear
+--local tc = table.clear
 local tins = table.insert
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
 local Compilers = require(script.Compilers)
@@ -12,7 +12,6 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
         local tov = to(v)
         local toi = tov == "table" and v.__type and to(v.__type) or to(i)
         local compilerFunc = Compilers[i]
-
         if compilerFunc then
             compilerFunc(Entity, i, v, Recursive)
         elseif tov == "Instance" then
@@ -30,7 +29,7 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
             if Type and Compilers[Type] then
                 Compilers[Type](Entity, i, v, Recursive)
             else
-                Recursive(Entity, v)
+                Recursive(Entity, v,InstanceThread)
             end
         elseif toi == "table" and Compilers[i.__type] then
             Compilers[i.__type](Entity, i, v, Recursive)
@@ -51,7 +50,15 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
                 elseif to(Entity.Instance[i]) == "RBXScriptSignal" then
                     Compilers.Event(Entity, i, v)
                 else
-                    Entity.Instance[i] = v
+                    if tov == "function" then
+                        local result = v(Entity.InnerThread or Entity.Thread, Entity.Instance)
+                        if result ~= nil then
+                            Entity.Instance[i] = result;
+                        end
+                    else
+                        Entity.Instance[i] = v
+                    end
+                    
                 end
             end
         end

@@ -58,13 +58,13 @@ function mt.__tostring()
 end
 
 --[=[
-    @function Iterate
-    @within Iterate
+    @method Iterate
+    @within Thread
     @param Tab table
     @param Func function
     @param Thread any?
     @return Iterate
-    Creates a new Iterate object that iterates over the given table.
+    [Creates a new Iterate object that iterates over the given table.](/docs/Utilities/Iterate)
 ]=]
 return function(Tab: {any: any},Func: (Index: any,Value: any,InnerThread: Types.Thread?,Entity: Instance?) -> (),Thread: Types.Thread)
     if Tab == nil or Func == nil then return end;

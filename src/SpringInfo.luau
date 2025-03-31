@@ -1,12 +1,8 @@
---[=[
-    @class SpringInfo
-    Represents the parameters of a spring animation.
-]=]
 local OtherTypes = require(script.Parent.Types)
 
 --[=[
-    @function SpringInfo
-    @within SpringInfo
+    @method SpringInfo
+    @within Thread
     @param Time number
     @param Frequency number
     @param Damping number
@@ -14,7 +10,7 @@ local OtherTypes = require(script.Parent.Types)
     @param Reverse boolean
     @param DelayTime number
     @return SpringInfo
-    Creates a new SpringInfo object with the given parameters.
+    [Creates a new SpringInfo object with the given parameters.](/docs/Utilities/AnimInfo)
 ]=]
 return function(Time: number,Frequency: number,Damping: number, RepeatCount: number,Reverse: boolean,DelayTime: number)
     local new = {

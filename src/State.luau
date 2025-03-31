@@ -7,9 +7,7 @@ local Clean = require(script.Parent.Clean)
 local tf = table.find
 local tr = table.remove
 local tc = table.clear
-local tof = typeof
 local tins = table.insert
-local ValueClasses = require(script.Parent.Misc.ValueClasses)
 local Compile = require(script.Parent.Compile)
 
 
@@ -79,12 +77,12 @@ function mt.__tostring()
 end
 
 --[=[
-    @function State
-    @within State
+    @method State
+    @within Thread
     @param FunctionToFire function
     @param Thread any?
     @return State
-    Creates a new State object that manages the given function.
+    [Creates a new State object that manages the given function.](/docs/Utilities/State)
 ]=]
 return function(FunctionToFire,Thread)
     if FunctionToFire == nil then return  end;
@@ -125,12 +123,13 @@ return function(FunctionToFire,Thread)
         new.CurrentCleaner = new.Thread:Extend();
         new.CurrentCleaner._isCleanAncestor = new.Thread._isCleanAncestor
         local result,r1 = new.Function(new.Grab,new.CurrentCleaner,(new.Entity ~= nil and new.Entity.Instance) or nil )
-        local Entity = {Instance = new.Entity.Instance,Thread = new.CurrentCleaner};
+        
         --[[
             The current cleaner is already added to the thread to be cleaned. the Entity instance is already in another object, therefor Entity: {} does not
             need a custom cleaning function, when it is sent to the cleaner the refenrecces in the table will be emptied, as for the contents are being deleted elsewhere.
         ]]
         if result ~= nil then
+            local Entity = {Instance = new.Entity.Instance,Thread = new.CurrentCleaner};
             if new.Property ~= nil then
                 Compile(Entity,{[new.Property] = result},new.CurrentCleaner)
             else
@@ -140,6 +139,21 @@ return function(FunctionToFire,Thread)
                     Compile(Entity,{result},new.CurrentCleaner)
                 end
             end
+        else
+            --clean
+
+
+            if new.Thread["Remove"] then
+                new.Thread:Remove(new.CurrentCleaner)
+            else
+                local pos = tf(new.Thread,new.CurrentCleaner)
+                if pos ~= nil then
+                    tr(new.Thread,pos)
+                end
+            end
+            Clean(new.CurrentCleaner)
+            new.CurrentCleaner = nil;
+            
         end
     end
 

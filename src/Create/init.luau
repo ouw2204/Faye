@@ -184,12 +184,12 @@ function mt.__tostring()
 end
 
 --[=[
-    @function Create
-    @within Create
+    @method Create
+    @within Thread
     @param ClassName string
     @param Thread {Add: (self: {},Entity: any) -> ()}?
     @return (props: PropertyTypes.Property) -> Create
-    Creates a new instance object.
+    [Creates a new instance object.](/docs/Instancing/Create)
 ]=]
 return function(ClassName: string,Thread: {Add: (self: {},Entity: any) -> ()}?)
     return function(props: PropertyTypes.Property)
@@ -199,6 +199,12 @@ return function(ClassName: string,Thread: {Add: (self: {},Entity: any) -> ()}?)
         end
 
         local Simple = true;
+        if props.Properties ~= nil then
+            for i,v in pairs(props.Properties) do
+                props[i] = v;
+            end
+            props.Properties = nil;
+        end
         for i,v in pairs(props) do
             local tov= tof(v)
             if tov ~= "function" and tov ~= "table" and i ~= "CleanDelay" and tov ~= "Instance" then

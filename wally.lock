@@ -5,9 +5,9 @@ registry = "test"
 [[package]]
 name = "10101/faye-remastered"
 version = "0.1.0"
-dependencies = [["Signal", "prophetouw/simplesignal@1.0.5"]]
+dependencies = [["Signal", "prophetouw/simplesignal@1.0.6"]]
 
 [[package]]
 name = "prophetouw/simplesignal"
-version = "1.0.5"
+version = "1.0.6"
 dependencies = []

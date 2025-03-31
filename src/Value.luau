@@ -66,9 +66,11 @@ end
     Sets the value.
 ]=]
 function mt:Set(newValue: any)
-    if self.Value ~= newValue then
-        self.Value = newValue;
-        self.Changed:Fire(newValue)
+    if self.SignalEnabled == true or self.SignalEnabled == nil then
+        if self.Value ~= newValue then
+            self.Value = newValue;
+            self.Changed:Fire(newValue)
+        end
     end
     self.ValueType = tof(newValue)
     return newValue;
@@ -82,7 +84,7 @@ end
 ]=]
 function mt:Get()
     local Ret = self.Value;
-    if self.ValueType == "table" and Ret.__type == "Instance" then
+    if self.ValueType == "table" and Ret ~= nil and Ret.__type == "Instance" then
         Ret = Ret.Instance
     end
     return Ret
@@ -144,9 +146,18 @@ end
     Triggers changed signal.
 ]=]
 function mt:Refresh()
-    self.Changed:Fire(self:Get())
+    if self.SignalEnabled == nil or self.SignalEnabled == true then
+        self.Changed:Fire(self:Get())
+    end
 end
-
+--[=[
+    @method SetSignalEnabled
+    @within Value
+    @param Enabled boolean
+]=]
+function mt:SetSignalEnabled(Enabled: boolean)
+    self.SignalEnabled = Enabled;
+end
 mt.__tostring = function(self)
     return `Value: {self.Id}`
 end
@@ -154,12 +165,12 @@ end
 local Counter = 0;
 
 --[=[
-    @function Value
-    @within Value
+    @method Value
+    @within Thread
     @param Initial any
     @param Thread {Add: (self: any, Entity: any) -> ()}?
     @return Value
-    Creates a new value object.
+    [Creates a new value object.](/docs/Utilities/Value)
 ]=]
 return function (Initial: any,Thread: {Add: (self: any, Entity: any) -> ()}?)
     local new = {

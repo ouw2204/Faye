@@ -10,8 +10,5 @@ classOrder = [
     "Delay",
     "Do",
     "State",
-    "Event",
-    "Info",
-    "SpringInfo",
     "SetTo",
-]
+] 

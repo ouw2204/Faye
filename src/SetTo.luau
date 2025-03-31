@@ -40,12 +40,12 @@ function mt.__tostring()
 end
 
 --[=[
-    @function SetTo
-    @within SetTo
+    @method SetTo
+    @within Thread
     @param Value any
     @param Thread any?
     @return SetTo
-    Creates a new SetTo object that sets the given value.
+    [Creates a new SetTo object that sets the given value.](/docs/Utilities/SetTo)
 ]=]
 return function(Value: any,Thread: types.Thread) : any
     if Value == nil or tof(Value) ~= "table" or Value.__type == nil or ValueClasses[Value.__type] == nil then warn(`Pass a valid value object - {debug.traceback()}`); return end;

@@ -5,8 +5,14 @@ function Recursive(Scope,NoDeletion: boolean?)
     if Scope["Destroy"] ~= nil then
         Scope:Destroy();
     else
-        while #Scope > 0 do
-            local k = #Scope
+        Scope._hc = nil;
+        Scope.ParentThread = nil;
+        Scope.ConnectionsThread = nil;
+        Scope._isCleanAncestor = nil;
+        Scope.AnimationsAmount = nil;
+        Scope.CleanWhenDone = nil;
+        Scope.Cleaning = nil;
+        for k = #Scope,1,-1 do
             local v = Scope[k]
             local type = typeof(v)
             if (type == "table" and v["Destroy"] ~= nil) or type == "Instance" then
@@ -29,13 +35,7 @@ function Recursive(Scope,NoDeletion: boolean?)
             Scope[k] = nil;
         end
         setmetatable(Scope,nil);
-        Scope._hc = nil;
-        Scope.ParentThread = nil;
-        Scope.ConnectionsThread = nil;
-        Scope._isCleanAncestor = nil;
-        Scope.AnimationsAmount = nil;
-        Scope.CleanWhenDone = nil;
-        Scope.Cleaning = nil;
+        
         --tc(Scope)
     end
 end

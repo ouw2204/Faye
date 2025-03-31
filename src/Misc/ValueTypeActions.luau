@@ -1,5 +1,3 @@
-local tf, tins, tr = table.find, table.insert, table.remove
-
 local function getIndex(tab, value)
     for k, v in pairs(tab) do
         if value == v then
@@ -7,6 +5,14 @@ local function getIndex(tab, value)
         end
     end
     return nil;
+end
+local function CountContent(tab)
+    local count = 0;
+    for i = 1,#tab do
+        if tab[i] == nil then break end;
+        count += 1
+    end
+    return count
 end
 
 local Rep = {
@@ -30,11 +36,11 @@ return {
     table = {
         Add = function(tab, Index, Value)
             if Index == nil then return end
-            
             local val = tab.Value
+            local Count = CountContent(val)+1;
             if Value == nil then
-                tins(val, Index)
-                tab.Changed:Fire(#val, Index, 1)
+                val[Count] = Index;
+                tab.Changed:Fire(Count, Index, 1)
             else
                 val[Index] = Value
                 tab.Changed:Fire(Index, Value, 1)
@@ -44,16 +50,10 @@ return {
             if Index == nil then return end
             local val = tab.Value
             if val[Index] == nil then
-                local pos = tf(val, Index)
+                local pos = getIndex(val, Index)
                 if pos ~= nil then
-                    tr(val, pos)
                     tab.Changed:Fire(pos, Index, 2)
-                else
-                    pos = getIndex(val, Index)
-                    if pos ~= nil then
-                        tab.Changed:Fire(pos, Index, 2)
-                        val[pos] = nil
-                    end
+                    val[pos] = nil
                 end
             else
                 tab.Changed:Fire(Index, val[Index], 2)
