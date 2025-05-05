@@ -126,13 +126,15 @@ local m = {
                 if Value.Tab.__type ~= nil and ValueClasses[Value.Tab.__type] ~= nil then
                     --first degree
                     local function step(Index,Value,ChangeType)
+                        print(Index,Value)
                         if Value == nil then
                             CleanHolder()
                             if Connect2 ~= nil and Connect2["Disconnect"] ~= nil then
                                 Connect2:Disconnect()
                                 Connect2 = nil;
                             end
-                            if tof(Index) == "table" then
+                            local vType = tof(Index)
+                            if vType == "table" then
                                 if Index.__type ~= nil and ValueClasses[Index.__type] then
                                     --second degree
                                     local function innerSet(newIndex,newValue,newChangeType)
@@ -172,6 +174,11 @@ local m = {
                                     for i,v in pairs(Index) do
                                         upd(i,v)
                                     end
+                                end
+                            elseif vType == "number" then
+                                -- is number
+                                for i = 1,Index do
+                                    upd(i,i)
                                 end
                             end
                         else
