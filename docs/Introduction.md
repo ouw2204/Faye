@@ -4,6 +4,11 @@ sidebar_position: 2
 # Introduction
 
 ### 1. Threads
+
+If you are using the wally version of faye, the module itself will return the threader.
+```lua
+local Threader = require(Packages.Faye)
+```
 Faye can be used with or without a thread(scope).
 #### Without:
 ```lua
@@ -15,6 +20,7 @@ task.wait(2)
 Frame:Destroy()
 ```
 #### With(Recommended):
+To create scopes you must require the Threader.
 ```lua
 local Thread = require(Faye.Threader)
 Thread:Create "Frame" {
@@ -23,7 +29,6 @@ Thread:Create "Frame" {
 task.wait(2)
 Thread:Clean()
 ```
-To create scopes you must require the Threader.
 #### Difference?
 Everything created using a Thread can be cleaned at once once the **Clean** function is called, this function cleans the contents, and the thread itself, hence the Thread isn't usable after its called. if you're not using any thread you must clean everything manuelly or assign a custom cleaning module(any cleaner that has an "Add" and/or "Remove" method):
 ```lua

@@ -1,6 +1,6 @@
 [package]
-name = "user/faye"
-version = "1.1.1"
+name = "prophetouw/faye"
+version = "1.1.3"
 registry = "https://github.com/ProphetOuw/Faye"
 realm = "shared"
 
