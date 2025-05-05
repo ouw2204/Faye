@@ -43,7 +43,7 @@ local AnimSpringInfo = SpringInfo( -- or Thread:SpringInfo
     DelayTime: number?
 )
 ```
-Usign SpringInfo in the Info section instead of a regular info table changes the animation into a spring. You can also set these in a value so that the info is reactive, this will allow u to use different infos for one animation, You can even switch between regular Info and Springs.
+Using SpringInfo in the Info section instead of a regular info table changes the animation into a spring. You can also set these in a value so that the info is reactive, this will allow u to use different infos for one animation, You can even switch between regular Info and Springs.
 #### Creating Animations.
 ```lua
 Thread:Create "Frame" {
