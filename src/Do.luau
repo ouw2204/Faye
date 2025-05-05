@@ -18,11 +18,12 @@ mt.__index = mt;
 
 --[[
     @method Run
-    within Do
+    @within Do
     Runs the do block manuelly.
 ]]
 function mt:Run()
     task.spawn(self.OnValueChanged)
+    return self;
 end
 --[=[
     @method Destroy
@@ -71,10 +72,9 @@ end
 --[=[
     @method Do
     @within Thread
-    @param FunctionToFire function
-    @param Thread any?
+    @param () -> (), Thread: Thread?
     @return Do
-    [Creates a new Do object that executes the given function.](/docs/Utilities/Do)
+    Creates a new Do object that executes the given function.
 ]=]
 return function(FunctionToFire,Thread)
     if FunctionToFire == nil then return  end;

@@ -82,7 +82,7 @@ end
     @param FunctionToFire function
     @param Thread any?
     @return State
-    [Creates a new State object that manages the given function.](/docs/Utilities/State)
+    Creates a new State object that manages the given function.
 ]=]
 return function(FunctionToFire,Thread)
     if FunctionToFire == nil then return  end;

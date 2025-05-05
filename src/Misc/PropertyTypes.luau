@@ -47,7 +47,7 @@ type Thread = {
 
 export type Property = {
 	Video: string?;
-	
+	ClearTableInCompulation: boolean?;
 	Rotation: number?;
 	Wraps: boolean?;
 	CellSize: UDim2?;

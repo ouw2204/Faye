@@ -7,7 +7,7 @@ local tof = typeof
     @param Event(s) any
     @param Function function
     @param Thread any?
-    [Connects the given function to the specified event(s) on the entity.](/docs/Utilities/Event)
+    Connects the given function to the specified event(s) on the entity.
 ]=]
 return function(Entity: any, Event: any,Function: (any: any) -> (),Thread) : ()
     if Entity == nil or Event == nil or Function == nil then return end;

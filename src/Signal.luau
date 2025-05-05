@@ -6,7 +6,7 @@ local Signal = require(script.Parent.Packages.Signal)
     @within Thread
     @param Thread table
     @return Signal
-    [Creates a new signal object.](/docs/Utilities/Signal)
+    Creates a new signal object.
 ]=]
 return function(Thread)
     local Sig = Signal.new();

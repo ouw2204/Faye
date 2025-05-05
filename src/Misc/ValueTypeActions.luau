@@ -37,8 +37,8 @@ return {
         Add = function(tab, Index, Value)
             if Index == nil then return end
             local val = tab.Value
-            local Count = CountContent(val)+1;
             if Value == nil then
+                local Count = CountContent(val)+1;
                 val[Count] = Index;
                 tab.Changed:Fire(Count, Index, 1)
             else
@@ -52,12 +52,12 @@ return {
             if val[Index] == nil then
                 local pos = getIndex(val, Index)
                 if pos ~= nil then
-                    tab.Changed:Fire(pos, Index, 2)
                     val[pos] = nil
-                end
+                    tab.Changed:Fire(pos, Index, 2) 
+                end 
             else
-                tab.Changed:Fire(Index, val[Index], 2)
                 val[Index] = nil
+                tab.Changed:Fire(Index, val[Index], 2)
             end
         end
     }

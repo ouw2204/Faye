@@ -3,15 +3,18 @@ local props = require(script.Parent.Misc.PropertyTypes);
 export type Value = {
     Set: (self: Value, Value: any) -> ();
     Get: (self: Value) -> ();
-    Add: (self: Value, Value: any) -> ();
+    Add: (self: Value, Value: any,...any) -> ();
     Remove: (self: Value,Value: any) -> ();
     Initial: any;
     Value: any;
+    ReCalibrate: (self: Value, Instance: Instance?, Property: string?) -> ();
     Changed: RBXScriptSignal;
     Reset: (self: Value) -> ();
     Compare: (Value: any) -> boolean;
     Destroy: (self: Value) -> ();
     Refresh: (self: Value) -> ();
+    GetItem: (self: Value,Index: any) -> any;
+    ItemExists: (self: Value, Entity: any) -> ();
 }
 export type UserInputType = typeof(game:GetService("UserInputService"));
 export type BasicThread = {Remove: (self: any, Entity: any) -> (); Add: (self: any, Entity: any) -> ()}
@@ -47,6 +50,7 @@ export type DelayValueType = {
     SetTime: (self: DelayValueType, Time: number) -> ();
     Sensitive: (self: DelayValueType) -> DelayValueType;
     ResetTime: (self: DelayValueType) -> ();
+    For: (self: DelayValueType, Value: any, Time: number?) -> DelayValueType;
     Destroy: (self: DelayValueType) -> ();
 };
 export type DelayType = {
@@ -57,6 +61,20 @@ type DoType = {
     Run: (self: DoType) -> DoType;
     Destroy: (self: DoType) -> ();  
 };
+export type SpaceTaskType = {
+    Destroy: (self: SpaceTaskType) -> ();
+    Call: (self: SpaceTaskType) -> SpaceTaskType;
+    Variables: {any: any};
+    Parameters: {[number]: Value};
+    SetId: (self: SpaceTaskType, Id: string) -> SpaceTaskType;
+}
+export type Space = {
+    Call: (self: Space, Task: SpaceTaskType) -> Space;
+    Add: (self: Space, Params: {[any]: any}, Thread: Thread?) -> SpaceTaskType;
+    Remove: (self: Space, Task: SpaceTaskType) -> ();
+    Connect: (self: Space, Connection: RBXScriptSignal) -> RBXScriptConnection;
+    Destroy: (self: Space) -> ();
+}
 export type Thread = {
     Create: (self: any, ClassName: string) -> (Properties: props.Property) -> {Instance: Instance, Thread: BasicThread};
     Configure: (self: any, Entity: any) -> (Properties: props.Property) -> {Instance: Instance, Thread: BasicThread};
@@ -73,12 +91,13 @@ export type Thread = {
     Property: (self:any, Entity: any, Property: string) -> Value;
     Attribute: (self:any, Entity: any, Attribute: string) -> Value;
     DelayValue: (self: any, Value: Value, Time: number) -> DelayValueType;
-    Delay: (self: any, Time: number, Props: props.Property) -> DelayType;
+    Delay: (self: any, Props: props.Property,Time: number) -> DelayType;
     SetTo: (self: any, Value: Value) -> {};
     Signal: (self: any) -> Signal;
     Event: (self: any, Entity: any, Event: any, Function: <p1,p2,p3>(Event: string,p1,p2,p3) -> ()) -> {};
     Add: (self: any,Entity: any) -> ();
     Remove: (self: any,Entity: any) -> ();
+    Space: (self: any, func: (...Value) -> ()) -> Space;
 }
 
 return {

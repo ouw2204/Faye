@@ -66,13 +66,13 @@ end
     Sets the value.
 ]=]
 function mt:Set(newValue: any)
-    if self.SignalEnabled == true or self.SignalEnabled == nil then
-        if self.Value ~= newValue then
-            self.Value = newValue;
-            self.Changed:Fire(newValue)
-        end
-    end
+    if self.Value == newValue then return end;
+    self.Value = newValue;
     self.ValueType = tof(newValue)
+    self.ValueTypeIsTable = self.ValueType == "table"
+    if self.SignalEnabled == true or self.SignalEnabled == nil then
+        self.Changed:Fire(newValue)
+    end
     return newValue;
 end
 
@@ -84,12 +84,38 @@ end
 ]=]
 function mt:Get()
     local Ret = self.Value;
-    if self.ValueType == "table" and Ret ~= nil and Ret.__type == "Instance" then
+    if self.ValueTypeIsTable and Ret ~= nil and Ret.__type == "Instance" then
         Ret = Ret.Instance
     end
     return Ret
 end
+--[=[
+    @method ItemExists
+    @within Value
+    @return boolean
+    If the current value is a table, check if the item exists within it.
+]=]
+function mt:ItemExists(Entity: any)
+    if Entity == nil then return false end;
+    if self.ValueTypeIsTable then
+        return self.Value[Entity] ~= nil or table.find(self.Value,Entity) ~= nil
+    end
+    return false;
+end
 
+--[=[
+    @method GetItem
+    @within Value
+    @return any
+    If the current value is a table, return the value at the index.
+]=]
+function mt:GetItem(Index: any)
+    if Index == nil then return end;
+    if self.ValueTypeIsTable then
+        return self.Value[Index]
+    end
+    return nil;
+end
 --[=[
     @method Compare
     @within Value
@@ -107,7 +133,9 @@ end
     This method resets the value to its initial state.
 ]=]
 function mt:Reset()
-    self:Set(self.Initial)
+    if self.Value ~= self.Initial then
+        self:Set(self.Initial)
+    end
 end
 
 --[=[
@@ -154,6 +182,7 @@ end
     @method SetSignalEnabled
     @within Value
     @param Enabled boolean
+    Sets the signal enabled state. If true, the signal will be fired when the value changes.
 ]=]
 function mt:SetSignalEnabled(Enabled: boolean)
     self.SignalEnabled = Enabled;
@@ -170,7 +199,7 @@ local Counter = 0;
     @param Initial any
     @param Thread {Add: (self: any, Entity: any) -> ()}?
     @return Value
-    [Creates a new value object.](/docs/Utilities/Value)
+    Creates a new value object.
 ]=]
 return function (Initial: any,Thread: {Add: (self: any, Entity: any) -> ()}?)
     local new = {
@@ -182,6 +211,7 @@ return function (Initial: any,Thread: {Add: (self: any, Entity: any) -> ()}?)
         Changed = Signal.new();
         Id = `{script.Name}-{Counter}`
     }
+    new.ValueTypeIsTable = new.ValueType == "table"
     Counter += 1
     setmetatable(new,mt)
     if Thread ~= nil then

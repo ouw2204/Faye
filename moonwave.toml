@@ -11,4 +11,7 @@ classOrder = [
     "Do",
     "State",
     "SetTo",
+    "Inputer",
+    "Space",
+    "Task"
 ] 

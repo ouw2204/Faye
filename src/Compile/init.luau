@@ -9,6 +9,7 @@ local Compilers = require(script.Compilers)
 local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any}, Props: any,InstanceThread: any)
     -- Main loop
     for i, v in pairs(Props) do
+        if i == "ClearTableInCompulation" then continue end; -- Skip if the key is "ClearTableInCompulation"
         local tov = to(v)
         local toi = tov == "table" and v.__type and to(v.__type) or to(i)
         local compilerFunc = Compilers[i]
@@ -62,10 +63,11 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
                 end
             end
         end
-
-        Props[i] = nil -- Avoid if Props is large
+        if Props["ClearTableInCompulation"] then
+            Props[i] = nil -- Avoid if Props is large
+        end
     end
-
+    Props.ClearTableInCompulation = nil;
     --tc(Props)
 end
 

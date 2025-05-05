@@ -230,6 +230,7 @@ return function(Entity: any,Thread: {Add: (self: {},Entity: any) -> ()}?)
         if Simple then
             return Entity;
         else
+            props.ClearTableInCompulation = true;
             local Wrapper = {
                 Instance = Entity;
                 Props = props;

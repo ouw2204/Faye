@@ -117,83 +117,90 @@ local m = {
         end
         -->
         if Value.Tab ~= nil then
-            if Value.Tab.__type ~= nil and ValueClasses[Value.Tab.__type] ~= nil then
-                --first degree
-                local function step(Index,Value,ChangeType)
-                    if Value == nil then
-                        CleanHolder()
-                        if Connect2 ~= nil and Connect2["Disconnect"] ~= nil then
-                            Connect2:Disconnect()
-                            Connect2 = nil;
-                        end
-                        if tof(Index) == "table" then
-                            if Index.__type ~= nil and ValueClasses[Index.__type] then
-                                --second degree
-                                local function innerSet(newIndex,newValue,newChangeType)
-                                    if newValue == nil then
-                                        if tof(newIndex) == "table" then
-                                            if newIndex.__type ~= nil then
-                                                warn(`Iterate only supports nested values up to the 2nd degree - {debug.traceback()}`)
-                                            else
-                                                CleanHolder()
-                                                for i,v in pairs(newIndex) do
-                                                    upd(i,v)
-                                                end
-                                            end
-                                        end
-                                    else
-                                        if newChangeType == 2 then
-                                            if Holder[newIndex] ~= nil then
-                                                if Thread["Remove"] then
-                                                    Thread:Remove(Holder[newIndex])
+            if Value.tabType == "number" then
+                --CleanHolder()
+                for i = 1,Value.Tab do
+                    upd(i,i)
+                end
+            else
+                if Value.Tab.__type ~= nil and ValueClasses[Value.Tab.__type] ~= nil then
+                    --first degree
+                    local function step(Index,Value,ChangeType)
+                        if Value == nil then
+                            CleanHolder()
+                            if Connect2 ~= nil and Connect2["Disconnect"] ~= nil then
+                                Connect2:Disconnect()
+                                Connect2 = nil;
+                            end
+                            if tof(Index) == "table" then
+                                if Index.__type ~= nil and ValueClasses[Index.__type] then
+                                    --second degree
+                                    local function innerSet(newIndex,newValue,newChangeType)
+                                        if newValue == nil then
+                                            if tof(newIndex) == "table" then
+                                                if newIndex.__type ~= nil then
+                                                    warn(`Iterate only supports nested values up to the 2nd degree - {debug.traceback()}`)
                                                 else
-                                                    local Pos = tf(Thread,Holder[newIndex])
-                                                    if Pos ~= nil then
-                                                        tr(Thread,Pos)
+                                                    CleanHolder()
+                                                    for i,v in pairs(newIndex) do
+                                                        upd(i,v)
                                                     end
                                                 end
-                                                Holder[newIndex]:Clean();
-                                                Holder[newIndex] = nil;
                                             end
                                         else
-                                            upd(newIndex,newValue)
+                                            if newChangeType == 2 then
+                                                if Holder[newIndex] ~= nil then
+                                                    if Thread["Remove"] then
+                                                        Thread:Remove(Holder[newIndex])
+                                                    else
+                                                        local Pos = tf(Thread,Holder[newIndex])
+                                                        if Pos ~= nil then
+                                                            tr(Thread,Pos)
+                                                        end
+                                                    end
+                                                    Holder[newIndex]:Clean();
+                                                    Holder[newIndex] = nil;
+                                                end
+                                            else
+                                                upd(newIndex,newValue)
+                                            end
                                         end
                                     end
-                                end
-                                innerSet(Index:Get())
-                                Connect2 = Index.Changed:Connect(innerSet)
-                            else
-                                for i,v in pairs(Index) do
-                                    upd(i,v)
-                                end
-                            end
-                        end
-                    else
-                        if ChangeType == 2 then
-                            if Holder[Index] ~= nil then
-                                if Thread["Remove"] then
-                                    Thread:Remove(Holder[Index])
+                                    innerSet(Index:Get())
+                                    Connect2 = Index.Changed:Connect(innerSet)
                                 else
-                                    local Pos = tf(Thread,Holder[Index])
-                                    if Pos ~= nil then
-                                        tr(Thread,Pos)
+                                    for i,v in pairs(Index) do
+                                        upd(i,v)
                                     end
                                 end
-                                
-                                Holder[Index]:Clean();
-                                Holder[Index] = nil;
                             end
                         else
-                            upd(Index,Value)
+                            if ChangeType == 2 then
+                                if Holder[Index] ~= nil then
+                                    if Thread["Remove"] then
+                                        Thread:Remove(Holder[Index])
+                                    else
+                                        local Pos = tf(Thread,Holder[Index])
+                                        if Pos ~= nil then
+                                            tr(Thread,Pos)
+                                        end
+                                    end
+                                    
+                                    Holder[Index]:Clean();
+                                    Holder[Index] = nil;
+                                end
+                            else
+                                upd(Index,Value)
+                            end
                         end
                     end
-                end
-                step(Value.Tab:Get())
-                Connect1 = Value.Tab.Changed:Connect(step)
-            else
-                CleanHolder()
-                for i,v in pairs(Value.Tab) do
-                    upd(i,v)
+                    step(Value.Tab:Get())
+                    Connect1 = Value.Tab.Changed:Connect(step)
+                else
+                    --CleanHolder()
+                    for i,v in pairs(Value.Tab) do
+                        upd(i,v)
+                    end
                 end
             end
         end

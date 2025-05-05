@@ -37,6 +37,10 @@ function mt:Destroy()
         self.Connection:Disconnect()
         self.Connection = nil
     end
+    if self.Custom ~= nil then
+        tc(self.Custom)
+        self.Custom = nil;
+    end
     setmetatable(self,nil)
     self.Initial = nil;
     self.Value = nil;
@@ -54,10 +58,25 @@ end
     Sets the delay time.
 ]=]
 function mt:SetTime(New: number)
-    if not (New == nil or tof(New) == "number") then return end;
+    if not (New == nil or tof(New) == "number") then return self end;
     self.Time = New;
+    return self;
 end
-
+--[=[
+    @method For
+    @within Delay
+    @param Value any
+    @param Time number
+    Sets a custom wait time for a value
+]=]
+function mt:For(Value: any,Time: number?)
+    if self.Custom == nil then
+        self.Custom = {};
+    end
+    self.Custom[Value] = Time;
+    self.IsSensitive = true
+    return self;
+end
 --[=[
     @method Get
     @within DelayValue
@@ -109,7 +128,6 @@ function mt:ResetTime()
 end
 
 local Id = 0;
-local curentUsageId = 0;
 local scriptName = script.Name;
 
 function mt.__tostring()
@@ -123,17 +141,18 @@ end
     @param Time number
     @param Thread Types.Thread
     @return DelayValue
-    [Creates a new delay value object.](/docs/Utilities/DelayValue)
+    Creates a new delay value object.
 ]=]
 return function(Value: Types.Value, Time: number, Thread: Types.Thread)
-    if Value == nil or Time == nil then warn(`Value or Time parameter are missing - {debug.traceback()}`); return end;
-    if tof(Value) ~= "table" and typeof(Time) ~= "number" then warn(`Parameters must be of the format: Value: Value, Time: number - {debug.traceback()}`); return end;
+    if Value == nil then warn(`Value or Time parameter are missing - {debug.traceback()}`); return end;
+    if tof(Value) ~= "table" then warn(`Parameters must be of the format: Value: Value, Time: number - {debug.traceback()}`); return end;
     Id += 1;
     local new = {
         Initial = Value.Initial;
         Thread = Thread;
         Connection = nil;
         Value = Value;
+        curentUsageId = 0;
         DefaultTime = Time;
         Time = Time;
         Id = "DelayValue-"..Id;
@@ -141,17 +160,21 @@ return function(Value: Types.Value, Time: number, Thread: Types.Thread)
         Changed = Signal.new();
     }
     setmetatable(new,mt);
-    new.Connection = Value.Changed:Connect(function(...)
+    new.Connection = Value.Changed:Connect(function(newValue: any)
         if new.SignalEnabled == false then return end;
-        curentUsageId +=1;
-        local currentId = curentUsageId;
-        if new.Time ~= nil then
+        new.curentUsageId +=1;
+        local currentId = new.curentUsageId;
+        local eqTime = new.Time;
+        if newValue ~= nil and new.Custom ~= nil and new.Custom[newValue] ~= nil then
+            eqTime = new.Custom[newValue];
+        end
+        if eqTime ~= nil then
             if not new.IsActive then return end
-            task.wait(new.Time)
+            task.wait(eqTime)
             if not new.IsActive then return end
         end;
-        if new.IsSensitive == nil or currentId == curentUsageId then
-            new.Changed:Fire(...)
+        if new.IsSensitive == nil or currentId == new.curentUsageId then
+            new.Changed:Fire(newValue)
         end
     end)
     if Thread ~= nil then

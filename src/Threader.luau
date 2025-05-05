@@ -148,8 +148,8 @@ function mt:DelayValue(Value: Types.Value, Time: number) : Types.DelayValueType
 end
 --Delay
 local Delay = require(Utilities.Delay)
-function mt:Delay(Time: number, Props: properties.Property) : Types.DelayValueType
-    return Delay(Time,Props,self)
+function mt:Delay(Props: properties.Property,Time: number) : Types.DelayType
+    return Delay(Props,Time,self)
 end
 --Property value
 local Propertyy = require(Utilities.Property)
@@ -176,7 +176,10 @@ local Eventt = require(Utilities.Event)
 function mt:Event(Entity: any, Event: any, Function: () -> ()) : ()
     return Eventt(Entity,Event,Function,self)
 end
-
+local Space = require(Utilities.Space)
+function mt:Space(func: (...any) -> ())
+    return Space(func,self);
+end
 local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;

@@ -45,7 +45,7 @@ end
     @param Value any
     @param Thread any?
     @return SetTo
-    [Creates a new SetTo object that sets the given value.](/docs/Utilities/SetTo)
+    Creates a new SetTo object that sets the given value.
 ]=]
 return function(Value: any,Thread: types.Thread) : any
     if Value == nil or tof(Value) ~= "table" or Value.__type == nil or ValueClasses[Value.__type] == nil then warn(`Pass a valid value object - {debug.traceback()}`); return end;

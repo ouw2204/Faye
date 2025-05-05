@@ -57,9 +57,9 @@ end
     @param Props PropsTypes.Property
     @param Thread Types.Thread
     @return Delay
-    [Creates a new delay object.](/docs/Utilities/Delay)
+    Creates a new delay object.
 ]=]
-return function(Time: number,Props: PropsTypes.Property,Thread: Types.Thread)
+return function(Props: PropsTypes.Property,Time: number,Thread: Types.Thread)
     if Time == nil or Props == nil then warn(`Time or properties is missing - {debug.traceback()}`); return end;
     local new = setmetatable({
         Time = Time;

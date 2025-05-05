@@ -3,14 +3,13 @@ local OtherTypes = require(script.Parent.Types)
 --[=[
     @method SpringInfo
     @within Thread
-    @param Time number
-    @param Frequency number
-    @param Damping number
-    @param RepeatCount number
-    @param Reverse boolean
-    @param DelayTime number
+    @param Time number?
+    @param Frequency number?
+    @param Damping number?
+    @param RepeatCount number?
+    @param Reverse boolean?
+    @param DelayTime number?
     @return SpringInfo
-    [Creates a new SpringInfo object with the given parameters.](/docs/Utilities/AnimInfo)
 ]=]
 return function(Time: number,Frequency: number,Damping: number, RepeatCount: number,Reverse: boolean,DelayTime: number)
     local new = {

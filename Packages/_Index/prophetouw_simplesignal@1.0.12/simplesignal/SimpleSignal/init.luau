@@ -39,6 +39,7 @@ function mt:Destroy()
 end
 function mt:DisconnectAll()
     for i = #self,1,-1 do
+        if self[i] == nil then continue end;
         self[i]:Disconnect();
         self[i] = nil;
     end
@@ -47,22 +48,57 @@ end
 --Firing signal
 function mt:Fire(...)
     for i = #self,1,-1 do
-        task.spawn(self[i].func,...)
-        if self[i].Once == true then
-            self[i]:Disconnect();
+        local v = self[i];
+        if v == nil then continue end;
+        task.spawn(v.func,...)
+        if v.Once == true then
+            v:Disconnect();
         end
     end
 end
+
+function mt:Wait(timeout: number)
+    local thread = coroutine.running()
+    local isFired = false
+    local connection
+    local timeoutTask = nil  -- Variable to hold the reference to the timeout task
+
+    connection = self:Connect(function(...)
+        if not isFired then
+            isFired = true
+            connection:Disconnect()
+            if timeoutTask then
+                task.cancel(timeoutTask)
+                timeoutTask = nil;
+            end
+            coroutine.resume(thread, ...)
+        end
+    end)
+
+    if timeout then
+        timeoutTask = task.delay(timeout, function()
+            if not isFired then
+                isFired = true
+                connection:Disconnect()
+                coroutine.resume(thread, nil) -- Resume with nil to indicate a timeout
+            end
+        end)
+    end
+
+    return coroutine.yield()
+end
+
 export type Connection = {
     Disconnect: (self: Connection) -> ();
     Destroy: (self: Connection) -> ();
 }
 export type Signal = {
-    Fire: (self: Signal) -> (),
+    Fire: (self: Signal, ...any) -> (),
     Connect: (self: Signal, func: () -> ()) -> Connection,
     Once: (self: Signal, func: () -> ()) -> Connection,
     DisconnectAll: (self: Signal) -> (),
-    Destroy: (self: Signal) -> ()
+    Destroy: (self: Signal) -> (),
+    Wait: (self: Signal, timeout: number) -> any
 }
 return {
     new = function() : Signal

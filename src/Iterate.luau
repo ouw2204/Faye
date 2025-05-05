@@ -42,12 +42,23 @@ end
 ]=]
 function mt:Get()
     local New = {}
-    for i,v in pairs(self.Tab) do
-        local Index,Value = self.Function(i,v)
-        if Value == nil then
-            tins(New,Index)
-        else
-            self[Index] = Value;
+    if self.tabType == "number" then
+        for i = 1,self.Tab do
+            local Index,Value = self.Function(i,i)
+            if Value == nil then
+                tins(New,Index)
+            else
+                self[Index] = Value;
+            end
+        end
+    else
+        for i,v in pairs(self.Tab) do
+            local Index,Value = self.Function(i,v)
+            if Value == nil then
+                tins(New,Index)
+            else
+                self[Index] = Value;
+            end
         end
     end
     return New;
@@ -64,12 +75,13 @@ end
     @param Func function
     @param Thread any?
     @return Iterate
-    [Creates a new Iterate object that iterates over the given table.](/docs/Utilities/Iterate)
+    Creates a new Iterate object that iterates over the given table.
 ]=]
 return function(Tab: {any: any},Func: (Index: any,Value: any,InnerThread: Types.Thread?,Entity: Instance?) -> (),Thread: Types.Thread)
     if Tab == nil or Func == nil then return end;
     local new = {
         Function = Func;
+        tabType = typeof(Tab);
         Tab = Tab;
         Thread = Thread;
     };

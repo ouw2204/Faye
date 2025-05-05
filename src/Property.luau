@@ -214,7 +214,40 @@ local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;
 end
-
+--[=[
+    @method ReCalibrate
+    @within Property
+    Allows you to listen to a new property or new instance
+]=]
+function mt:ReCalibrate(Instance: Instance?,Property: string?)
+    if Instance == nil or Property == nil then return end;
+    if Instance ~= nil then
+        self.Instance = Instance;
+    end
+    if Property ~= nil then
+        self.Property = Property
+    end
+    if self.Instance == nil or self.Property == nil then return end;
+    if self.ChangeListener ~= nil then
+        self.ChangeListener:Disconnect();
+        self.ChangeListener = nil;
+    end
+    if self.IsAttribute == false then
+        self.Initial = self.Instance[self.Property];
+        self.ChangeListener = self.Instance:GetPropertyChangedSignal(self.Property):Connect(function()
+            if self.SignalEnabled == nil or self.SignalEnabled == true then
+                self.Changed:Fire(self.Instance[self.Property])
+            end
+        end)
+    else
+        self.Initial = self.Instance:GetAttribute(self.Property);
+        self.ChangeListener = self.Instance:GetAttributeChangedSignal(self.Property):Connect(function()
+            if self.SignalEnabled == nil or self.SignalEnabled == true then
+                self.Changed:Fire(self.Instance:GetAttribute(self.Property))
+            end
+        end)
+    end
+end
 local Counter = 0;
 
 --[=[
@@ -225,17 +258,15 @@ local Counter = 0;
     @param IsAttribute boolean
     @param Thread Types.Thread
     @return Property
-    [Creates a new instance property sync.](/docs/Utilities/Property)
+    Creates a new instance property sync.
 ]=]
 return function(Entity: any,Property: any,IsAttribute: boolean,Thread: Types.Thread)
-    if Entity == nil or Property == nil then warn(`Entity and Property parameter must exist - {debug.traceback()}`); return end;
-    if not (tof(Entity) == "Instance" and tof(Property) == "string") then warn(`Entity param must be an instance and Proeprty param must be a string - {debug.traceback()}`); return end;
     local new = {
         Connect1 = nil,Connect2 = nil; Connect3 = nil;
         PropConnect1 = nil;PropConnect2 = nil;
         Changed = Signal.new();
-        Instance = Entity;
-        Property = Property;
+        Instance = nil;
+        Property = nil;
         Initial = nil;
         IsAttribute = IsAttribute;
         Thread = Thread;
@@ -251,21 +282,7 @@ return function(Entity: any,Property: any,IsAttribute: boolean,Thread: Types.Thr
             tins(Thread,new)
         end
     end
-    if IsAttribute == false then
-        new.Initial = Entity[Property];
-        new.ChangeListener = Entity:GetPropertyChangedSignal(Property):Connect(function()
-            if new.SignalEnabled == nil or new.SignalEnabled == true then
-                new.Changed:Fire(Entity[Property])
-            end
-        end)
-    else
-        new.Initial = Entity:GetAttribute(Property);
-        new.ChangeListener = Entity:GetAttributeChangedSignal(Property):Connect(function()
-            if new.SignalEnabled == nil or new.SignalEnabled == true then
-                new.Changed:Fire(Entity:GetAttribute(Property))
-            end
-        end)
-    end
     setmetatable(new,mt)
+    new:ReCalibrate(Entity,Property)
     return new;
 end

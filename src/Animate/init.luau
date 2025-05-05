@@ -124,10 +124,9 @@ end
     @method Play
     @within Animate
     @param To any
-    @param T any?
     Plays the animation.
 ]=]
-function mt:Play(To: any,T)
+function mt:Play(To: any)
    if To == nil then return end;
    if (self.Thread ~= nil and self.Thread.CleanWhenDone) and not (self.Thread ~= nil and self.Thread.CleanWhenDone == true and self.Thread.AnimationsAmount ~= nil and self.Thread.AnimationsAmount >0) then return end;
    self:Stop();
