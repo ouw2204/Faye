@@ -126,7 +126,6 @@ local m = {
                 if Value.Tab.__type ~= nil and ValueClasses[Value.Tab.__type] ~= nil then
                     --first degree
                     local function step(Index,Value,ChangeType)
-                        print(Index,Value)
                         if Value == nil then
                             CleanHolder()
                             if Connect2 ~= nil and Connect2["Disconnect"] ~= nil then
