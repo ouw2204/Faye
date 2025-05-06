@@ -41,4 +41,4 @@ Thread:Create "Frame" {
 ### 2. Importance of using spaces
 Spaces allow you to write organized code, if you care about memory usage please use them.
 ### 3. Function > Do > State Rule
-Functions are less heavier than Do blocks and because states create new threads, they are less heavy than Do code blocks, therefor, use functions instead of Do code blocks when u don't need to listen to a value's change, and use Do instead of state when u aren't creating new stuff or don't want to delete the previous sessions on updates.
+Functions are less heavier than Do blocks and because states create new threads, they are heavier than Do code blocks, therefor, use functions instead of Do code blocks when u don't need to listen to a value's change, and use Do instead of state when u aren't creating new components or don't want to delete the previous sessions on updates.
