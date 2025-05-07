@@ -7,6 +7,7 @@ sidebar_position: 1
 - Configure
 - Nested Tables & Properties
 - Functions
+- Signals Basics
 ## [Utilities](./Utilities)
 - Value
 - Animations

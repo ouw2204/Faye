@@ -112,3 +112,18 @@ Thread:Create "Frame" {
 :::note
 There is a module named "Type" in the Faye folder that contains a bunch of types you can use for your parameters.
 :::
+### 6. Signals
+```lua
+{
+    MouseButton1Down = function(Entity,...) -- Event = function
+
+    end);
+    SizeChanged = function(Entity,NewValue) -- [Property]Changed = function(Entity,new value)
+
+    end);
+    SizeChangedInit = function(Entity,NewValue) -- [Property]ChangedInit = function(Entity,new value)
+
+    end)
+}
+```
+[Property]ChangedInit fires the function initially and when it is changed, its like the regular [Property]Changed except it fires the function on initialization.
