@@ -250,7 +250,7 @@ return function(Target)
     local MousePosition = Inputer:GetMousePosition(Input)
 end
 ```
-Its important to understand that the connections aren't directely added to the thread so u must do it manuelly.
+Its important to understand that the input connections aren't directely added to the thread so u must do it manuelly.
 :::note
 Recommended to use it with the UI-Hub plugin made by me as it auto switches UserInputService automatically if done in a viewport.
 :::
