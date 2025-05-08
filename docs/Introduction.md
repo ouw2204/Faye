@@ -49,9 +49,9 @@ local Extended = Thread:Extend()
 When Thread is deleted, Extended is also deleted, but when Extended is deleted, Thread is uneffected.
 #### Some useful thread methods
 ```lua
-Thread:Add(any) -- add something to be cleaned on clean
-Thread:Remove(any) -- remove something from being cleaned
-Thread:Connect(rbxlScriptSignal,function) -- connection a signal to a function
+Thread:Add(any) -- add something to thread cleaner
+Thread:Remove(any) -- remove something from thread cleaner
+Thread:Connect(rbxlScriptSignal,function) -- connect a signal to a function
 ```
 ### 3. Configure And Create
 #### Create
