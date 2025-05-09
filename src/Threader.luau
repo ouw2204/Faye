@@ -94,7 +94,7 @@ end
 
 --connect
 function mt:Connect(Connection: RBXScriptSignal,Function: () -> ())
-    self:Add(Connection:Connect(Function),true)
+    --[[connectionstarthere]]self:Add(Connection:Connect(Function),true)--[[connectioncodeblockended]]
 end
 --[=[
     @within Thread

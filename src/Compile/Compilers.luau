@@ -491,7 +491,11 @@ local m = {
         local Instance = Entity.Instance;
         local Thread = Entity.InnerThread or Entity.Thread -- fetching innerthread or thread with priority
         if Thread ~= nil then -- thread exist
-            if Thread["Add"] ~= nil then -- is a specialized cleaner
+            if Thread["Connect"] ~= nil then
+                Thread:Connect(Instance[Index],function(...)
+                    Value(Instance,...)
+                end)
+            elseif Thread["Add"] ~= nil then -- is a specialized cleaner
                 Thread:Add(Instance[Index]:Connect(function(...)
                     Value(Instance,...)
                 end),true)
