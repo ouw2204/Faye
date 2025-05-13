@@ -3,7 +3,7 @@
     A class that represents a reactive state value. Values can be created with Threads(recommended) or directly by the value class.
 ]=]
 
-local Signal = require(script.Parent.Packages.Signal);
+local Signal = require(script.Parent.Parent.Signal);
 local tins,tf,tr = table.insert,table.find,table.remove
 local tof = typeof
 local tc = table.clear

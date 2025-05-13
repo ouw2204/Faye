@@ -1,4 +1,4 @@
-local Signal = require(script.Parent.Packages.Signal)
+local Signal = require(script.Parent.Parent.Signal)
 
 
 --[=[

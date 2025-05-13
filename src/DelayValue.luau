@@ -4,7 +4,7 @@
 ]=]
 local Types = require(script.Parent.Types)
 local tof,tins,tf,tr,tc = typeof,table.insert,table.find,table.remove,table.clear
-local Signal = require(script.Parent.Packages.Signal);
+local Signal = require(script.Parent.Parent.Signal);
 
 local mt = {
     __type = script.Name;
