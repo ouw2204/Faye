@@ -1,6 +1,6 @@
 [package]
 name = "prophetouw/faye"
-version = "1.1.7"
+version = "1.1.8"
 registry = "https://github.com/ProphetOuw/Faye"
 realm = "shared"
 

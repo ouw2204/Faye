@@ -215,6 +215,10 @@ You can also manuelly signal the space to Call the task.
 ```lua
 Task:Call()
 ```
+You can connect a signal to a task using
+```lua
+Task:Connect(Signal)
+```
 :::note
 Passing none reactive values or tables when creating tasks is only useful if those values are set to never change, this is because it uses table.unpack to unload those parameters so dictionaries will just be ignored.
 :::

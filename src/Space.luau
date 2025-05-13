@@ -25,6 +25,20 @@ function parammt:SetId(Id: string)
     self.Id = Id;
     return self;
 end
+
+--[=[
+    @method Connect
+    @within Task
+    Connects a signal to the task. The task will be called when the signal is fired.
+]=]
+function parammt:Connect(Connection: RBXScriptSignal)
+    local connection = Connection:Connect(self.Call)
+    if self.__connections == nil then
+        self.__connections = {}
+    end
+    tins(self.__connections,connection)
+    return connection;
+end
 --[=[
     @method Destroy
     @within Task

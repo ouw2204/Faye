@@ -84,6 +84,7 @@ export type Property = {
 	Anchored: boolean?,
 	BrickColor: BrickColor?,
 	CanCollide: boolean?,
+	Selectable: boolean?,
 	CastShadow: boolean?,
 	Color: Color3?,
 	Material: Enum.Material?,

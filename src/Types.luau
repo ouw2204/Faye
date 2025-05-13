@@ -61,18 +61,19 @@ type DoType = {
     Run: (self: DoType) -> DoType;
     Destroy: (self: DoType) -> ();  
 };
-export type SpaceTaskType = {
-    Destroy: (self: SpaceTaskType) -> ();
-    Call: (self: SpaceTaskType) -> SpaceTaskType;
+export type SpaceTask = {
+    Destroy: (self: SpaceTask) -> ();
+    Call: (self: SpaceTask) -> SpaceTask;
     Variables: {any: any};
-    Parameters: {[number]: Value};
-    SetId: (self: SpaceTaskType, Id: string) -> SpaceTaskType;
+    Parameters: {[any]: any};
+    SetId: (self: SpaceTask, Id: string) -> SpaceTask;
+    Connect: (self: SpaceTask, Connection: RBXScriptSignal) -> RBXScriptConnection;
 }
 export type Space = {
-    Call: (self: Space, Task: SpaceTaskType) -> Space;
-    Add: (self: Space, Params: {[any]: any}, Thread: Thread?) -> SpaceTaskType;
-    Remove: (self: Space, Task: SpaceTaskType) -> ();
-    Connect: (self: Space, Connection: RBXScriptSignal) -> RBXScriptConnection;
+    Call: (self: Space, Task: SpaceTask) -> Space;
+    Add: (self: Space, Params: {[any]: any}, Thread: Thread?) -> SpaceTask;
+    Remove: (self: Space, Task: SpaceTask) -> ();
+    Connect: (self: Space, Connection: RBXScriptSignal,Id: string) -> RBXScriptConnection;
     Destroy: (self: Space) -> ();
 }
 export type Thread = {
