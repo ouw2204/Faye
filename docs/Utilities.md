@@ -247,11 +247,24 @@ end)
 ```
 ### 10. Inputer
 Getting the UserInputService is tricky if u are using a UI library, the inputer utility allows you to quickly go around this.
+#### In a viewport
+```lua
+local Inputer = require(Faye.Inputer)
+local Input = Inputer:Get()
+return function(Target)
+    local MousePosition = Inputer:GetMousePosition()
+end
+```
+This version of using inputer just gets the UserInputService, so you can place it on top of the function and it'll still work fine.
+#### Inside a UI viewer window
+Unlike the viewport version, you must call the GetMousePosition method in a InputBegan,Changed, or Ended code block as this uses the target to draw input.
 ```lua
 local Inputer = require(Faye.Inputer)
 return function(Target)
     local Input = Inputer:Get(Target)
-    local MousePosition = Inputer:GetMousePosition(Input)
+    Thread:Connect(Input.InputBegan,function(InputObject)
+        local MousePosition = Inputer:GetMousePosition(Input, InputObject.Position)
+    end)
 end
 ```
 Its important to understand that the input connections aren't directely added to the thread so u must do it manuelly.
