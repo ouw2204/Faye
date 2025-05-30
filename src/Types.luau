@@ -71,7 +71,7 @@ export type SpaceTask = {
 }
 export type Space = {
     Call: (self: Space, Task: SpaceTask) -> Space;
-    Add: (self: Space, Params: {[any]: any}, Thread: Thread?) -> SpaceTask;
+    Add: (self: Space, Params: {[any]: any}, Thread: Thread?,IsDictionary: boolean?) -> SpaceTask;
     Remove: (self: Space, Task: SpaceTask) -> ();
     Connect: (self: Space, Connection: RBXScriptSignal,Id: string) -> RBXScriptConnection;
     Destroy: (self: Space) -> ();
@@ -101,14 +101,4 @@ export type Thread = {
     Space: (self: any, func: (...Value) -> ()) -> Space;
 }
 
-return {
- Thread = nil;
- DelayType = nil;
- Info = nil;
- SpringInfo = nil;
- InputType = nil;
- AnimationType = nil;
- BasicThread = nil;
- UserInputType = nil;
- Value = nil;
-};
+return nil;

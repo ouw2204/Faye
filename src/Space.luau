@@ -91,7 +91,7 @@ end
     @param Thread Thread?
     Adds/Creates a task to the Space. The task will be called when the Space is called.
 ]=]
-function mt:Add(Params: {[any]: any},Thread: Types.Thread)
+function mt:Add(Params: {[any]: any},Thread: Types.Thread,IsDictionary: boolean?)
     if self.Cleaning == true then return end;
     if Params == nil then return end;
     Thread = Thread or self.Thread;
@@ -103,7 +103,11 @@ function mt:Add(Params: {[any]: any},Thread: Types.Thread)
         Executes the task.
     ]=]
     function Params.Call()
-        Params.__holder.func(table.unpack(Params))
+        if IsDictionary == true then
+            Params.__holder.func(Params)
+        else
+            Params.__holder.func(table.unpack(Params))
+        end
         return Params;
     end
     if Thread ~= self.Thread then
@@ -210,7 +214,7 @@ return function(func: (...any) -> (),Thread: Types.Thread)
     m.ReceiverFunction = function()
         if m.Cleaning then return end;
         for i,v in pairs(m.Tasks) do
-            m.func(table.unpack(v))
+            v.Call();
         end
     end
     if Thread ~= nil then
