@@ -131,6 +131,11 @@ local Do = require(Utilities.Do)
 function mt:Do(Function: (Grab: any, Entity: Instance) -> ())
     return Do(Function,self)
 end
+--Do
+local Spawn = require(Utilities.Spawn)
+function mt:Spawn(func: (...any) -> ())
+    return Spawn(func,self)
+end
 --State
 local State = require(Utilities.State)
 function mt:State(Function: (Grab: any, InnerThread: Types.Thread,Entity: Instance) -> ())

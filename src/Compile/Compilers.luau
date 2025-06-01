@@ -10,6 +10,9 @@ local m = {
         end
         Value:Destroy();
     end;
+    Spawn = function(Entity,Index,Value,Compile)
+        Value:Perform(Entity,Index,Compile,Entity.Thread or Value.Thread);
+    end;
     Instance = function(Entity,Index,Value,Compile,From)
         local Props = Value.Props;
         local Thread = Entity.Thread;
