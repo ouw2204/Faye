@@ -117,7 +117,7 @@ export type Property = {
 	CFrame: CFrame?,
 	FieldOfView: number?,
 	Focus: CFrame?,
-	
+	TextWrapped: boolean?;
 	TextXAlignment: Enum.TextXAlignment?;
 	TextYAlignment: Enum.TextYAlignment?;
 	-- UI Element Properties (TextLabel, TextButton, ImageLabel, ImageButton, etc.)

@@ -18,7 +18,7 @@ function m:Destroy()
     setmetatable(self,nil)
 end
 function m:Perform(Entity,Index,Compile,Thread)
-    task.spawn(function()
+    local createdtask; createdtask = task.spawn(function()
         local ret = self.func(Thread,Entity)
         if ret ~= nil then
             if typeof(ret) == "table" then
@@ -32,7 +32,26 @@ function m:Perform(Entity,Index,Compile,Thread)
                 Entity[Index] = ret;
             end
         end
+
+        if Thread ~= nil then
+            if Thread["Remove"] ~= nil then
+                Thread:Remove(createdtask)
+            else
+                local f = tf(Thread,createdtask)
+                if f ~= nil then
+                    tr(Thread,f)
+                end;
+            end
+            createdtask = nil;
+        end
     end)
+    if Thread ~= nil then
+        if Thread["Add"] ~= nil then
+            Thread:Add(createdtask)
+        else
+            tins(Thread,createdtask)
+        end
+    end
     self:Destroy();
 end
 return function(func: () -> (), Thread: Types.Thread)
