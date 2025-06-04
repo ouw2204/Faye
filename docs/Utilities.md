@@ -271,3 +271,13 @@ Its important to understand that the input connections aren't directely added to
 :::note
 Recommended to use it with the UI-Hub plugin made by me as it auto switches UserInputService automatically if done in a viewport.
 :::
+### 11. Spawn
+This is a Task.Spawn wrapper version of running a function, This is good if you are adding features thay may yield the compilation.
+```lua
+
+{
+    Size = Thread:Spawn(function()
+        return UDim2.new(1,0,1,0)
+    end)
+}
+```

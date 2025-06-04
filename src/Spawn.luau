@@ -1,8 +1,17 @@
+--[=[
+    @class Spawn
+    Works like task.spawn for activities that may yield the compilation process.
+]=]
 local m = {__type = script.Name;};
 m.__index = m;
 local Types = require(script.Parent.Types)
 local tins,tf,tc,tr = table.insert,table.find,table.clear,table.remove
 
+--[=[
+    @method Destroy
+    @within Spawn
+    Deletes the task if not already deleted.
+]=]
 function m:Destroy()
     if self.Thread ~= nil then
         if self.Thread["Remove"] then
@@ -17,17 +26,17 @@ function m:Destroy()
     tc(self)
     setmetatable(self,nil)
 end
+--[=[
+    @method Perform
+    @within Spawn
+    This method performs the tasks then self destructs right after.
+]=]
 function m:Perform(Entity,Index,Compile,Thread)
     local createdtask; createdtask = task.spawn(function()
-        local ret = self.func(Thread,Entity)
+        local ret = self.func(Entity)
         if ret ~= nil then
-            if typeof(ret) == "table" then
-                if ret.__type ~= nil then
-                    ret = {
-                        Index = ret;
-                    }
-                    Compile(Entity,ret,Thread)
-                end
+            if typeof(Index) == "number" then
+                Compile(Entity,(typeof(ret) == "table" and ret.__type == nil and ret) or {ret},Thread)
             else
                 Entity[Index] = ret;
             end
@@ -54,6 +63,13 @@ function m:Perform(Entity,Index,Compile,Thread)
     end
     self:Destroy();
 end
+--[=[
+    @method Spawn
+    @within Thread
+    @param func function
+    @param Thread Thread?
+    Creates a new task
+]=]
 return function(func: () -> (), Thread: Types.Thread)
     local new = {
         func = func;

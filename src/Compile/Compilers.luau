@@ -2,7 +2,16 @@ local tins,tf,tr = table.insert,table.find,table.remove
 local tof = typeof
 local ValueClasses = require(script.Parent.Parent.Misc.ValueClasses)
 local tc = table.clear
-
+local Types = require(script.Parent.Parent.Types)
+function repeatedCompile(Index: number,Thread: Types.Thread,Ret: any,Compile: () -> (),Entity: any)
+    if Ret ~= nil then
+        if tof(Index) ~= "number" and typeof(Entity.Instance[Index]) ~= "RBXScriptSignal" then
+            Entity.Instance[Index] = Ret;
+        else
+            Compile(Entity,(tof(Ret) == "table" and Ret.__type == nil and Ret) or {Ret},Thread)
+        end
+    end
+end
 local m = {
     SetTo = function(Entity,Index,Value)
         if Value["Value"] ~= nil and Value.Value["Set"] ~= nil then
@@ -46,11 +55,60 @@ local m = {
         local Instance = Entity.Instance;
         local Thread = Entity.InnerThread or Entity.Thread
         if Init == true then
-            Value(Instance,Instance[Index])
+            local Ret = Value(Instance,Instance[Index])
+            if Ret ~= nil then
+                repeatedCompile(Index,Thread,Ret,Compile,Entity)
+                Ret = nil;
+            end
         end
         Thread:Connect(Instance:GetPropertyChangedSignal(Index),function()
-            Value(Instance,Instance[Index])
+            local Ret = Value(Instance,Instance[Index])
+            if Ret ~= nil then
+                repeatedCompile(Index,Thread,Ret,Compile,Entity)
+                Ret = nil;
+            end;
         end)
+    end;
+    Event = function(Entity,Index,Value,Compile)
+        local Instance = Entity.Instance;
+        local Thread = Entity.InnerThread or Entity.Thread -- fetching innerthread or thread with priority
+        if Thread ~= nil then -- thread exist
+            if Thread["Connect"] ~= nil then
+                Thread:Connect(Instance[Index],function(...)
+                    local Ret = Value(Instance,...)
+                    if Ret ~= nil then
+                        repeatedCompile(Index,Thread,Ret,Compile,Entity)
+                        Ret = nil;
+                    end
+                end)
+            elseif Thread["Add"] ~= nil then -- is a specialized cleaner
+                Thread:Add(Instance[Index]:Connect(function(...)
+                    local Ret = Value(Instance,...)
+                    if Ret ~= nil then
+                        repeatedCompile(Index,Thread,Ret,Compile,Entity)
+                        Ret = nil;
+                    end
+                end),true)
+            else
+                tins(Thread,Instance[Index]:Connect(function(...)
+                    local Ret = Value(Instance,...)
+                    if Ret ~= nil then
+                        repeatedCompile(Index,Thread,Ret,Compile,Entity)
+                        Ret = nil;
+                    end
+                end))
+            end
+        else -- no threads
+            Instance[Index]:Connect(function(...)
+                local Ret = Value(Instance,...)
+                if Ret ~= nil then
+                    repeatedCompile(Index,Thread,Ret,Compile,Entity)
+                    Ret = nil;
+                end
+            end)
+        end
+        
+        --Thread = nil;   
     end;
     Iterate = function(Entity,Index,Value,Compile)
         local Instance = Entity.Instance;
@@ -488,30 +546,6 @@ local m = {
         end
         Goal = nil;
         Info = nil;
-        Thread = nil;
-    end;
-    Event = function(Entity,Index,Value)
-        local Instance = Entity.Instance;
-        local Thread = Entity.InnerThread or Entity.Thread -- fetching innerthread or thread with priority
-        if Thread ~= nil then -- thread exist
-            if Thread["Connect"] ~= nil then
-                Thread:Connect(Instance[Index],function(...)
-                    Value(Instance,...)
-                end)
-            elseif Thread["Add"] ~= nil then -- is a specialized cleaner
-                Thread:Add(Instance[Index]:Connect(function(...)
-                    Value(Instance,...)
-                end),true)
-            else
-                tins(Thread,Instance[Index]:Connect(function(...)
-                    Value(Instance,...)
-                end))
-            end
-        else -- no threads
-            Instance[Index]:Connect(function(...)
-                Value(Instance,...)
-            end)
-        end
         Thread = nil;
     end;
     Value = function(Entity,Index,Value)

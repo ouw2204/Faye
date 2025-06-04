@@ -4,7 +4,7 @@ registry = "test"
 
 [[package]]
 name = "prophetouw/faye"
-version = "1.2.0"
+version = "1.2.4"
 dependencies = [["Signal", "prophetouw/simplesignal@1.0.12"]]
 
 [[package]]

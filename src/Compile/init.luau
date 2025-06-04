@@ -36,9 +36,9 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
             Compilers[i.__type](Entity, i, v, Recursive)
         else
             if tov == "function" and toi == "number" then
-                local ret = v(Entity.InnerThread or Entity.Thread, Entity.Instance)
+                local ret = v(Entity.Instance)
                 if ret then
-                    Recursive(Entity, to(ret) == "table" and ret.__type == nil and ret or {ret})
+                    Recursive(Entity, (to(ret) == "table" and ret.__type == nil and ret) or {ret})
                 end
             else
                 local onChangedIndex = sf(i, "OnChanged")
@@ -49,10 +49,10 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
                         Compilers.OnChanged(Entity, prop, v, Recursive, Init)
                     end
                 elseif to(Entity.Instance[i]) == "RBXScriptSignal" then
-                    Compilers.Event(Entity, i, v)
+                    Compilers.Event(Entity, i, v,Recursive)
                 else
                     if tov == "function" then
-                        local result = v(Entity.InnerThread or Entity.Thread, Entity.Instance)
+                        local result = v(Entity.Instance)
                         if result ~= nil then
                             Entity.Instance[i] = result;
                         end

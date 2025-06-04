@@ -19,6 +19,7 @@ sidebar_position: 1
 - Inputer(UIHub Only)
 - SetTo
 - Event
+- Spawn
 ## [Important Tutorials](./ImportantTutorials)
 - OnClean,CleanDelay, and CleanFunction(**IMPORTANT**)
 - Importance of using spaces

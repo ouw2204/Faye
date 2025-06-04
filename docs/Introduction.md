@@ -101,7 +101,7 @@ Thread:Create "Frame" {
 Anything you return in the function will be compiled.
 ```lua
 Thread:Create "Frame" {
-    function()
+    function(Entity: GuiBase)
         return Thread:Create "Frame" {
             Name = "Frame2";
         }
@@ -133,3 +133,6 @@ There is a module named "Type" in the Faye folder that contains a bunch of types
 }
 ```
 [Property]ChangedInit fires the function initially and when it is changed, its like the regular [Property]Changed except it fires the function on initialization.
+:::note
+Anything returned in these signal functions will be compiled.
+:::
