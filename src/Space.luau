@@ -31,6 +31,9 @@ end
     @within Task
     Connects a signal to the task. The task will be called when the signal is fired.
 ]=]
+function  parammt.__tostring()
+    return "Task"
+end
 function parammt:Connect(Connection: RBXScriptSignal)
     local connection = Connection:Connect(self.Call)
     if self.__connections == nil then
@@ -38,6 +41,20 @@ function parammt:Connect(Connection: RBXScriptSignal)
     end
     tins(self.__connections,connection)
     return connection;
+end
+--[=[
+    @method AddParameter
+    @within Task
+    Cleans up the task and removes it from the Space. This will also disconnect any connections made to the task.
+]=]
+function parammt:AddParameter(Index: any,Value: any)
+    if (Value == nil and Index == nil) or Index == nil then return end;
+    if Value ~= nil then
+        self[Index] = Value;
+    else
+        tins(self,Index)
+    end
+    return self;
 end
 --[=[
     @method Destroy

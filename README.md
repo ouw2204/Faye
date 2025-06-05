@@ -6,7 +6,7 @@ Remember to occasionally check for new updates as there might be bug fixes.
 https://create.roblox.com/store/asset/74301103261718/Faye
 ### Wally
 ```
-faye = "prophetouw/faye@1.2.4"
+faye = "prophetouw/faye@1.2.9"
 ```
 ### Github
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.

@@ -56,8 +56,10 @@ return {
                     tab.Changed:Fire(pos, Index, 2) 
                 end 
             else
+                local Value = val[Index]
                 val[Index] = nil
-                tab.Changed:Fire(Index, val[Index], 2)
+                tab.Changed:Fire(Index, Value, 2)
+                Value = nil;
             end
         end
     }

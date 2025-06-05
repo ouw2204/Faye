@@ -68,6 +68,7 @@ export type SpaceTask = {
     Parameters: {[any]: any};
     SetId: (self: SpaceTask, Id: string) -> SpaceTask;
     Connect: (self: SpaceTask, Connection: RBXScriptSignal) -> RBXScriptConnection;
+    AddParameter: (self: SpaceTask, Index: any,Value: any) -> ();
 }
 export type Space = {
     Call: (self: Space, Task: SpaceTask) -> Space;
@@ -89,7 +90,7 @@ export type Thread = {
     Animate: (self: Thread, Goal: any, Info: Info | SpringInfo) -> AnimationType;
     Info: (self: Thread, Time: number,EasingStyle: Enum.EasingStyle,EasingDirection: Enum.EasingDirection, RepeatCount: number,Reverse: boolean,DelayTime: number) -> Info;
     SpringInfo: (self: Thread, Time: number,Frequency: number,Damping: number, RepeatCount: number,Reverse: boolean,DelayTime: number) -> SpringInfo;
-    Connect: (self: Thread, Connection: RBXScriptSignal,Function: () -> ()) -> ();
+    Connect: (self: Thread, Connection: RBXScriptSignal, Function: (...any) -> ()) -> (),
     Do: (self: Thread, Function : (Grab: any) -> (),Entity: Instance) -> DoType;
     State: (self: Thread, Function : (Grab: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
     Iterate: (self: Thread, Table: any,Function: (Index: any,Value: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
@@ -102,7 +103,7 @@ export type Thread = {
     Event: (self: Thread, Entity: any, Event: any, Function: <p1,p2,p3>(Event: string,p1,p2,p3) -> ()) -> {};
     Add: (self: Thread,Entity: any) -> ();
     Remove: (self: Thread,Entity: any) -> ();
-    Space: (self: Thread, func: (...Value) -> ()) -> Space;
+    Space: (self: Thread, func: (...(Value & { [any]: Value })) -> ()) -> Space,
     Spawn: (self: Thread,func: (...any)-> ()) -> Spawn;
 }
 

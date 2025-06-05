@@ -21,6 +21,15 @@ function mt:Connect(func: () -> ())
     if self.Destroying == true then return end;
     local t = setmetatable({func = func,signal = self},disconnectmt)
     tins(self,t)
+    if self.Queu ~= nil then
+        for i = #self.Queu,1,-1 do
+            local v = self.Queu[i];
+            self:Fire(table.unpack(v));
+            self.Queu[i] = nil;
+        end
+        table.clear(self.Queu)
+        self.Queu = nil;
+    end
     return t;
 end
 function mt:Once(func: () -> ())
@@ -54,6 +63,16 @@ function mt:Fire(...)
         if v.Once == true then
             v:Disconnect();
         end
+    end
+end
+function mt:SafeFire(...)
+    if #self >0 then
+        self:Fire(...)
+    else
+        if self.Queu == nil then
+            self.Queu = {}
+        end
+        table.insert(self.Queu,{...})
     end
 end
 
@@ -94,6 +113,7 @@ export type Connection = {
 }
 export type Signal = {
     Fire: (self: Signal, ...any) -> (),
+    SafeFire: (self: Signal, ...any) -> ();
     Connect: (self: Signal, func: () -> ()) -> Connection,
     Once: (self: Signal, func: () -> ()) -> Connection,
     DisconnectAll: (self: Signal) -> (),

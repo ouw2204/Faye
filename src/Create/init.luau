@@ -4,7 +4,8 @@
 ]=]
 
 local PropertyTypes = require(script.Parent.Misc.PropertyTypes);
-
+local ValueClasses = require(script.Parent.Misc.ValueClasses)
+local Compilers = require(script.Parent.Compile.Compilers)
 local Compile = require(script.Parent.Compile)
 local Clean = require(script.Parent.Clean);
 local Defaults = require(script.Defaults);
@@ -39,11 +40,6 @@ end
 function mt:Compile()
     local Props = self.Props;
     if Props ~= nil then
-        if Props.Parent ~= nil then
-            self.Instance.Parent = Props.Parent;
-            Props.Parent = nil;
-        end
-        self.Props = nil;
         local AddClean = nil;
         if Props.CleanDelay ~= nil or Props.OnClean ~= nil then
             if self.Thread ~= nil then
@@ -107,6 +103,16 @@ function mt:Compile()
         AddClean = nil;
         Props.CleanFunction = nil;
         Props.CleanDelay = nil;
+
+        if Props.Parent ~= nil then
+            if typeof(Props.Parent) == "table" and Compilers[Props.Parent.__type] then
+                Compilers[Props.Parent.__type](self,"Parent",Props.Parent)
+            else
+                self.Instance.Parent = Props.Parent;
+            end
+            Props.Parent = nil;
+        end
+        self.Props = nil;
         Compile(self,Props)
     else
         self:Destroy();

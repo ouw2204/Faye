@@ -186,8 +186,8 @@ local m = {
             else
                 if Value.Tab.__type ~= nil and ValueClasses[Value.Tab.__type] ~= nil then
                     --first degree
-                    local function step(Index,Value,ChangeType)
-                        if Value == nil then
+                    local function step(Index: any?,Value: any?,ChangeType: number?)
+                        if Value == nil and ChangeType == nil then
                             CleanHolder()
                             if Connect2 ~= nil and Connect2["Disconnect"] ~= nil then
                                 Connect2:Disconnect()
@@ -557,9 +557,10 @@ local m = {
                 ChangedConnection:Disconnect();
                 ChangedConnection = nil;
             end
-            if tof(new) == "table" then
+            local tooff = tof(new) == "table"
+            if tooff and new.__type ~= nil and ValueClasses[new.__type] ~= nil then
                 --the value is a table
-                if new.__type ~= nil and ValueClasses[new.__type] ~= nil then
+                --if  then
                     --is nested state
                     local function InnerUpdate(newValue)
                         --set value from nested value
@@ -569,7 +570,7 @@ local m = {
                             if Entity ~= nil and Instance ~= nil then
                                 local tofIndex = tof(Instance[Index])
                                 local tofNew = tof(newValue)
-                                if tofIndex == tofNew or ((tofIndex == "number" or tofIndex == "string") and (tofNew == "number" or tofNew == "string")) then
+                                if tofIndex == tofNew or (tofIndex == "nil" and tofNew ~= nil) or ((tofIndex == "number" or tofIndex == "string") and (tofNew == "number" or tofNew == "string")) then
                                     Instance[Index] = newValue;
                                 end
                                 tofIndex = nil;
@@ -579,12 +580,15 @@ local m = {
                     end
                     InnerUpdate(new:Get())
                     ChangedConnection = new.Changed:Connect(InnerUpdate) --connect change connection
-                end
+                --end
             else
                 if Entity ~= nil and Instance ~= nil then
+                    if tooff then
+                        new = new.Instance or new
+                    end
                     local tofIndex = tof(Instance[Index])
                     local tofNew = tof(new)
-                    if tofIndex == tofNew or ((tofIndex == "number" or tofIndex == "string") and (tofNew == "number" or tofNew == "string")) then
+                    if tofIndex == tofNew or (tofIndex == "nil" and tofNew ~= nil) or ((tofIndex == "number" or tofIndex == "string") and (tofNew == "number" or tofNew == "string")) then
                         Instance[Index] = new;
                     end
                     tofIndex = nil;
