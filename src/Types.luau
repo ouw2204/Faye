@@ -95,9 +95,9 @@ export type Thread = {
     Info: (self: Thread?, Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Info;
     SpringInfo: (self: Thread?, Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> SpringInfo;
     Connect: (self: Thread, Connection: RBXScriptSignal, Function: (...any) -> ()) -> (),
-    Do: (self: Thread, Function : (Grab: any) -> (),Entity: Instance) -> DoType;
-    State: (self: Thread, Function : (Grab: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
-    Iterate: (self: Thread, Table: any,Function: (Index: any,Value: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
+    Do: (self: Thread, Function : (Grab: any) -> (),Entity: Instance?) -> DoType;
+    State: (self: Thread, Function : (Grab: any,InnerThread: Thread,Entity: Instance?) -> ()) -> ();
+    Iterate: (self: Thread, Table: any,Function: (Index: any,Value: any?,InnerThread: Thread?,Entity: Instance?) -> ()) -> ();
     Property: (self:any, Entity: any, Property: string) -> Value;
     Attribute: (self:any, Entity: any, Attribute: string) -> Value;
     DelayValue: (self: Thread, Value: Value, Time: number) -> DelayValueType;
@@ -107,7 +107,7 @@ export type Thread = {
     Listener: (self: Thread, Entity: any, Event: string & {string}, func: (string,...any) -> ()) -> {};
     Add: (self: Thread,Entity: any) -> ();
     Remove: (self: Thread,Entity: any) -> ();
-    Space: (self: Thread, func: (...(Value & { [any]: Value })) -> ()) -> Space,
+    Space: (self: Thread, func: (...any) -> ()) -> Space,
     Spawn: (self: Thread,func: (...any)-> ()) -> Spawn;
     Event: (self: Thread,Connection: RBXScriptSignal & {RBXScriptSignal}, func: (...any) -> ()) -> Event;
     EventState: (self: Thread,Connection: RBXScriptSignal & {RBXScriptSignal}, func: (...any) -> ()) -> Event;
