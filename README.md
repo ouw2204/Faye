@@ -10,3 +10,6 @@ faye = "prophetouw/faye@1.2.9"
 ```
 ### Github
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.
+## Update log
+### v1.3.0
+- New utilities called SignalReader and SignalState which listens to signals and compiles them similarly to Do and State.

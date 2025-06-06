@@ -81,6 +81,10 @@ export type Spawn = {
     Perform: (self: Spawn) -> ();
     Destroy: (self: Spawn) -> ();
 }
+export type Event = {
+    Destroy: (self: Event) -> ();
+    Connect: (self: Event, Connection: RBXScriptSignal) -> Event;
+}
 export type Thread = {
     Create: (self: Thread, ClassName: string) -> (Properties: props.Property) -> {Instance: Instance, Thread: BasicThread};
     Configure: (self: Thread, Entity: any) -> (Properties: props.Property) -> {Instance: Instance, Thread: BasicThread};
@@ -88,8 +92,8 @@ export type Thread = {
     Clean: (self: Thread) -> ();
     Value: (self: Thread,Initial: any) -> Value;
     Animate: (self: Thread, Goal: any, Info: Info | SpringInfo) -> AnimationType;
-    Info: (self: Thread, Time: number,EasingStyle: Enum.EasingStyle,EasingDirection: Enum.EasingDirection, RepeatCount: number,Reverse: boolean,DelayTime: number) -> Info;
-    SpringInfo: (self: Thread, Time: number,Frequency: number,Damping: number, RepeatCount: number,Reverse: boolean,DelayTime: number) -> SpringInfo;
+    Info: (self: Thread?, Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Info;
+    SpringInfo: (self: Thread?, Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> SpringInfo;
     Connect: (self: Thread, Connection: RBXScriptSignal, Function: (...any) -> ()) -> (),
     Do: (self: Thread, Function : (Grab: any) -> (),Entity: Instance) -> DoType;
     State: (self: Thread, Function : (Grab: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
@@ -100,11 +104,13 @@ export type Thread = {
     Delay: (self: Thread, Props: props.Property,Time: number) -> DelayType;
     SetTo: (self: Thread, Value: Value) -> {};
     Signal: (self: Thread) -> Signal;
-    Event: (self: Thread, Entity: any, Event: any, Function: <p1,p2,p3>(Event: string,p1,p2,p3) -> ()) -> {};
+    Listener: (self: Thread, Entity: any, Event: string & {string}, func: (string,...any) -> ()) -> {};
     Add: (self: Thread,Entity: any) -> ();
     Remove: (self: Thread,Entity: any) -> ();
     Space: (self: Thread, func: (...(Value & { [any]: Value })) -> ()) -> Space,
     Spawn: (self: Thread,func: (...any)-> ()) -> Spawn;
+    Event: (self: Thread,Connection: RBXScriptSignal & {RBXScriptSignal}, func: (...any) -> ()) -> Event;
+    EventState: (self: Thread,Connection: RBXScriptSignal & {RBXScriptSignal}, func: (...any) -> ()) -> Event;
 }
 
 return nil;

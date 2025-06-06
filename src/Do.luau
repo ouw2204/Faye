@@ -89,12 +89,20 @@ return function(FunctionToFire,Thread)
     setmetatable(new,mt);
     function new.Grab(Value)
         if Value == nil then return end;
-        if new.Listening[Value.Id] == nil then
-            new.Listening[Value.Id] = true;
-            tins(new.Connections,Value.Changed:Connect(new.OnValueChanged))
+        if Value.ClassName ~= nil then
+            local FullName = Value:GetFullName();
+            if new.Listening[FullName] == nil then
+                new.Listening[FullName] = true;
+                tins(new.Connections,Value.Changed:Connect(new.OnValueChanged))
+            end
+            return Value.Value;
+        else
+            if new.Listening[Value.Id] == nil then
+                new.Listening[Value.Id] = true;
+                tins(new.Connections,Value.Changed:Connect(new.OnValueChanged))
+            end
+            return Value:Get();
         end
-
-        return Value:Get();
     end
     function new.OnValueChanged()
         local result,r1 = new.Function(new.Grab,(new.Entity ~= nil and new.Entity.Instance) or nil )

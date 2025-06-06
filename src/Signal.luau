@@ -4,7 +4,7 @@ local Signal = require(script.Parent.Packages.Signal)
 --[=[
     @method signal
     @within Thread
-    @param Thread table
+    @param Thread Thread
     @return Signal
     Creates a new signal object.
 ]=]

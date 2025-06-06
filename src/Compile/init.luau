@@ -49,7 +49,7 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
                         Compilers.OnChanged(Entity, prop, v, Recursive, Init)
                     end
                 elseif to(Entity.Instance[i]) == "RBXScriptSignal" then
-                    Compilers.Event(Entity, i, v,Recursive)
+                    Compilers.EventCompiler(Entity, i, v,Recursive)
                 else
                     if tov == "function" then
                         local result = v(Entity.Instance)

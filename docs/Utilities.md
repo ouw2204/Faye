@@ -234,10 +234,10 @@ local FrameValue = Thread:Value()
 }
 print(FrameValue:Get()) -- TestFrame Gui Object
 ```
-### 9. Event
+### 9. Listener
 Lets you connect to multiple events at once and handle everything in one code block.
 ```lua
-Thread:Event(Instance,{"ChildAdded","ChildRemoved"},function(Event:String, params...)
+Thread:Listener(Instance,{"ChildAdded","ChildRemoved"},function(Event:String, params...)
     if Event == "ChildAdded" then
         ...
     else
@@ -279,5 +279,14 @@ This is a Task.Spawn wrapper version of running a function, This is good if you 
     Size = Thread:Spawn(function()
         return UDim2.new(1,0,1,0)
     end)
+}
+```
+### Event and EventState
+These work similar to do and state but are for event listening
+```lua
+{
+    Thread:Event(Signal or {Signal1,Signal2},function(...)
+        return Thread:Create "Frame" {}
+    end):Connect(Signal3)
 }
 ```

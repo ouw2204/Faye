@@ -69,7 +69,7 @@ local m = {
             end;
         end)
     end;
-    Event = function(Entity,Index,Value,Compile)
+    EventCompiler = function(Entity,Index,Value,Compile)
         local Instance = Entity.Instance;
         local Thread = Entity.InnerThread or Entity.Thread -- fetching innerthread or thread with priority
         if Thread ~= nil then -- thread exist
@@ -110,6 +110,42 @@ local m = {
         
         --Thread = nil;   
     end;
+    Event = function(Entity,Index,Value)
+        local Thread = Entity.InnerThread or Entity.Thread
+        if Value.__Thread ~= Thread then
+            if Value.__Thread ~= nil then
+                if Value.__Thread["Remove"] then
+                    Value.__Thread:Remove(Value)
+                else
+                    local f = tf(Value.__Thread,Value)
+                    if f ~= nil then
+                        tr(Value.__Thread,f)
+                    end
+                end
+
+                if Value.__currentcleaner ~= nil then
+                    if Value.__Thread["Remove"] then
+                        Value.__Thread:Remove(Value.__currentcleaner)
+                    else
+                        local pos = tf(Value.__Thread,Value.__currentcleaner)
+                        if pos ~= nil then
+                            tr(Value.__Thread,pos)
+                        end
+                    end
+                    if Thread["Add"] then
+                        Thread:Add(Value.__currentcleaner)
+                    else
+                        tins(Thread,Value.__currentcleaner)
+                    end
+                end
+            end;
+            Value.__Thread = Thread;
+        end
+        Value.__entity = Entity;
+        if (tof(Index) ~= "number") then
+            Value.__property = Index;
+        end
+    end,
     Iterate = function(Entity,Index,Value,Compile)
         local Instance = Entity.Instance;
         local Thread = Entity.InnerThread or Entity.Thread

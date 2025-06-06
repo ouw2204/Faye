@@ -130,7 +130,16 @@ return function(FunctionToFire,Thread)
             Clean(new.CurrentCleaner)
             new.CurrentCleaner = nil;
         end
-        new.CurrentCleaner = new.Thread:Extend();
+        if new.Thread["Extend"] then
+            new.CurrentCleaner = new.Thread:Extend();
+        else
+            new.CurrentCleaner = {};
+            if new.Thread["Add"] then
+                new.Thread:Add(new.CurrentCleaner)
+            else
+                tins(new.Thread,new.CurrentCleaner)
+            end
+        end
         new.CurrentCleaner._isCleanAncestor = new.Thread._isCleanAncestor
         local result,r1 = new.Function(new.Grab,new.CurrentCleaner,(new.Entity ~= nil and new.Entity.Instance) or nil )
         
@@ -149,6 +158,7 @@ return function(FunctionToFire,Thread)
                     Compile(Entity,{result},new.CurrentCleaner)
                 end
             end
+            Entity = nil;
         else
             --clean
 
