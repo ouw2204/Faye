@@ -281,7 +281,7 @@ This is a Task.Spawn wrapper version of running a function, This is good if you 
     end)
 }
 ```
-### Event and EventState
+### 12. Event and EventState
 These work similar to do and state but are for event listening
 ```lua
 {
