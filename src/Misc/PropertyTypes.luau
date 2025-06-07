@@ -47,6 +47,7 @@ type Thread = {
 
 export type Property = {
 	Video: string?;
+	ClearTextOnFocus : boolean?;
 	ClearTableInCompulation: boolean?;
 	Rotation: number?;
 	Wraps: boolean?;
@@ -78,6 +79,8 @@ export type Property = {
 	ClipsDescendants: boolean?;
 	SortOrder: Enum.SortOrder?;
 	AspectRatio: number?;
+	AspectType: Enum.AspectType?;
+	DominantAxis: Enum.DominantAxis?;
 	Properties: Property?;
 	Name: string?;
 	Parent: Instance?;

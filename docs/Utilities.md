@@ -200,9 +200,10 @@ return (Index: number, Value: number,Thread: Types.Thread,Space: Types.Space)
     local Task = Space:Add({
         Variables,
         Color
-    },Thread?) -- the Thread parameter is optional, if not passed it will assume the thread that created the Space.
+    },Thread?,IsDictionary?) -- the Thread parameter is optional, if not passed it will assume the thread that created the Space.
 end)
 ```
+By default the table sent in the parameters is unpacked when fired to the space, if you want to use it as a dictionary, you must set the IsDictionary parmaeter to true, this will make it so nothing is unpacked, the parameters table will be sent whole.
 :::warning
 Although the Thread parameter for a task is optional, its useful if u want the task to be deleted when the inner-thread is cleaned. If you don't pass a thread then the task will be cleaned when the Thread that created the space is cleaned.
 :::
