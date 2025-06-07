@@ -109,7 +109,7 @@ return function(FunctionToFire,Thread)
         else
             if new.Listening[Value.Id] == nil then
                 new.Listening[Value.Id] = true;
-                tins(new.Connections,Value.Changed:Connect(new.OnValueChanged))
+                tins(new.Connections,Value.Changed:Connect(new.OnValueChanged,new.Connections))
             end
     
             return Value:Get();

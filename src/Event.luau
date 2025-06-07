@@ -34,7 +34,11 @@ function mt:Connect(Signal)
         if self.__Thread["Add"] ~= nil then
             self.__Thread:Add(Signal:Connect(self.__prefunc),true)
         else
-            tins(self.__Thread,Signal:Connect(self.__prefunc))
+            local Connection = Signal:Connect(self.__prefunc)
+            if typeof(Connection) == "table" and Connection.__simplesignalconnection and Connection.lists == nil then
+                Connection.lists = self.__Thread;
+            end
+            tins(self.__Thread,Connection)
         end
     else
         Signal:Connect(self.__prefunc)

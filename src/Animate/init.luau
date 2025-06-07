@@ -23,18 +23,24 @@ local AnimsHandler = require(script.AnimsPlayer);
 ]=]
 function mt:UpdateInfo(Info)
     if Info == nil then return end;
-    if Info.__typeIndex == 1 then
-        self.Function = Functions[Info.EasingStyle.Name][Info.EasingDirection.Name]
-    else
-        self.Function = nil;
-    end
-    self.__typeIndex = Info.__typeIndex;
-    self.__Time = Info.Time;
-    self.__Reverse = Info.Reverse;
-    self.__DelayTime = Info.DelayTime;
-    self.__Frequency = Info.Frequency
-    self.__Damping = Info.Damping
-    self.__RepeatCount = Info.RepeatCount
+    if Info.__typeIndex ~= nil then
+        if Info.__typeIndex == 1 then
+            self.Function = Functions[Info.EasingStyle.Name][Info.EasingDirection.Name]
+        else
+            self.Function = nil;
+        end
+        self.__typeIndex = Info.__typeIndex;
+    elseif (Info.EasingStyle ~= nil or Info.EasingDirection ~= nil) and self.__typeIndex == 1 then
+        self.Function = Functions[(Info.EasingStyle or Enum.EasingStyle.Linear) .Name][(Info.EasingDirection or Enum.EasingDirection.Out).Name]
+        self.__typeIndex = 1;
+    end;
+    self.__Time = Info.Time or self.__Time;
+    self.__Reverse = Info.Reverse or self.__Reverse;
+    self.__DelayTime = Info.DelayTime or self.__DelayTime;
+    self.__Frequency = Info.Frequency or self.__Frequency;
+    self.__Damping = Info.Damping or self.__Damping;
+    self.__RepeatCount = Info.RepeatCount or self.__RepeatCount;
+    return self;
 end
 
 --[=[

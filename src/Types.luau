@@ -24,6 +24,7 @@ export type AnimationType = {
     Play: (self: AnimationType,To: any) -> ();
     Skip: (self: AnimationType) -> ();
     Destroy: (self: AnimationType) -> ();
+    UpdateInfo: (self: AnimationType, Info: {Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?,Reverse: boolean?,DelayTime: number?,Frequency: number?,Damping: number?,RepeatCount: number?}) -> AnimationType;
 }
 export type Info = {Time: number; EasingStyle: Enum.EasingStyle; EasingDirection: Enum.EasingDirection; RepeatCount: number; Reverse: boolean; DelayTime: number}
 export type SpringInfo = {Time: number; Frequency: number; Damping: number; RepeatCount: number; Reverse: boolean; DelayTime: number}

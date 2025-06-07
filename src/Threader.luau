@@ -102,12 +102,18 @@ end
     @param Entity any
     The entity to add to the thread
 ]=]
-
+local tof = typeof
 function mt:Add(Entity: any,IsConnection)
     if Entity == nil then return end;
     if IsConnection and self.ConnectionsThread ~= nil then
+        if tof(Entity) == "table" and Entity.__simplesignalconnection and Entity.lists == nil then
+            Entity.lists = self.ConnectionsThread;
+        end
         tins(self.ConnectionsThread,Entity)
     else
+        if tof(Entity) == "table" and Entity.__simplesignalconnection and Entity.lists == nil then
+            Entity.lists = self;
+        end
         tins(self,Entity)
     end
 end

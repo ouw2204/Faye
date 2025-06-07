@@ -35,10 +35,10 @@ function  parammt.__tostring()
     return "Task"
 end
 function parammt:Connect(Connection: RBXScriptSignal)
-    local connection = Connection:Connect(self.Call)
     if self.__connections == nil then
         self.__connections = {}
     end
+    local connection = Connection:Connect(self.Call,self.__connections)
     tins(self.__connections,connection)
     return connection;
 end
@@ -161,17 +161,17 @@ end
 ]=]
 function mt:Connect(Connection: RBXScriptSignal,Id: string?)
     if Id == nil then
-        local connection = Connection:Connect(self.ReceiverFunction)
+        local connection = Connection:Connect(self.ReceiverFunction,self.Thread)
         self.Thread:Add(connection)
         return connection;
     else
         task.delay(nil,function()
             for i,v in pairs(self.Tasks) do
                 if v.Id == Id then
-                    local TaskConnection = Connection:Connect(v.Call)
                     if v.__connections == nil then
                         v.__connections = {}
                     end
+                    local TaskConnection = Connection:Connect(v.Call,v.__connections)
                     tins(v.__connections,TaskConnection)
                     return TaskConnection;
                 end
