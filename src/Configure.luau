@@ -107,11 +107,16 @@ function mt:Compile()
         Props.CleanDelay = nil;
 
         if Props.Parent ~= nil then
-            local EqType = (typeof(Props.Parent) == "table" and ((ValueClasses[Props.Parent.__type] and "Value") or Props.Parent.__type)) or nil
-            if EqType ~= nil then
+            local eqistable = typeof(Props.Parent) == "table"
+            local EqType = (eqistable and ((ValueClasses[Props.Parent.__type] and "Value") or Props.Parent.__type)) or nil
+            if EqType ~= nil and EqType ~= "Instance" then
                 Compilers[ EqType ](self,"Parent",Props.Parent)
             else
-                self.Instance.Parent = Props.Parent;
+                if eqistable then
+                    self.Instance.Parent = Props.Parent.Instance or Props.Parent;
+                else
+                    self.Instance.Parent = Props.Parent;
+                end
             end
             Props.Parent = nil;
         end
