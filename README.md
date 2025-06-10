@@ -11,6 +11,8 @@ faye = "prophetouw/faye@1.3.4"
 ### Github
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.
 ## Update log
+### v1.3.5
+- Removed Inputer
 ### v1.3.2
 - Fixed some simple signal implementation bugs
 - Animation:UpdateInfo

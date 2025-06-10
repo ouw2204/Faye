@@ -28,12 +28,12 @@ export type AnimationType = {
 }
 export type Info = {Time: number; EasingStyle: Enum.EasingStyle; EasingDirection: Enum.EasingDirection; RepeatCount: number; Reverse: boolean; DelayTime: number}
 export type SpringInfo = {Time: number; Frequency: number; Damping: number; RepeatCount: number; Reverse: boolean; DelayTime: number}
-export type InputType = {
+--[[export type InputType = {
     Get: (self: InputType, Target: Instance?) -> UserInputType;
     Type: (self: InputType, Input: UserInputType) -> UserInputType;
     GetMousePosition: (self: InputType, Input: UserInputType,From: Vector3?) -> Vector3;
     GetMousePositionNoInsets: (self: InputType, Input: UserInputType,From: Vector3?) -> Vector3;
-}
+}]]
 export type Connection = {
     Disconnect: (self: Connection) -> ();
     Destroy: (self: Connection) -> ();

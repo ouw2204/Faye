@@ -159,7 +159,7 @@ export type Property = {
 	MouseButton1Up: () -> ()?, -- Triggered when the left mouse button is released
 	MouseButton2Down: () -> ()?, -- Triggered when the right mouse button is pressed down
 	MouseButton2Up: () -> ()?, -- Triggered when the right mouse button is released
-	Offset: vector?;
+	Offset: Vector2?;
 
 	-- BillboardGui Properties
 	Adornee: Instance?,

@@ -16,7 +16,6 @@ sidebar_position: 1
 - Property & Attribute
 - Iterate
 - Space
-- Inputer(UIHub Only)
 - SetTo
 - Listener
 - Spawn
