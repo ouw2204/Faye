@@ -84,6 +84,7 @@ export type Spawn = {
 }
 export type Event = {
     Destroy: (self: Event) -> ();
+    Call: (...any) -> Event;
     Connect: (self: Event, Connection: RBXScriptSignal) -> Event;
 }
 export type Thread = {

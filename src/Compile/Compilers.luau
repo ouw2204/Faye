@@ -145,6 +145,14 @@ local m = {
         if (tof(Index) ~= "number") then
             Value.__property = Index;
         end
+        if Value.__callOnInit then
+            task.spawn(function()
+                Value.__prefunc(table.unpack(Value.__callOnInit))
+            end)
+            table.clear(Value.__callOnInit)
+            Value.__callOnInit = nil;
+        end
+        Value.__Initiated = true;
     end,
     Iterate = function(Entity,Index,Value,Compile)
         local Instance = Entity.Instance;

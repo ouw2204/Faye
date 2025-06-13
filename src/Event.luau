@@ -76,7 +76,27 @@ function  mt:Destroy()
     setmetatable(self,nil)
     self.__destroying = nil
 end
-
+--[=[
+    @method Call
+    @within Event
+    Forces a signal, only use this if the :Event is being compiled, otherwise just create a function then fire it.
+]=]
+--[=[
+    @method Call
+    @within EventState
+    Forces a signal, only use this if the :Event is being compiled, otherwise just create a function then fire it.
+]=]
+function  mt:Call(...)
+    if self.__Initiated == nil then
+        if self.__callOnInit ~= nil then
+            tc(self.__callOnInit)
+        end
+        self.__callOnInit = {...};
+    else
+        self.__prefunc(...)
+    end
+    return self;
+end
 local Types = require(script.Parent.Types);
 --[=[
     @method SignalReader

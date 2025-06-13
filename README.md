@@ -6,11 +6,13 @@ Remember to occasionally check for new updates as there might be bug fixes.
 https://create.roblox.com/store/asset/74301103261718/Faye
 ### Wally
 ```
-Faye = "prophetouw/faye@1.3.4" 
+Faye = "prophetouw/faye@1.3.6" 
 ```
 ### Github
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.
 ## Update log
+### v1.3.6
+- :Call update to Event and EventState to call simulate/force event receiving
 ### v1.3.5
 - Removed Inputer
 ### v1.3.2
