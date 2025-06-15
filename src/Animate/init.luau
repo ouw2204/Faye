@@ -116,12 +116,17 @@ function mt:Stop(FromDestroy)
             self.Thread.AnimationsAmount = math.max(self.Thread.AnimationsAmount - 1, 0)
         end
         if self.Thread.CleanWhenDone and (self.Thread.AnimationsAmount ~= nil and self.Thread.AnimationsAmount <= 0) then
+            self.Thread.AnimationsAmount = nil;
             self.Thread.CleanWhenDone = nil;
             if FromDestroy == nil then
                 self:Destroy(true)
             end
             if self.Thread ~= nil then
                 Cleaner(self.Thread)
+            end
+        else
+            if self.Thread.AnimationsAmount ~= nil and self.Thread.AnimationsAmount <= 0 then
+                self.Thread.AnimationsAmount = nil;
             end
         end
     end
