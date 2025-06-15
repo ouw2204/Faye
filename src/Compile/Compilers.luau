@@ -327,6 +327,7 @@ local m = {
                 end
                 CleanHolder();
             end
+            Value.__cleanFunction = Clean
             if Thread["Add"] then
                 Thread:Add(Clean)
             else
@@ -511,10 +512,10 @@ local m = {
                                 end
                             else
                                 if Entity ~= nil and Instance ~= nil then
-                                    if (NoAnim or Value.SkipToGoal) and Value.Initial == nil then
-                                        if NoAnim == nil then
+                                    if (NoAnim --[[or Value.SkipToGoal]]) and Value.Initial == nil then
+                                        --[[if NoAnim == nil then
                                             Value.SkipToGoal = nil;
-                                        end
+                                        end]]
                                         NoAnim = nil;
                                         if Value.Property ~= nil and tof(Instance[Value.Property]) == tof(newnewGoal) then
                                             Instance[Value.Property] = newnewGoal;
@@ -533,10 +534,10 @@ local m = {
                     end
                 else
                     if Entity ~= nil and Instance ~= nil then
-                        if (NoAnim or Value.SkipToGoal) and Value.Initial == nil then
-                            if NoAnim == nil then
+                        if (NoAnim--[[ or Value.SkipToGoal]]) and Value.Initial == nil then
+                            --[[if NoAnim == nil then
                                 Value.SkipToGoal = nil;
-                            end
+                            end]]
                             NoAnim = nil;
                             if Value.Property ~= nil and tof(Instance[Value.Property]) == tof(NewGoal) then
                                 Instance[Value.Property] = NewGoal;
@@ -587,6 +588,7 @@ local m = {
             else
                 table.insert(Thread,cleanFunction) -- if thread is a regular table
             end
+            Value.__cleanFunction = cleanFunction
         end
         Goal = nil;
         Info = nil;
@@ -661,6 +663,7 @@ local m = {
             else
                 table.insert(Thread,cleanFunction) -- if thread is a regular table
             end
+            Value.__cleanFunction = cleanFunction
         end
         Thread = nil;
     end

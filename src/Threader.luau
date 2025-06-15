@@ -192,16 +192,53 @@ function mt:Space(func: (...any) -> ())
     return Space(func,self);
 end
 local Event = require(Utilities.Event)
-function mt:Event(Connections: RBXScriptSignal & {RBXScriptSignal},func: (...any) -> ())
+function mt:Event(Connections: RBXScriptSignal & {RBXScriptSignal} & () -> (),func: (...any) -> ()?)
     return Event(Connections, func,self);
 end
-function mt:EventState(Connections: RBXScriptSignal & {RBXScriptSignal},func: (...any) -> ())
+function mt:EventState(Connections: RBXScriptSignal & {RBXScriptSignal} & () -> (),func: (...any) -> ()?)
     return Event(Connections, func,self,true);
 end
-local scriptName = script.Name;
-function mt.__tostring()
-    return scriptName;
+local tc = table.clear
+--[=[
+    @within Thread
+    @method Timed
+    @param Item any
+    @param Time number?
+    @return item
+    Cleans an item individually based off the time.
+]=]
+function  mt:Timed(Item: any, Time: number?)
+    if Item == nil then return end;
+    local d; d = task.delay(Time,function()
+        local type = typeof(Item)
+        if (type == "table" and Item["Destroy"] ~= nil) or type == "Instance" then
+            Item:Destroy();
+        elseif (type == "table" and Item["Clean"]) then
+            Item:Clean()
+        elseif type == "function" then
+            Item()
+        elseif type == "RBXScriptConnection" then
+            Item:Disconnect();
+        elseif type == "thread" then
+            task.cancel(Item);
+        elseif type == "table" then
+            if Item.__isThread == true then
+                Clean(Item)
+            else
+                tc(Item)
+            end
+        end
+        self:Remove(d)
+    end)
+    if Time  ~= nil and Time >0 then
+        self:Add(d)
+    end
+    return Item;
 end
+local scriptName = script.Name;
+--[[function mt.__tostring()
+    return scriptName;
+end]]
 return function() : Types.Thread
     local new = {}
     setmetatable(new,mt)

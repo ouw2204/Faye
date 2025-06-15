@@ -145,6 +145,18 @@ end
 ]=]
 function mt:Destroy()
     if self.Thread ~= nil then
+        if self.__cleanFunction ~= nil then
+            if self.Thread["Remove"] then
+                self.Thread:Remove(self.__cleanFunction)
+            else
+                local f = tf(self.Thread,self.__cleanFunction)
+                if f ~= nil then
+                    tr(self.Thread,f)
+                end
+            end
+
+            self.__cleanFunction = nil;
+        end
         if self.Thread["Remove"] then
             self.Thread:Remove(self)
         else

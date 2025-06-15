@@ -61,6 +61,23 @@ function  mt:Destroy()
         self[i] = nil;
     end
     self.func = nil;
+    if self.__currentcleaner ~= nil then
+        if self.__Thread["Remove"] ~= nil then
+            self.__Thread:Remove(self.__currentcleaner)
+        else
+            local find = tf(self.__Thread,self.__currentcleaner)
+            if find ~= nil then
+                tr(self.__Thread,find)
+            end
+        end
+        Clean(self.__currentcleaner)
+        self.__currentcleaner = nil;
+    end
+    self.__entity = nil;
+    if self.__callOnInit ~= nil then
+        tc(self.__callOnInit)
+        self.__callOnInit = nil;
+    end
     if self.__Thread ~= nil then
         if self.__Thread["Remove"] ~= nil then
             self.__Thread:Remove(self)
@@ -103,7 +120,11 @@ local Types = require(script.Parent.Types);
     @within Thread
     Creates a new signal reader that will run the function when the signal is triggered.
 ]=]
-return function (Connections: RBXScriptSignal & {RBXScriptSignal},func: () -> (), Thread: Types.Thread?,State: boolean?)
+return function (Connections: RBXScriptSignal & {RBXScriptSignal} & () -> (),func: (...any) -> ()?, Thread: Types.Thread?,State: boolean?)
+    if func == nil then
+        func = Connections;
+        Connections = nil;
+    end
     local tab = {
         __func = func;
         __Thread = Thread;

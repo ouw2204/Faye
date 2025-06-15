@@ -63,18 +63,32 @@ function mt:Destroy(FromStop)
                 tr(self.Thread,Pos)
             end
         end
+        if self.__cleanFunction ~= nil then
+            self.__cleanFunction()
+            if self.Thread["Remove"] then
+                self.Thread:Remove(self.__cleanFunction)
+            else
+                local f = tf(self.Thread,self.__cleanFunction)
+                if f ~= nil then
+                    tr(self.Thread,f)
+                end
+            end
+            self.__cleanFunction = nil;
+        end
         if FromStop == nil then
             self.Thread = nil;
         end
+        
     end
-
+    
     self.__Time = nil;
     self.__Reverse = nil;
     self.__DelayTime = nil;
     self.__Frequency = nil;
     self.__Damping = nil;
     self.__RepeatCount = nil;
-
+    
+    self.__cleanFunction = nil;
     self.Goal = nil;
     self.Entity = nil;
     self.Property = nil;
@@ -114,18 +128,19 @@ function mt:Stop(FromDestroy)
     self.Elapsed = nil;
 end
 
---[=[
+--[[
     @method Skip
     @within Animate
     Skips to the goal of the animation.
     @return Animation
-]=]
+]]
+--[[
 function mt:Skip()
     if self.Goal == nil or tof(self.Goal) == "table" then return self end;
     self.SkipToGoal = true;
     return self;
 end
-
+]]
 --[=[
     @method Play
     @within Animate

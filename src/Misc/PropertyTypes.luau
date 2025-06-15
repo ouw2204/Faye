@@ -160,7 +160,8 @@ export type Property = {
 	MouseButton2Down: () -> ()?, -- Triggered when the right mouse button is pressed down
 	MouseButton2Up: () -> ()?, -- Triggered when the right mouse button is released
 	Offset: Vector2?;
-
+	TileSize: UDim2?;
+	TextStrokeColor3: Color3?;
 	-- BillboardGui Properties
 	Adornee: Instance?,
 	StudsOffset: Vector3?,

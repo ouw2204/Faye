@@ -22,7 +22,7 @@ export type AnimationType = {
     From: (self: AnimationType, Value: any) -> AnimationType;
     AlwaysFrom: (self: AnimationType, Value: any) -> AnimationType;
     Play: (self: AnimationType,To: any) -> ();
-    Skip: (self: AnimationType) -> ();
+    --Skip: (self: AnimationType) -> ();
     Destroy: (self: AnimationType) -> ();
     UpdateInfo: (self: AnimationType, Info: {Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?,Reverse: boolean?,DelayTime: number?,Frequency: number?,Damping: number?,RepeatCount: number?}) -> AnimationType;
 }
@@ -111,7 +111,8 @@ export type Thread = {
     Remove: (self: Thread,Entity: any) -> ();
     Space: (self: Thread, func: (...any) -> ()) -> Space,
     Spawn: (self: Thread,func: (...any)-> ()) -> Spawn;
-    Event: (self: Thread,Connection: RBXScriptSignal & {RBXScriptSignal}, func: (...any) -> ()) -> Event;
+    Timed: (self: Thread, Item: any, Time: number?) -> ();
+    Event: (self: Thread,Connections: RBXScriptSignal & {RBXScriptSignal} & () -> (),func: (...any) -> ()?) -> Event;
     EventState: (self: Thread,Connection: RBXScriptSignal & {RBXScriptSignal}, func: (...any) -> ()) -> Event;
 }
 

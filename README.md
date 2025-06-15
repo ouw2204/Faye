@@ -6,11 +6,17 @@ Remember to occasionally check for new updates as there might be bug fixes.
 https://create.roblox.com/store/asset/74301103261718/Faye
 ### Wally
 ```
-Faye = "prophetouw/faye@1.3.6" 
+Faye = "prophetouw/faye@1.3.8" 
 ```
 ### Github
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.
 ## Update log
+### v1.3.8
+- Fixed animate memory bug
+- Removed :Skip function from animate as its useless
+### v1.3.7
+- Made the connection parameter in Thread:Event none mandatory
+- Thread:CleanAfter which elts you clean stuff individually after a certain amount of time
 ### v1.3.6
 - :Call update to Event and EventState to call simulate/force event receiving
 ### v1.3.5

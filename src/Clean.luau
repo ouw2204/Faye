@@ -1,6 +1,6 @@
 --add a __isThread = true variable in all your custom threads that don't have a destroy function
 local tc = table.clear
-function Recursive(Scope,NoDeletion: boolean?)
+function Recursive(Scope)
     if Scope == nil then return end;
     if Scope["Destroy"] ~= nil then
         Scope:Destroy();
@@ -39,6 +39,6 @@ function Recursive(Scope,NoDeletion: boolean?)
         --tc(Scope)
     end
 end
-return function(Scope, NoDeletion: boolean?)
-    Recursive(Scope,NoDeletion)
+return function(Scope)
+    Recursive(Scope)
 end
