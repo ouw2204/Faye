@@ -112,8 +112,8 @@ export type Thread = {
     Space: (self: Thread, func: (...any) -> ()) -> Space,
     Spawn: (self: Thread,func: (...any)-> ()) -> Spawn;
     Timed: (self: Thread, Item: any, Time: number?) -> ();
-    Event: (self: Thread,Connections: RBXScriptSignal & {RBXScriptSignal} & () -> (),func: (...any) -> ()?) -> Event;
-    EventState: (self: Thread,Connection: RBXScriptSignal & {RBXScriptSignal}, func: (...any) -> ()) -> Event;
+    Event: (self: Thread,any,func: (...any) -> ()?) -> Event;
+    EventState: (self: Thread,any, func: (...any) -> ()) -> Event;
 }
 
 return nil;
