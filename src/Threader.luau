@@ -236,9 +236,9 @@ function  mt:Timed(Item: any, Time: number?)
     return Item;
 end
 local scriptName = script.Name;
---[[function mt.__tostring()
+function mt.__tostring()
     return scriptName;
-end]]
+end
 return function() : Types.Thread
     local new = {}
     setmetatable(new,mt)

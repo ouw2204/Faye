@@ -16,15 +16,17 @@ export type Value = {
     GetItem: (self: Value,Index: any) -> any;
     ItemExists: (self: Value, Entity: any) -> ();
 }
+export type Instance = {Instance: Instance, Props: {[any]: any}?,Thread: thread?, Innerthread: thread?}
 export type UserInputType = typeof(game:GetService("UserInputService"));
 export type BasicThread = {Remove: (self: BasicThread, Entity: any) -> (); Add: (self: BasicThread, Entity: any) -> ()}
-export type AnimationType = {
-    From: (self: AnimationType, Value: any) -> AnimationType;
-    AlwaysFrom: (self: AnimationType, Value: any) -> AnimationType;
-    Play: (self: AnimationType,To: any) -> ();
-    --Skip: (self: AnimationType) -> ();
-    Destroy: (self: AnimationType) -> ();
-    UpdateInfo: (self: AnimationType, Info: {Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?,Reverse: boolean?,DelayTime: number?,Frequency: number?,Damping: number?,RepeatCount: number?}) -> AnimationType;
+export type Animation = {
+    From: (self: Animation, Value: any) -> Animation;
+    AlwaysFrom: (self: Animation, Value: any) -> Animation;
+    Play: (self: Animation,To: any) -> ();
+    --Skip: (self: Animation) -> ();
+    Destroy: (self: Animation) -> ();
+    OneTimeInfo: (self: Animation, Info: {Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?,Reverse: boolean?,DelayTime: number?,Frequency: number?,Damping: number?,RepeatCount: number?}) -> Animation;
+    UpdateInfo: (self: Animation, Info: {Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?,Reverse: boolean?,DelayTime: number?,Frequency: number?,Damping: number?,RepeatCount: number?}) -> Animation;
 }
 export type Info = {Time: number; EasingStyle: Enum.EasingStyle; EasingDirection: Enum.EasingDirection; RepeatCount: number; Reverse: boolean; DelayTime: number}
 export type SpringInfo = {Time: number; Frequency: number; Damping: number; RepeatCount: number; Reverse: boolean; DelayTime: number}
@@ -93,7 +95,7 @@ export type Thread = {
     Extend: (self: Thread) -> Thread;
     Clean: (self: Thread) -> ();
     Value: (self: Thread,Initial: any) -> Value;
-    Animate: (self: Thread, Goal: any, Info: Info | SpringInfo) -> AnimationType;
+    Animate: (self: Thread, Goal: any, Info: Info | SpringInfo) -> Animation;
     Info: (self: Thread?, Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Info;
     SpringInfo: (self: Thread?, Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> SpringInfo;
     Connect: (self: Thread, Connection: RBXScriptSignal, Function: (...any) -> ()) -> (),

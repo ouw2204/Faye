@@ -9,7 +9,7 @@ If you are using the wally version of faye, the module itself will return the th
 ```lua
 local Threader = require(Packages.Faye)
 ```
-Faye can be used with or without a thread(scope).
+Create,Configure, and Value based(Value, Property, Attribute,etc) utilities can be used independetly. 
 #### Without:
 ```lua
 local Create = require(path)
@@ -40,6 +40,9 @@ Create("Frame",Trove) {
 task.wait(2)
 Trove:Destroy()
 ```
+:::note
+When creating utilities independently you can pass your own thread/cleaner as a parameter. right now the only utilities that fully support thread indepedence(can work without it) are Clean, Configure, and value based utilities, everything else its recommended you pass a thread if you are to use them independently.
+::: 
 ### 2. Inner-Threads
 Inner-Threads are extended threads, this means that they are child threads of whatever thread they are extended from.
 ```lua
@@ -135,4 +138,7 @@ There is a module named "Type" in the Faye folder that contains a bunch of types
 [Property]ChangedInit fires the function initially and when it is changed, its like the regular [Property]Changed except it fires the function on initialization.
 :::note
 Anything returned in these signal functions will be compiled.
+:::
+:::warning
+Every utility except for value base utilities(Value, Property, Attribute,etc) can only be compiled once
 :::

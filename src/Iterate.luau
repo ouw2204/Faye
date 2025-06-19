@@ -18,18 +18,11 @@ mt.__index = mt;
     Destroys the object and cleans up resources.
 ]=]
 function mt:Destroy()
+    if self.__cleanFunction ~= nil then
+        self.__cleanFunction()
+        self.__cleanFunction = nil;
+    end
     if self.Thread ~= nil then
-        if self.__cleanFunction ~= nil then
-            if self["Remove"] then
-                self:Remove(self.__cleanFunction)
-            else
-                local f = tf(self,self.__cleanFunction)
-                if f ~= nil then
-                    tr(self,f)
-                end
-            end
-            self.__cleanFunction = nil;
-        end
         if self.Thread["Remove"] then
             self.Thread:Remove(self)
         else

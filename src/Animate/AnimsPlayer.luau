@@ -3,6 +3,7 @@ local tof = typeof
 local RunService = game:GetService("RunService")
 local RunConnection = (RunService:IsServer() and RunService.Heartbeat) or RunService.RenderStepped
 local ValueClasses = require(script.Parent.Parent.Misc.ValueClasses);
+local Tweenservice = game:GetService("TweenService")
 local Lerps = require(script.Parent.Lerps)
 local Spring = require(script.Parent.Spring)
 local max = math.max;
@@ -56,7 +57,7 @@ function AnimsHandler.Update(delta)
         else
             --Animate
             if Anim.__typeIndex == 1 then
-                Pivot =  Anim.Function(Prog)
+                Pivot =  Tweenservice:GetValue(Prog,Anim.__easingstyle,Anim.__easingdirection) --Anim.Function(Prog)
             elseif Anim.__typeIndex == 2 then
                 Pivot = Spring(Prog,Anim.__Frequency,Anim.__Damping)
             end

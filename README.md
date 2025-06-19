@@ -6,11 +6,16 @@ Remember to occasionally check for new updates as there might be bug fixes.
 https://create.roblox.com/store/asset/74301103261718/Faye
 ### Wally
 ```
-Faye = "prophetouw/faye@1.4.1" 
+Faye = "prophetouw/faye@1.4.7" 
 ```
 ### Github
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.
 ## Update log
+### v1.4.7
+- Nested values go to infinite(ex)
+### v1.4.2
+- Iterate fixes
+- New OnetimeInfo function for animations
 ### v1.4.0
 - Cleanup
 ### v1.3.8

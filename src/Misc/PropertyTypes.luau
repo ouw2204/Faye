@@ -1,184 +1,211 @@
-type BasicThread = {Remove: (self: any, Entity: any) -> (); Add: (self: any, Entity: any) -> ()}
+type BasicThread = { Remove: (self: any, Entity: any) -> (), Add: (self: any, Entity: any) -> () }
 type AnimationType = {
-    From: (self: AnimationType, Value: any) -> AnimationType;
-    Play: (self: AnimationType,To: any) -> ();
-    Skip: (self: AnimationType) -> ();
+	From: (self: AnimationType, Value: any) -> AnimationType,
+	Play: (self: AnimationType, To: any) -> (),
+	Skip: (self: AnimationType) -> (),
 }
 type Value = {
-    Set: (self: Value, Value: any) -> ();
-    Get: (self: Value) -> ();
-    Add: (self: Value, Value: any) -> ();
-    Remove: (self: Value,Value: any) -> ();
-    Initial: any;
-    Changed: RBXScriptSignal;
-    Reset: (self: Value) -> ();
+	Set: (self: Value, Value: any) -> (),
+	Get: (self: Value) -> (),
+	Add: (self: Value, Value: any) -> (),
+	Remove: (self: Value, Value: any) -> (),
+	Initial: any,
+	Changed: RBXScriptSignal,
+	Reset: (self: Value) -> (),
 }
-type Info = {Time: number; EasingStyle: Enum.EasingStyle; EasingDirection: Enum.EasingDirection; RepeatCount: number; Reverse: boolean; DelayTime: number}
-type SpringInfo = {Time: number; Frequency: number; Damping: number; RepeatCount: number; Reverse: boolean; DelayTime: number}
+type Info = {
+	Time: number,
+	EasingStyle: Enum.EasingStyle,
+	EasingDirection: Enum.EasingDirection,
+	RepeatCount: number,
+	Reverse: boolean,
+	DelayTime: number,
+}
+type SpringInfo = {
+	Time: number,
+	Frequency: number,
+	Damping: number,
+	RepeatCount: number,
+	Reverse: boolean,
+	DelayTime: number,
+}
 
 type DelayType = {
-    Get: (self: DelayType) -> ();
-    Changed: RBXScriptSignal;
-    SetTime: (self: DelayType, Time: number) -> ();
-    Sensitive: (self: DelayType) -> DelayType;
-    ResetTime: (self: DelayType) -> ();
-};
+	Get: (self: DelayType) -> (),
+	Changed: RBXScriptSignal,
+	SetTime: (self: DelayType, Time: number) -> (),
+	Sensitive: (self: DelayType) -> DelayType,
+	ResetTime: (self: DelayType) -> (),
+}
 type Thread = {
-    Create: (self: any, ClassName: string) -> (Properties: Property) -> {Instance: Instance, Thread: BasicThread};
-    Configure: (self: any, Entity: any) -> (Properties: Property) -> {Instance: Instance, Thread: BasicThread};
-    Extend: (self: any) -> Thread;
-    Clean: (self: any) -> ();
-    Value: (self: any,Initial: any) -> Value;
-    Animate: (self: any, Goal: any, Info: Info | SpringInfo) -> AnimationType;
-    Info: (self: any, Time: number,EasingStyle: Enum.EasingStyle,EasingDirection: Enum.EasingDirection, RepeatCount: number,Reverse: boolean,DelayTime: number) -> Info;
-    SpringInfo: (self: any, Time: number,Frequency: number,Damping: number, RepeatCount: number,Reverse: boolean,DelayTime: number) -> SpringInfo;
-    Connect: (self: any, Connection: RBXScriptSignal,Function: () -> ()) -> ();
-    Do: (self: any, Function : (Grab: any) -> (),Entity: Instance) -> ();
-    State: (self: any, Function : (Grab: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
-    Iterate: (self: any, Table: any,Function: (Index: any,Value: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
-    Property: (self:any, Entity: any, Property: string) -> Value;
-    Attribute: (self:any, Entity: any, Attribute: string) -> Value;
-    Delay: (self: any, Value: Value, Time: number) -> DelayType;
-    SetTo: (self: any, Value: Value) -> {};
-    Event: (self: any, Entity: any, Event: any, Function: <p1,p2,p3>(Event: string,p1,p2,p3) -> ()) -> {};
-    Add: (self: any,Entity: any) -> ();
-    Remove: (self: any,Entity: any) -> ();
+	Create: (self: any, ClassName: string) -> (Properties: Property) -> { Instance: Instance, Thread: BasicThread },
+	Configure: (self: any, Entity: any) -> (Properties: Property) -> { Instance: Instance, Thread: BasicThread },
+	Extend: (self: any) -> Thread,
+	Clean: (self: any) -> (),
+	Value: (self: any, Initial: any) -> Value,
+	Animate: (self: any, Goal: any, Info: Info | SpringInfo) -> AnimationType,
+	Info: (
+		self: any,
+		Time: number,
+		EasingStyle: Enum.EasingStyle,
+		EasingDirection: Enum.EasingDirection,
+		RepeatCount: number,
+		Reverse: boolean,
+		DelayTime: number
+	) -> Info,
+	SpringInfo: (
+		self: any,
+		Time: number,
+		Frequency: number,
+		Damping: number,
+		RepeatCount: number,
+		Reverse: boolean,
+		DelayTime: number
+	) -> SpringInfo,
+	Connect: (self: any, Connection: RBXScriptSignal, Function: () -> ()) -> (),
+	Do: (self: any, Function: (Grab: any) -> (), Entity: Instance) -> (),
+	State: (self: any, Function: (Grab: any, InnerThread: Thread, Entity: Instance) -> ()) -> (),
+	Iterate: (
+		self: any,
+		Table: any,
+		Function: (Index: any, Value: any, InnerThread: Thread, Entity: Instance) -> ()
+	) -> (),
+	Property: (self: any, Entity: any, Property: string) -> Value,
+	Attribute: (self: any, Entity: any, Attribute: string) -> Value,
+	Delay: (self: any, Value: Value, Time: number) -> DelayType,
+	SetTo: (self: any, Value: Value) -> {},
+	Event: (self: any, Entity: any, Event: any, Function: <p1, p2, p3>(Event: string, p1, p2, p3) -> ()) -> {},
+	Add: (self: any, Entity: any) -> (),
+	Remove: (self: any, Entity: any) -> (),
 }
 
 export type Property = {
-	Video: string?;
-	ClearTextOnFocus : boolean?;
-	ClearTableInCompulation: boolean?;
-	Rotation: number?;
-	Wraps: boolean?;
-	CellSize: UDim2?;
-	Padding: UDim?;
-	CellPadding: UDim2?;
-	ZIndex: number?;
-	PlaceholderText: string?;
-	AbsolutePosition: Vector2?;
-	AbsoluteSize: Vector2?;
-	AbsoluteContentSize: Vector2?;
-	TextBounds: Vector2?;
-	DisplayOrder: number?;
-	FontFace: any?;
-	ScrollBarImageColor3: Color3?;
-	ScrollBarTransparency: number?;
-	TopImage: string?;
-	MidImage: string?;
-	BottomImage: string?;
-	ScrollBarThickness: number?;
-	TextSize: number?;
-	CanvasSize: UDim2?;
-	CanvasPosition: Vector2?;
-	HorizontalAlignment: Enum.HorizontalAlignment?;
-	VerticalAlignment: Enum.VerticalAlignment?;
-	FillDirection: Enum.FillDirection?;
-	TextTransparency: number?;
-	TextStrokeTransparency: number?;
-	ClipsDescendants: boolean?;
-	SortOrder: Enum.SortOrder?;
-	AspectRatio: number?;
-	AspectType: Enum.AspectType?;
-	DominantAxis: Enum.DominantAxis?;
-	Properties: Property?;
-	Name: string?;
-	Parent: Instance?;
-	Anchored: boolean?,
-	BrickColor: BrickColor?,
-	CanCollide: boolean?,
-	Selectable: boolean?,
-	CastShadow: boolean?,
-	Color: Color3?,
-	Material: Enum.Material?,
+	Video: any,
+	ClearTextOnFocus: any,
+	ClearTableInCompulation: any,
+	Rotation: any,
+	Wraps: any,
+	CellSize: any,
+	Padding: any,
+	CellPadding: any,
+	ZIndex: any,
+	PlaceholderText: any,
+	AbsolutePosition: any,
+	AbsoluteSize: any,
+	AbsoluteContentSize: any,
+	TextBounds: any,
+	DisplayOrder: number?,
+	FontFace: any,
+	ScrollBarImageColor3: any,
+	ScrollBarTransparency: any,
+	TopImage: any,
+	MidImage: any,
+	BottomImage: any,
+	ScrollBarThickness: any,
+	TextSize: any,
+	CanvasSize: any,
+	CanvasPosition: any,
+	HorizontalAlignment: any,
+	VerticalAlignment: any,
+	FillDirection: any,
+	TextTransparency: any,
+	TextStrokeTransparency: any,
+	ClipsDescendants: any,
+	SortOrder: any,
+	AspectRatio: any,
+	AspectType: any,
+	DominantAxis: any,
+	Properties: any,
+	Name: any,
+	Parent: any,
+	Anchored: any,
+	BrickColor: any,
+	CanCollide: any,
+	Selectable: any,
+	CastShadow: any,
+	Color: any,
+	Material: any,
 	Reflectance: number?,
-	Transparency: number?,
-	Thickness: number?;
-	Shape: Enum.PartType?, -- Specific to parts like Part, Ball, Cylinder
-	RichText: boolean?;
+	Transparency: any,
+	Thickness: any,
+	Shape: any, -- Specific to parts like Part, Ball, Cylinder
+	RichText: any,
 	-- BasePart Events
-	Touched: (otherPart: BasePart) -> ()?, -- Triggered when something touches the part
-	TouchEnded: (otherPart: BasePart) -> ()?, -- Triggered when something stops touching the part
-	CleanDelay: number?;
-	CleanFunction: (InnerThread: Thread, Entity: Instance) -> ()?;
+	Touched: (otherPart: BasePart?) -> ()?, -- Triggered when something touches the part
+	TouchEnded: (otherPart: BasePart?) -> ()?, -- Triggered when something stops touching the part
+	CleanDelay: any,
+	CleanFunction: (InnerThread: Thread, Entity: Instance) -> ()?,
 	OnClean: (InnerThread: Thread, entity: Instance) -> ()?, -- replaces clean function
 	-- Generic Instance Properties
-	Archivable: boolean?,
-
-	-- Generic Instance Events
-	Destroying: () -> ()?, -- Triggered before the instance is destroyed
-	AncestryChanged: (child: Instance, parent: Instance?) -> ()?, -- Triggered when the instance's parent changes
-	Changed: (property: string) -> ()?, -- Triggered when a property of the instance changes
-	AttributeChanged: (attribute: string) -> ()?, -- Triggered when an attribute changes
+	Archivable: any,
 
 	-- Model Properties
-	PrimaryPart: BasePart?,
-	WorldPivot: CFrame?,
+	PrimaryPart: any,
+	WorldPivot: any,
 
 	-- Camera Properties
-	CameraType: Enum.CameraType?,
-	CFrame: CFrame?,
-	FieldOfView: number?,
-	Focus: CFrame?,
-	TextWrapped: boolean?;
-	TextXAlignment: Enum.TextXAlignment?;
-	TextYAlignment: Enum.TextYAlignment?;
+	CameraType: any,
+	CFrame: any,
+	FieldOfView: any,
+	Focus: any,
+	TextWrapped: any,
+	TextXAlignment: any,
+	TextYAlignment: any,
 	-- UI Element Properties (TextLabel, TextButton, ImageLabel, ImageButton, etc.)
-	Text: string?,
-	TextColor3: Color3?,
-	Font: Enum.Font?,
-	TextScaled: boolean?,
-	BackgroundColor3: Color3?,
-	BackgroundTransparency: number?,
-	BorderColor3: Color3?,
-	BorderSizePixel: number?,
-	Size: Vector3?,
-	Size: UDim2?,
-	Position: UDim2?,
-	AnchorPoint: Vector2?,
-	Visible: boolean?,
-	Image: string?, -- For ImageLabel and ImageButton
-	ImageColor3: Color3?,
-	ImageTransparency: number?,
-	ScaleType: Enum.ScaleType?,
-	SliceCenter: Rect?,
-	AutoButtonColor: boolean?, -- For TextButton and ImageButton
+	Text: any,
+	TextColor3: any,
+	Font: any,
+	TextScaled: any,
+	BackgroundColor3: any,
+	BackgroundTransparency: any,
+	BorderColor3: any,
+	BorderSizePixel: any,
+	Size: any,
+	Position: any,
+	AnchorPoint: any,
+	Visible: any,
+	Image: any, -- For ImageLabel and ImageButton
+	ImageColor3: any,
+	ImageTransparency: any,
+	ScaleType: any,
+	SliceCenter: any,
+	AutoButtonColor: any, -- For TextButton and ImageButton
 
 	-- UI Events (TextLabel, TextButton, ImageLabel, ImageButton, etc.)
-	MouseEnter: () -> ()?, -- Triggered when the mouse enters the UI element
-	MouseLeave: () -> ()?, -- Triggered when the mouse leaves the UI element
-	MouseMoved: (x: number, y: number) -> ()?, -- Triggered when the mouse moves over the element
-	MouseWheelForward: () -> ()?, -- Triggered when the mouse wheel scrolls forward
-	MouseWheelBackward: () -> ()?, -- Triggered when the mouse wheel scrolls backward
-	InputBegan: (input: InputObject) -> ()?, -- Triggered when an input begins (e.g., key press)
-	InputEnded: (input: InputObject) -> ()?, -- Triggered when an input ends (e.g., key release)
-	InputChanged: (input: InputObject) -> ()?, -- Triggered when an input changes (e.g., mouse move)
-	MouseButton1Click: () -> ()?, -- Triggered when the left mouse button is clicked
-	MouseButton2Click: () -> ()?, -- Triggered when the right mouse button is clicked
-	MouseButton1Down: () -> ()?, -- Triggered when the left mouse button is pressed down
-	MouseButton1Up: () -> ()?, -- Triggered when the left mouse button is released
-	MouseButton2Down: () -> ()?, -- Triggered when the right mouse button is pressed down
-	MouseButton2Up: () -> ()?, -- Triggered when the right mouse button is released
-	Offset: Vector2?;
-	TileSize: UDim2?;
-	TextStrokeColor3: Color3?;
+	MouseEnter: (...any) -> ()?, -- Triggered when the mouse enters the UI element
+	MouseLeave: (...any) -> ()?, -- Triggered when the mouse leaves the UI element
+	MouseMoved: (...any) -> ()?, -- Triggered when the mouse moves over the element
+	MouseWheelForward: (...any) -> ()?, -- Triggered when the mouse wheel scrolls forward
+	MouseWheelBackward: (...any) -> ()?, -- Triggered when the mouse wheel scrolls backward
+	InputBegan: (input: InputObject,...any) -> ()?, -- Triggered when an input begins (e.g., key press)
+	InputEnded: (input: InputObject,...any) -> ()?, -- Triggered when an input ends (e.g., key release)
+	InputChanged: (input: InputObject,...any) -> ()?, -- Triggered when an input changes (e.g., mouse move)
+	MouseButton1Click: (...any) -> ()?, -- Triggered when the left mouse button is clicked
+	MouseButton2Click: (...any) -> ()?, -- Triggered when the right mouse button is clicked
+	MouseButton1Down: (...any) -> ()?, -- Triggered when the left mouse button is pressed down
+	MouseButton1Up: (...any) -> ()?, -- Triggered when the left mouse button is released
+	MouseButton2Down: (...any) -> ()?, -- Triggered when the right mouse button is pressed down
+	MouseButton2Up: (...any) -> ()?, -- Triggered when the right mouse button is released
+	Offset: any,
+	TileSize: any,
+	TextStrokeColor3: any,
 	-- BillboardGui Properties
-	Adornee: Instance?,
-	StudsOffset: Vector3?,
-	MaxDistance: number?,
-	ExtentsOffset: Vector3?,
-	AlwaysOnTop: boolean?,
-	
+	Adornee: any,
+	StudsOffset: any,
+	MaxDistance: any,
+	ExtentsOffset: any,
+	AlwaysOnTop: any,
+
 	-- UICorner
-	CornerRadius: UDim?;
-	
+	CornerRadius: any,
+
 	-- BillboardGui Events
 	AdorneeChanged: (adornee: Instance?) -> ()?, -- Triggered when the Adornee property changes
 
 	-- Tool Properties
-	RequiresHandle: boolean?,
-	Grip: CFrame?,
-	Enabled: boolean?,
+	RequiresHandle: any,
+	Grip: any,
+	Enabled: any,
 
 	-- Tool Events
 	Activated: () -> ()?, -- Triggered when the tool is activated
@@ -187,25 +214,25 @@ export type Property = {
 	Unequipped: () -> ()?, -- Triggered when the tool is unequipped
 
 	-- Sound Properties
-	SoundId: string?,
-	Volume: number?,
-	PlaybackSpeed: number?,
-	TimePosition: number?,
-	Looping: boolean?,
-	Playing: boolean?,
-	RollOffMode: Enum.RollOffMode?,
-	MinDistance: number?,
+	SoundId: any,
+	Volume: any,
+	PlaybackSpeed: any,
+	TimePosition: any,
+	Looping: any,
+	Playing: any,
+	RollOffMode: any,
+	MinDistance: any,
 
 	-- Sound Events
-	Played: () -> ()?, -- Triggered when the sound starts playing
-	Stopped: () -> ()?, -- Triggered when the sound stops
-	Ended: () -> ()?, -- Triggered when the sound finishes playing
-	Looped: () -> ()?, -- Triggered when the sound loops
+	Played: (...any) -> ()?, -- Triggered when the sound starts playing
+	Stopped: (...any) -> ()?, -- Triggered when the sound stops
+	Ended: (...any) -> ()?, -- Triggered when the sound finishes playing
+	Looped: (...any) -> ()?, -- Triggered when the sound loops
 
 	-- Animation Properties
-	AnimationId: string?,
+	AnimationId: any,
 
 	-- Animation Events
 	KeyframeReached: (keyframeName: string) -> ()?, -- Triggered when a specific keyframe is reached
 }
-return nil;
+return nil

@@ -1,3 +1,4 @@
+local tins,tf,tr = table.insert,table.find,table.remove
 local function getIndex(tab, value)
     for k, v in pairs(tab) do
         if value == v then
@@ -6,15 +7,6 @@ local function getIndex(tab, value)
     end
     return nil;
 end
-local function CountContent(tab)
-    local count = 0;
-    for i = 1,#tab do
-        if tab[i] == nil then break end;
-        count += 1
-    end
-    return count
-end
-
 local Rep = {
     Add = function(tab, value)
 		tab.Value += value
@@ -28,7 +20,18 @@ local Rep = {
     end;
 }
 return {
-    number = Rep;
+    number = {
+        Add = function(tab, value)
+            tab.Value += value
+            tab.Changed:Fire(value,nil,1)
+            return tab
+        end;
+        Remove = function(tab, value)
+            tab.Value -= value
+            tab.Changed:Fire(value,nil,2)
+            return tab
+        end;
+    };
     Vector3 = Rep;
     Vector2 = Rep;
     UDim2 = Rep;
@@ -38,9 +41,8 @@ return {
             if Index == nil then return end
             local val = tab.Value
             if Value == nil then
-                local Count = CountContent(val)+1;
-                val[Count] = Index;
-                tab.Changed:Fire(Count, Index, 1)
+                tins(val,Index)
+                tab.Changed:Fire(tf(val,Index), Index, 1,true)
             else
                 val[Index] = Value
                 tab.Changed:Fire(Index, Value, 1)
@@ -50,11 +52,17 @@ return {
             if Index == nil then return end
             local val = tab.Value
             if val[Index] == nil then
-                local pos = getIndex(val, Index)
-                if pos ~= nil then
-                    val[pos] = nil
-                    tab.Changed:Fire(pos, Index, 2) 
-                end 
+                local f = tf(val,Index)
+                if f ~= nil then
+                    tr(val,f)
+                    tab.Changed:Fire(f, Index, 2,true)
+                else
+                    local pos = getIndex(val, Index)
+                    if pos ~= nil then
+                        val[pos] = nil
+                        tab.Changed:Fire(pos, Index, 2) 
+                    end
+                end
             else
                 local Value = val[Index]
                 val[Index] = nil
