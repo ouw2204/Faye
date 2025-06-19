@@ -16,6 +16,9 @@ while true do
 end
 ```
 I won't go through all of its methods here, for that check its [api](../api/Value). You can set a value's value to anything. I will also use it in alot of examples, so you should learn how to use it with other utilities if you continue reading.
+:::note
+Any use of any value base(Value, Attribute, Property, etc...) can be nested infinetely.
+:::
 #### Special Metamethods
 You can use += and -= instead of :Add and :Remove
 ### 2. Animations
