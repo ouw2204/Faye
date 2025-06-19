@@ -2,8 +2,7 @@
     @class Create
     A class that handles the creation of instances.
 ]=]
-
-local PropertyTypes = require(script.Parent.Misc.PropertyTypes)
+local Types = require(script.Parent.Types)
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
 local Compilers = require(script.Parent.Compile.Compilers)
 local Compile = require(script.Parent.Compile)
@@ -215,7 +214,7 @@ end
     [Creates a new instance object.](/docs/Instancing/Create)
 ]=]
 return function(ClassName: string, Thread: { Add: (self: {}, Entity: any) -> () }?)
-	return function(props: PropertyTypes.Property)
+	return function(props: Types.Properties)
 		local Object = Instance.new(ClassName)
 		if Defaults[ClassName] ~= nil then
 			Defaults[ClassName](Object)

@@ -1,4 +1,3 @@
-local PropsTypes = require(script.Parent.Misc.PropertyTypes)
 local Types = require(script.Parent.Types)
 local mt = {
     __type = script.Name;
@@ -45,7 +44,7 @@ end
     Initializes the delay object with the given properties.
     @return Delay
 ]=]
-function mt:From(Props: PropsTypes.Property)
+function mt:From(Props: Types.Properties)
     self.Init = Props;
     return self;
 end
@@ -59,7 +58,7 @@ end
     @return Delay
     Creates a new delay object.
 ]=]
-return function(Props: PropsTypes.Property,Time: number,Thread: Types.Thread)
+return function(Props: Types.Properties,Time: number,Thread: Types.Thread)
     if Time == nil or Props == nil then warn(`Time or properties is missing - {debug.traceback()}`); return end;
     local new = setmetatable({
         Time = Time;

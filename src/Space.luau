@@ -160,23 +160,25 @@ end
     Connects a signal to space, pass an id if u only want that connection to fire a specific task.
 ]=]
 function mt:Connect(Connection: RBXScriptSignal,Id: string?)
+    if self.Cleaning then return end;
     if Id == nil then
         local connection = Connection:Connect(self.ReceiverFunction,self.Thread)
         self.Thread:Add(connection)
         return connection;
     else
-        task.delay(nil,function()
-            for i,v in pairs(self.Tasks) do
-                if v.Id == Id then
-                    if v.__connections == nil then
-                        v.__connections = {}
+        task.spawn(function()
+            task.wait()
+            if self.Tasks == nil or self.Cleaning then  return end;
+            for i = 1,#self.Tasks do
+                if self.Tasks[i].Id == Id then
+                    if self.Tasks[i].__connections == nil then
+                        self.Tasks[i].__connections = {}
                     end
-                    local TaskConnection = Connection:Connect(v.Call,v.__connections)
-                    tins(v.__connections,TaskConnection)
+                    local TaskConnection = Connection:Connect(self.Tasks[i].Call,self.Tasks[i].__connections)
+                    tins(self.Tasks[i].__connections,TaskConnection)
                     return TaskConnection;
                 end
             end
-            return
         end)
     end
     return

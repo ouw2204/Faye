@@ -2,8 +2,7 @@
     @class Configure
     A class that handles the configuration of entities.
 ]=]
-
-local PropertyTypes = require(script.Parent.Misc.PropertyTypes)
+local Types = require(script.Parent.Types)
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
 local Compilers = require(script.Parent.Compile.Compilers)
 local Compile = require(script.Parent.Compile)
@@ -216,7 +215,7 @@ end
     [Allows configuration on an existing physical or none physical component.](/docs/Instancing/Create)
 ]=]
 return function(Entity: any, Thread: { Add: (self: {}, Entity: any) -> () }?)
-	return function(props: PropertyTypes.Property)
+	return function(props: Types.Properties)
 		if tof(Entity) == "table" then
 			if Entity.__type == "Instance" then
 				Entity = Entity.Instance

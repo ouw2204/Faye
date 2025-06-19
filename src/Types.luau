@@ -1,5 +1,3 @@
-local props = require(script.Parent.Misc.PropertyTypes);
-
 export type Value = {
     Set: (self: Value, Value: any) -> ();
     Get: (self: Value) -> ();
@@ -23,19 +21,13 @@ export type Animation = {
     From: (self: Animation, Value: any) -> Animation;
     AlwaysFrom: (self: Animation, Value: any) -> Animation;
     Play: (self: Animation,To: any) -> ();
-    --Skip: (self: Animation) -> ();
     Destroy: (self: Animation) -> ();
     OneTimeInfo: (self: Animation, Info: {Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?,Reverse: boolean?,DelayTime: number?,Frequency: number?,Damping: number?,RepeatCount: number?}) -> Animation;
     UpdateInfo: (self: Animation, Info: {Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?,Reverse: boolean?,DelayTime: number?,Frequency: number?,Damping: number?,RepeatCount: number?}) -> Animation;
 }
 export type Info = {Time: number; EasingStyle: Enum.EasingStyle; EasingDirection: Enum.EasingDirection; RepeatCount: number; Reverse: boolean; DelayTime: number}
 export type SpringInfo = {Time: number; Frequency: number; Damping: number; RepeatCount: number; Reverse: boolean; DelayTime: number}
---[[export type InputType = {
-    Get: (self: InputType, Target: Instance?) -> UserInputType;
-    Type: (self: InputType, Input: UserInputType) -> UserInputType;
-    GetMousePosition: (self: InputType, Input: UserInputType,From: Vector3?) -> Vector3;
-    GetMousePositionNoInsets: (self: InputType, Input: UserInputType,From: Vector3?) -> Vector3;
-}]]
+
 export type Connection = {
     Disconnect: (self: Connection) -> ();
     Destroy: (self: Connection) -> ();
@@ -47,18 +39,18 @@ export type Signal = {
     DisconnectAll: (self: Signal) -> (),
     Destroy: (self: Signal) -> ()
 }
-export type DelayValueType = {
-    Get: (self: DelayValueType) -> ();
+export type DelayValue = {
+    Get: (self: DelayValue) -> ();
     Changed: RBXScriptSignal;
-    SetTime: (self: DelayValueType, Time: number) -> ();
-    Sensitive: (self: DelayValueType) -> DelayValueType;
-    ResetTime: (self: DelayValueType) -> ();
-    For: (self: DelayValueType, Value: any, Time: number?) -> DelayValueType;
-    Destroy: (self: DelayValueType) -> ();
+    SetTime: (self: DelayValue, Time: number) -> ();
+    Sensitive: (self: DelayValue) -> DelayValue;
+    ResetTime: (self: DelayValue) -> ();
+    For: (self: DelayValue, Value: any, Time: number?) -> DelayValue;
+    Destroy: (self: DelayValue) -> ();
 };
-export type DelayType = {
-    From: (self: DelayType, Props: props.Property) -> DelayType;
-    Destroy: (self: DelayType) -> ();
+export type Delay = {
+    From: (self: Delay, any) -> Delay;
+    Destroy: (self: Delay) -> ();
 }
 type DoType = {
     Run: (self: DoType) -> DoType;
@@ -90,8 +82,8 @@ export type Event = {
     Connect: (self: Event, Connection: RBXScriptSignal) -> Event;
 }
 export type Thread = {
-    Create: (self: Thread, ClassName: string) -> (Properties: props.Property) -> {Instance: Instance, Thread: BasicThread};
-    Configure: (self: Thread, Entity: any) -> (Properties: props.Property) -> {Instance: Instance, Thread: BasicThread};
+    Create: (self: Thread, ClassName: string) -> (Properties: Properties) -> {Instance: Instance, Thread: BasicThread};
+    Configure: (self: Thread, Entity: any) -> (Properties: Properties) -> {Instance: Instance, Thread: BasicThread};
     Extend: (self: Thread) -> Thread;
     Clean: (self: Thread) -> ();
     Value: (self: Thread,Initial: any) -> Value;
@@ -104,8 +96,8 @@ export type Thread = {
     Iterate: (self: Thread, Table: any,Function: (Index: any,Value: any?,InnerThread: Thread?,Entity: Instance?) -> ()) -> ();
     Property: (self:any, Entity: any, Property: string) -> Value;
     Attribute: (self:any, Entity: any, Attribute: string) -> Value;
-    DelayValue: (self: Thread, Value: Value, Time: number) -> DelayValueType;
-    Delay: (self: Thread, Props: props.Property,Time: number) -> DelayType;
+    DelayValue: (self: Thread, Value: Value, Time: number) -> DelayValue;
+    Delay: (self: Thread, Props: Properties,Time: number) -> Delay;
     SetTo: (self: Thread, Value: Value) -> {};
     Signal: (self: Thread) -> Signal;
     Listener: (self: Thread, Entity: any, Event: string & {string}, func: (string,...any) -> ()) -> {};
@@ -118,4 +110,159 @@ export type Thread = {
     EventState: (self: Thread,any, func: (...any) -> ()) -> Event;
 }
 
+export type Properties = {
+	Video: any,
+	ClearTextOnFocus: any,
+	ClearTableInCompulation: any,
+	Rotation: any,
+	Wraps: any,
+	CellSize: any,
+	Padding: any,
+	CellPadding: any,
+	ZIndex: any,
+	PlaceholderText: any,
+	AbsolutePosition: any,
+	AbsoluteSize: any,
+	AbsoluteContentSize: any,
+	TextBounds: any,
+	DisplayOrder: number?,
+	FontFace: any,
+	ScrollBarImageColor3: any,
+	ScrollBarTransparency: any,
+	TopImage: any,
+	MidImage: any,
+	BottomImage: any,
+	ScrollBarThickness: any,
+	TextSize: any,
+	CanvasSize: any,
+	CanvasPosition: any,
+	HorizontalAlignment: any,
+	VerticalAlignment: any,
+	FillDirection: any,
+	TextTransparency: any,
+	TextStrokeTransparency: any,
+	ClipsDescendants: any,
+	SortOrder: any,
+	AspectRatio: any,
+	AspectType: any,
+	DominantAxis: any,
+	Properties: any,
+	Name: any,
+	Parent: any,
+	Anchored: any,
+	BrickColor: any,
+	CanCollide: any,
+	Selectable: any,
+	CastShadow: any,
+	Color: any,
+	Material: any,
+	Reflectance: number?,
+	Transparency: any,
+	Thickness: any,
+	Shape: any, -- Specific to parts like Part, Ball, Cylinder
+	RichText: any,
+	-- BasePart Events
+	
+	CleanDelay: any,
+	CleanFunction: (InnerThread: Thread, Entity: Instance) -> ()?,
+	OnClean: (InnerThread: Thread, entity: Instance) -> ()?, -- replaces clean function
+	-- Generic Instance Properties
+	Archivable: any,
+
+	-- Model Properties
+	PrimaryPart: any,
+	WorldPivot: any,
+
+	-- Camera Properties
+	CameraType: any,
+	CFrame: any,
+	FieldOfView: any,
+	Focus: any,
+	TextWrapped: any,
+	TextXAlignment: any,
+	TextYAlignment: any,
+	-- UI Element Properties (TextLabel, TextButton, ImageLabel, ImageButton, etc.)
+	Text: any,
+	TextColor3: any,
+	Font: any,
+	TextScaled: any,
+	BackgroundColor3: any,
+	BackgroundTransparency: any,
+	BorderColor3: any,
+	BorderSizePixel: any,
+	Size: any,
+	Position: any,
+	AnchorPoint: any,
+	Visible: any,
+	Image: any, -- For ImageLabel and ImageButton
+	ImageColor3: any,
+	ImageTransparency: any,
+	ScaleType: any,
+	SliceCenter: any,
+	AutoButtonColor: any, -- For TextButton and ImageButton
+
+	-- UI Events (TextLabel, TextButton, ImageLabel, ImageButton, etc.)
+	MouseEnter: (...any) -> ()?, -- Triggered when the mouse enters the UI element
+	MouseLeave: (...any) -> ()?, -- Triggered when the mouse leaves the UI element
+	MouseMoved: (...any) -> ()?, -- Triggered when the mouse moves over the element
+	MouseWheelForward: (...any) -> ()?, -- Triggered when the mouse wheel scrolls forward
+	MouseWheelBackward: (...any) -> ()?, -- Triggered when the mouse wheel scrolls backward
+	InputBegan: (input: InputObject,...any) -> ()?, -- Triggered when an input begins (e.g., key press)
+	InputEnded: (input: InputObject,...any) -> ()?, -- Triggered when an input ends (e.g., key release)
+	InputChanged: (input: InputObject,...any) -> ()?, -- Triggered when an input changes (e.g., mouse move)
+	MouseButton1Click: (...any) -> ()?, -- Triggered when the left mouse button is clicked
+	MouseButton2Click: (...any) -> ()?, -- Triggered when the right mouse button is clicked
+	MouseButton1Down: (...any) -> ()?, -- Triggered when the left mouse button is pressed down
+	MouseButton1Up: (...any) -> ()?, -- Triggered when the left mouse button is released
+	MouseButton2Down: (...any) -> ()?, -- Triggered when the right mouse button is pressed down
+	MouseButton2Up: (...any) -> ()?, -- Triggered when the right mouse button is released
+	Offset: any,
+	TileSize: any,
+	TextStrokeColor3: any,
+	-- BillboardGui Properties
+	Adornee: any,
+	StudsOffset: any,
+	MaxDistance: any,
+	ExtentsOffset: any,
+	AlwaysOnTop: any,
+
+	-- UICorner
+	CornerRadius: any,
+
+	-- BillboardGui Events
+	AdorneeChanged: (adornee: Instance?) -> ()?, -- Triggered when the Adornee property changes
+
+	-- Tool Properties
+	RequiresHandle: any,
+	Grip: any,
+	Enabled: any,
+
+	-- Tool Events
+	Activated: () -> ()?, -- Triggered when the tool is activated
+	Deactivated: () -> ()?, -- Triggered when the tool is deactivated
+	Equipped: (mouse: Mouse) -> ()?, -- Triggered when the tool is equipped
+	Unequipped: () -> ()?, -- Triggered when the tool is unequipped
+
+	-- Sound Properties
+	SoundId: any,
+	Volume: any,
+	PlaybackSpeed: any,
+	TimePosition: any,
+	Looping: any,
+	Playing: any,
+	RollOffMode: any,
+	MinDistance: any,
+
+	-- Sound Events
+	Played: (...any) -> ()?, -- Triggered when the sound starts playing
+	Stopped: (...any) -> ()?, -- Triggered when the sound stops
+	Ended: (...any) -> ()?, -- Triggered when the sound finishes playing
+	Looped: (...any) -> ()?, -- Triggered when the sound loops
+
+	-- Animation Properties
+	AnimationId: any,
+
+	-- Animation Events
+	KeyframeReached: (keyframeName: string) -> ()?, -- Triggered when a specific keyframe is reached
+}
 return nil;

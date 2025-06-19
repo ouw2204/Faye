@@ -140,6 +140,8 @@ return function(Entity: Types.Instance, _: string, Value: any, Compile: (Entity:
 							if ChangeType == 2 then
 								if Holder[EqIndex] ~= nil then
 									cleanIndividual(Value.Thread,Holder,EqIndex)
+								elseif Holder[Index] ~= nil then
+									cleanIndividual(Value.Thread,Holder,EqIndex)
 								end
 							else
 								subCompile(Value.Thread,Value,Entity,Holder,Compile,Index, NewValue, EqIndex)
@@ -151,8 +153,9 @@ return function(Entity: Types.Instance, _: string, Value: any, Compile: (Entity:
 				end)
 				mainFunc(Content:Get(),Position + 1)
 			else
+				cleanHolder(Value.Thread,Holder);
 				for i,v in pairs(Content) do
-					subCompile(Value.Thread,Value,Entity,Holder,Compile,i,v)
+					subCompile(Value.Thread,Value,Entity,Holder,Compile,i,v,(tonumber(i) and v) or nil )
 				end
 			end
 		end
