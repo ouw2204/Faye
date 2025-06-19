@@ -6,33 +6,10 @@ Remember to occasionally check for new updates as there might be bug fixes.
 https://create.roblox.com/store/asset/74301103261718/Faye
 ### Wally
 ```
-Faye = "prophetouw/faye@1.4.8" 
+Faye = "prophetouw/faye@1.4.9" 
 ```
 ### Github
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.
 ## Update log
-### v1.4.8
-- Fixes
-### v1.4.7
-- Nested values go to infinite
-### v1.4.2
-- Iterate fixes
-- New OnetimeInfo function for animations
-### v1.4.0
-- Cleanup
-### v1.3.8
-- Fixed animate memory bug
-- Removed :Skip function from animate as its useless
-### v1.3.7
-- Made the connection parameter in Thread:Event none mandatory
-- Thread:CleanAfter which elts you clean stuff individually after a certain amount of time
-### v1.3.6
-- :Call update to Event and EventState to call simulate/force event receiving
-### v1.3.5
-- Removed Inputer
-### v1.3.2
-- Fixed some simple signal implementation bugs
-- Animation:UpdateInfo
-### v1.3.1
-- New utilities called Event and EventState which listens to signals and compiles them similarly to Do and State.
-- Fixes
+### v1.4.9
+- Type fix

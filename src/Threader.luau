@@ -239,6 +239,7 @@ local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;
 end
+mt.Types = Types;
 return function() : Types.Thread
     local new = {}
     setmetatable(new,mt)

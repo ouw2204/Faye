@@ -88,12 +88,12 @@ export type Thread = {
     Clean: (self: Thread) -> ();
     Value: (self: Thread,Initial: any) -> Value;
     Animate: (self: Thread, Goal: any, Info: Info | SpringInfo) -> Animation;
-    Info: (self: Thread?, Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Info;
-    SpringInfo: (self: Thread?, Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> SpringInfo;
+    Info: (self: Thread, Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Info;
+    SpringInfo: (self: Thread, Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> SpringInfo;
     Connect: (self: Thread, Connection: RBXScriptSignal, Function: (...any) -> ()) -> (),
     Do: (self: Thread, Function : (Grab: any) -> (),Entity: Instance?) -> DoType;
     State: (self: Thread, Function : (Grab: any,InnerThread: Thread,Entity: Instance?) -> ()) -> ();
-    Iterate: (self: Thread, Table: any,Function: (Index: any,Value: any?,InnerThread: Thread?,Entity: Instance?) -> ()) -> ();
+    Iterate: (self: Thread, Table: any,Function: (Index: any,Value: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
     Property: (self:any, Entity: any, Property: string) -> Value;
     Attribute: (self:any, Entity: any, Attribute: string) -> Value;
     DelayValue: (self: Thread, Value: Value, Time: number) -> DelayValue;
