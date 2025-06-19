@@ -20,12 +20,31 @@ local AnimsHandler = require(script.AnimsPlayer)
     @param Info OtherTypes.Info
     Updates the animation information.
 ]=]
+local defaultdirection = Enum.EasingDirection.Out;
+local defaultstyle = Enum.EasingStyle.Linear;
 function mt:UpdateInfo(Info)
 	if Info == nil then
+		warn(`Info was not passed - {debug.traceback()}`)
 		return self
 	end
-	if Info.EasingStyle ~= nil and Info.EasingDirection ~= nil and self.__typeIndex ~= 1 then
+	local HasOneInfo =  Info.__typeIndex == 1 or Info.EasingStyle ~= nil or Info.EasingDirection ~= nil
+	local HasOneSpringInfo = Info.__typeIndex == 2 or Info.Damping ~= nil or Info.Frequency ~= nil
+	if HasOneInfo and not HasOneSpringInfo and self.__typeIndex ~= 1 then
 		self.__typeIndex = 1;
+		if self.__easingdirection == nil and Info.EasingDirection == nil then
+			self.__easingdirection = defaultdirection
+		end
+		if self.__easingstyle == nil and Info.EasingStyle == nil then
+			self.__easingstyle = defaultstyle
+		end
+	elseif not HasOneInfo and HasOneSpringInfo and self.__typeIndex ~= 2 then
+		self.__typeIndex = 2
+		if self.__Damping == nil and Info.Damping == nil then
+			self.__Damping = .2;
+		end
+		if self.__Frequency == nil and Info.Frequency == nil then
+			self.__Frequency = 1;
+		end
 	end
 	self.__easingdirection = Info.EasingDirection or self.__easingdirection
 	self.__easingstyle = Info.EasingStyle or self.__easingstyle
@@ -235,11 +254,13 @@ end]]
     @return Animation
     Creates a new animation object.
 ]=]
+local InfoCreater = require(script.Parent.Info)
+local DefaultInfo = InfoCreater();
 return function(
 	Goal: any,
 	Info: OtherTypes.Info | OtherTypes.SpringInfo,
 	Thread: OtherTypes.Thread?
-): OtherTypes.AnimationType
+): OtherTypes.Animation
 	local new = {
 		Goal = Goal,
 		Thread = Thread,
@@ -255,5 +276,6 @@ return function(
 			table.insert(Thread, new)
 		end
 	end
+	new:UpdateInfo(Info or DefaultInfo)
 	return new :: any
 end

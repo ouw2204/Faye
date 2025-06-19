@@ -24,7 +24,7 @@ return function(Entity: Types.Instance, Index: string, Value: Types.Animation)
     -->
 
 
-    local function  mainInfoFunc(Info: any,Position: number)
+    local function  mainInfoFunc(Info: any,Position: number,First)
         if Info == nil then return end;
         if tof(Info) ~= "table" then
             warn(`Info to set is not a table - {debug.traceback()}`)
@@ -43,13 +43,16 @@ return function(Entity: Types.Instance, Index: string, Value: Types.Animation)
                 infoConnectionsLength = Position;
                 mainInfoFunc(NewInfo,Position + 1)
             end)
-            mainInfoFunc(Info:Get(), Position + 1)
+            mainInfoFunc(Info:Get(), Position + 1,First)
         else
-            Value:UpdateInfo(Info)
+            if First == nil then
+                Value:UpdateInfo(Info)
+            end;
         end
     end
     if Value.__onetimeinfo == nil then
-        mainInfoFunc(Info)
+        mainInfoFunc(Info,nil,true)
+        Info = nil;
     end
     local function  mainGoalFunc(Goal: any,Position: number?,NoAnim: boolean?)
         if Goal == nil then return end;

@@ -6,10 +6,11 @@ Remember to occasionally check for new updates as there might be bug fixes.
 https://create.roblox.com/store/asset/74301103261718/Faye
 ### Wally
 ```
-Faye = "prophetouw/faye@1.4.9" 
+Faye = "prophetouw/faye@1.4.10" 
 ```
 ### Github
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.
 ## Update log
-### v1.4.9
+### v1.4.10
+- Animate updateInfo function fix
 - Type fix
