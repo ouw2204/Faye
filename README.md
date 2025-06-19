@@ -12,7 +12,7 @@ Faye = "prophetouw/faye@1.4.7"
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.
 ## Update log
 ### v1.4.7
-- Nested values go to infinite(ex)
+- Nested values go to infinite
 ### v1.4.2
 - Iterate fixes
 - New OnetimeInfo function for animations
