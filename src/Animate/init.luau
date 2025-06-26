@@ -256,6 +256,7 @@ end]]
 ]=]
 local InfoCreater = require(script.Parent.Info)
 local DefaultInfo = InfoCreater();
+local Utility = require(script.Parent.Misc.Utility)
 return function(
 	Goal: any,
 	Info: OtherTypes.Info | OtherTypes.SpringInfo,
@@ -276,6 +277,6 @@ return function(
 			table.insert(Thread, new)
 		end
 	end
-	new:UpdateInfo(Info or DefaultInfo)
+	new:UpdateInfo(Utility.GetValue(Info) or DefaultInfo)
 	return new :: any
 end
