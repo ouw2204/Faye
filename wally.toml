@@ -1,6 +1,6 @@
 [package]
 name = "prophetouw/faye"
-version = "1.4.11"
+version = "1.4.12"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 

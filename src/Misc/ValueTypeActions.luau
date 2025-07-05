@@ -23,12 +23,12 @@ return {
     number = {
         Add = function(tab, value)
             tab.Value += value
-            tab.Changed:Fire(value,nil,1)
+            tab.Changed:Fire(tab.Value, value,nil,1)
             return tab
         end;
         Remove = function(tab, value)
             tab.Value -= value
-            tab.Changed:Fire(value,nil,2)
+            tab.Changed:Fire(tab.Value,value,nil,2)
             return tab
         end;
     };
@@ -42,10 +42,10 @@ return {
             local val = tab.Value
             if Value == nil then
                 tins(val,Index)
-                tab.Changed:Fire(tf(val,Index), Index, 1,true)
+                tab.Changed:Fire(val,tf(val,Index), Index, 1,true)
             else
                 val[Index] = Value
-                tab.Changed:Fire(Index, Value, 1)
+                tab.Changed:Fire(val,Index, Value, 1)
             end
         end,
         Remove = function(tab, Index)
@@ -55,18 +55,18 @@ return {
                 local f = tf(val,Index)
                 if f ~= nil then
                     tr(val,f)
-                    tab.Changed:Fire(f, Index, 2,true)
+                    tab.Changed:Fire(val,f, Index, 2,true)
                 else
                     local pos = getIndex(val, Index)
                     if pos ~= nil then
                         val[pos] = nil
-                        tab.Changed:Fire(pos, Index, 2) 
+                        tab.Changed:Fire(val,pos, Index, 2) 
                     end
                 end
             else
                 local Value = val[Index]
                 val[Index] = nil
-                tab.Changed:Fire(Index, Value, 2)
+                tab.Changed:Fire(val,Index, Value, 2)
                 Value = nil;
             end
         end

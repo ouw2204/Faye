@@ -97,7 +97,10 @@ return function(Entity: Types.Instance, _: string, Value: any, Compile: (Entity:
 		else
 			if Content.__type ~= nil and ValueClasses[Content.__type] then
 				connectionslength = Position;
-				ConnectionsHolder[Position] = Content.Changed:Connect(function(Index: any, NewValue: any?, ChangeType: number?, IsConventional: boolean?)
+				ConnectionsHolder[Position] = Content.Changed:Connect(function(__reserved, Index: any, NewValue: any?, ChangeType: number?, IsConventional: boolean?)
+					if Index == nil or ChangeType == nil then
+						Index = __reserved
+					end
 					if connectionslength > Position then
 						cleanHolder(Value.Thread,Holder);
 						for i = connectionslength,Position+1,-1 do

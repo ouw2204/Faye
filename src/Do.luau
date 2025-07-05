@@ -90,9 +90,8 @@ return function(FunctionToFire,Thread)
     function new.Grab(Value)
         if Value == nil then return end;
         if Value.ClassName ~= nil then
-            local FullName = Value:GetFullName();
-            if new.Listening[FullName] == nil then
-                new.Listening[FullName] = true;
+            if new.Listening[Value] == nil then
+                new.Listening[Value] = true;
                 tins(new.Connections,Value.Changed:Connect(new.OnValueChanged))
             end
             return Value.Value;
