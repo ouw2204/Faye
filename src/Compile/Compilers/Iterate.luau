@@ -2,7 +2,7 @@ local tf, tins, tr, tof, tc = table.find, table.insert, table.remove, typeof, ta
 local ValueClasses = require(script.Parent.Parent.Parent.Misc.ValueClasses)
 local Types = require(script.Parent.Parent.Parent.Types)
 local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
-local removetxt,extendtxt,cleantxt,addtxt,tabletxt,numbertxt = "Remove","Extend","cleantxt","Add","table","number"
+local removetxt,extendtxt,cleantxt,addtxt,tabletxt,numbertxt = "Remove","Extend","Clean","Add","table","number"
 local function subCompile(Thread: Types.Thread,ActualValue: {Function: (Index: any, Value: any, NewThread: any, Instance: any) -> ()},Entity:  Types.Instance, Holder: {[any]: any},Compile: (Entity: Types.Instance, Props: {[any]: any},...any) -> (),Index: any, Value: any, FirstIndex: any)
     if Index == nil or Value == nil then return end
 		local EquippedIndex = FirstIndex or Index
