@@ -2,12 +2,13 @@ local tf, tins, tr, tof, tc = table.find, table.insert, table.remove, typeof, ta
 local ValueClasses = require(script.Parent.Parent.Parent.Misc.ValueClasses)
 local Types = require(script.Parent.Parent.Parent.Types)
 local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
+local removetxt,extendtxt,cleantxt,addtxt,tabletxt,numbertxt = "Remove","Extend","cleantxt","Add","table","number"
 local function subCompile(Thread: Types.Thread,ActualValue: {Function: (Index: any, Value: any, NewThread: any, Instance: any) -> ()},Entity:  Types.Instance, Holder: {[any]: any},Compile: (Entity: Types.Instance, Props: {[any]: any},...any) -> (),Index: any, Value: any, FirstIndex: any)
     if Index == nil or Value == nil then return end
 		local EquippedIndex = FirstIndex or Index
 		if Thread ~= nil then
 			if Holder[EquippedIndex] ~= nil then
-				if Thread["Remove"] then
+				if Thread[removetxt] then
 					Thread:Remove(Holder[EquippedIndex])
 				else
 					local Pos = tf(Thread, Holder[EquippedIndex])
@@ -19,7 +20,7 @@ local function subCompile(Thread: Types.Thread,ActualValue: {Function: (Index: a
 				Holder[EquippedIndex] = nil
 			end
 		end;
-		local NewThread = (Thread ~= nil and Thread["Extend"] ~= nil and Thread:Extend()) or {};
+		local NewThread = (Thread ~= nil and Thread[extendtxt] ~= nil and Thread:Extend()) or {};
 		NewThread._isCleanAncestor = Thread._isCleanAncestor
 		local I, V = ActualValue.Function(Index, Value, NewThread, Entity.Instance)
 		local NewCompile = {}
@@ -41,7 +42,7 @@ local function  cleanIndividual(Thread: Types.Thread,Holder: {any: any},Index: a
 end
 local function cleanHolder(Thread: Types.Thread,Holder: {[any]: any})
     for i, v in pairs(Holder) do
-        if Thread["Remove"] then
+        if Thread[removetxt] then
             Thread:Remove(v)
         else
             local Pos = tf(Thread, v)
@@ -49,7 +50,7 @@ local function cleanHolder(Thread: Types.Thread,Holder: {[any]: any})
                 tr(Thread, Pos)
             end
         end
-        if v ~= nil and v["Clean"] then
+        if v ~= nil and v[cleantxt] then
             v:Clean()
         end
     end
@@ -59,7 +60,7 @@ return function(Entity: Types.Instance, _: string, Value: any, Compile: (Entity:
     local ActualThread: Types.Thread = Entity.Innerthread or Entity.Thread;
     if ActualThread ~= nil and ActualThread ~= Value.Thread then
 		if Value.Thread ~= nil then
-			if Value.Thread["Remove"] then
+			if Value.Thread[removetxt] then
 				Value.Thread:Remove(Value)
 			else
 				local f = tf(Value.Thread, Value)
@@ -69,7 +70,7 @@ return function(Entity: Types.Instance, _: string, Value: any, Compile: (Entity:
 			end
 		end
 		Value.Thread = ActualThread
-		if ActualThread["Add"] then
+		if ActualThread[addtxt] then
 			ActualThread:Add(Value)
 		else
 			tins(ActualThread, Value)
@@ -84,8 +85,8 @@ return function(Entity: Types.Instance, _: string, Value: any, Compile: (Entity:
     local function mainFunc(Content: Types.Value,Position: number?)
 		if Content == nil then return end;
 		local ContentType = tof(Content)
-		local contentIsNumber = ContentType == "number";
-		local contentIsTable = ContentType == "table"
+		local contentIsNumber = ContentType == numbertxt;
+		local contentIsTable = ContentType == tabletxt
 		if not contentIsNumber and not contentIsTable then return end;
 		Position = Position or 1
 		if contentIsNumber then
@@ -110,7 +111,7 @@ return function(Entity: Types.Instance, _: string, Value: any, Compile: (Entity:
 					end
 					connectionslength = Position;
 					local vType = tof(Index)
-					local vtypeisnumber = vType == "number";
+					local vtypeisnumber = vType == numbertxt;
 					if NewValue == nil and ChangeType == nil then
 						mainFunc(Index,Position + 1)
 					else

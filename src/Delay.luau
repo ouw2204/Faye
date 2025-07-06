@@ -40,7 +40,7 @@ end
 --[=[
     @method From
     @within Delay
-    @param Props PropsTypes.Property
+    @param Props Types.Properties
     Initializes the delay object with the given properties.
     @return Delay
 ]=]
@@ -53,7 +53,7 @@ end
     @method Delay
     @within Thread
     @param Time number
-    @param Props PropsTypes.Property
+    @param Props Types.Properties
     @param Thread Types.Thread
     @return Delay
     Creates a new delay object.

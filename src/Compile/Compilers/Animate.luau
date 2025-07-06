@@ -2,7 +2,7 @@ local tf, tins, tr, tof, tc = table.find, table.insert, table.remove, typeof, ta
 local ValueClasses = require(script.Parent.Parent.Parent.Misc.ValueClasses)
 local Types = require(script.Parent.Parent.Parent.Types)
 local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
-
+local tabletxt = "table"
 return function(Entity: Types.Instance, Index: string, Value: Types.Animation)
     local infoConnections = {}
     local infoConnectionsLength = 0;
@@ -26,7 +26,7 @@ return function(Entity: Types.Instance, Index: string, Value: Types.Animation)
 
     local function  mainInfoFunc(Info: any,Position: number,First)
         if Info == nil then return end;
-        if tof(Info) ~= "table" then
+        if tof(Info) ~= tabletxt then
             warn(`Info to set is not a table - {debug.traceback()}`)
             return
         end
@@ -58,7 +58,7 @@ return function(Entity: Types.Instance, Index: string, Value: Types.Animation)
         if Goal == nil then return end;
         Position = Position or 1;
         local goalType = typeof(Goal);
-        if goalType == "table" then
+        if goalType == tabletxt then
             if Goal.__type ~= nil and ValueClasses[Goal.__type] then
                 goalConnectionsLength = Position;
                 goalConnections[Position] = Goal.Changed:Connect(function(NewGoal: any)
@@ -103,7 +103,7 @@ return function(Entity: Types.Instance, Index: string, Value: Types.Animation)
             end
         end
     end
-    if tof(Value.Goal) == "table" then
+    if tof(Value.Goal) == tabletxt then
         if Value.Goal.__type ~= nil and ValueClasses[Value.Goal.__type] then
             mainGoalFunc(Value.Goal,nil,true )
         end

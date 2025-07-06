@@ -14,6 +14,12 @@ export type Value = {
     GetItem: (self: Value,Index: any) -> any;
     ItemExists: (self: Value, Entity: any) -> ();
 }
+export type FayeInstance = {
+	Instance: Instance, Thread: BasicThread?, InnerThread: BasicThread?,
+	SetAttribute: (self: FayeInstance,Name: string,Value: any) -> FayeInstance,
+	GetAttribute: (self: FayeInstance,Name: string) -> any,
+	GetAttributes: (self: FayeInstance) -> {any: any};
+}
 export type Instance = {Instance: Instance, Props: {[any]: any}?,Thread: thread?, Innerthread: thread?}
 export type UserInputType = typeof(game:GetService("UserInputService"));
 export type BasicThread = {Remove: (self: BasicThread, Entity: any) -> (); Add: (self: BasicThread, Entity: any) -> ()}
@@ -82,8 +88,8 @@ export type Event = {
     Connect: (self: Event, Connection: RBXScriptSignal) -> Event;
 }
 export type Thread = {
-    Create: (self: Thread, ClassName: string) -> (Properties: Properties) -> {Instance: Instance, Thread: BasicThread};
-    Configure: (self: Thread, Entity: any) -> (Properties: Properties) -> {Instance: Instance, Thread: BasicThread};
+    Create: (self: Thread, ClassName: string) -> (Properties: Properties) -> FayeInstance;
+    Configure: (self: Thread, Entity: any) -> (Properties: Properties) -> FayeInstance;
     Extend: (self: Thread) -> Thread;
     Clean: (self: Thread) -> ();
     Value: (self: Thread,Initial: any) -> Value;
@@ -105,9 +111,11 @@ export type Thread = {
     Remove: (self: Thread,Entity: any) -> ();
     Space: (self: Thread, func: (...any) -> ()) -> Space,
     Spawn: (self: Thread,func: (...any)-> ()) -> Spawn;
-    Timed: (self: Thread, Item: any, Time: number?) -> ();
+	SpawnAfter: (self: Thread,Time: number,func: (...any)-> ()) -> Spawn;
+    Schedule: (self: Thread, Item: any, Time: number?,...any) -> any;
     Event: (self: Thread,any,func: (...any) -> ()?) -> Event;
     EventState: (self: Thread,any, func: (...any) -> ()) -> Event;
+	AttributeChanged: (self: Thread, Attribute: string) -> ();
 }
 
 export type Properties = {
@@ -202,20 +210,20 @@ export type Properties = {
 	AutoButtonColor: any, -- For TextButton and ImageButton
 
 	-- UI Events (TextLabel, TextButton, ImageLabel, ImageButton, etc.)
-	MouseEnter: (...any) -> ()?, -- Triggered when the mouse enters the UI element
-	MouseLeave: (...any) -> ()?, -- Triggered when the mouse leaves the UI element
-	MouseMoved: (...any) -> ()?, -- Triggered when the mouse moves over the element
-	MouseWheelForward: (...any) -> ()?, -- Triggered when the mouse wheel scrolls forward
-	MouseWheelBackward: (...any) -> ()?, -- Triggered when the mouse wheel scrolls backward
-	InputBegan: (input: InputObject,...any) -> ()?, -- Triggered when an input begins (e.g., key press)
-	InputEnded: (input: InputObject,...any) -> ()?, -- Triggered when an input ends (e.g., key release)
-	InputChanged: (input: InputObject,...any) -> ()?, -- Triggered when an input changes (e.g., mouse move)
-	MouseButton1Click: (...any) -> ()?, -- Triggered when the left mouse button is clicked
-	MouseButton2Click: (...any) -> ()?, -- Triggered when the right mouse button is clicked
-	MouseButton1Down: (...any) -> ()?, -- Triggered when the left mouse button is pressed down
-	MouseButton1Up: (...any) -> ()?, -- Triggered when the left mouse button is released
-	MouseButton2Down: (...any) -> ()?, -- Triggered when the right mouse button is pressed down
-	MouseButton2Up: (...any) -> ()?, -- Triggered when the right mouse button is released
+	MouseEnter: (Entity: Instance, ...any) -> (), -- Triggered when the mouse enters the UI element
+	MouseLeave: (Entity: Instance, ...any) -> (), -- Triggered when the mouse leaves the UI element
+	MouseMoved: (Entity: Instance, ...any) -> (), -- Triggered when the mouse moves over the element
+	MouseWheelForward: (Entity: Instance, ...any) -> (), -- Triggered when the mouse wheel scrolls forward
+	MouseWheelBackward: (Entity: Instance, ...any) -> (), -- Triggered when the mouse wheel scrolls backward
+	InputBegan: (Entity: Instance, ...any) -> (), -- Triggered when an input begins (e.g., key press)
+	InputEnded: (Entity: Instance, ...any) -> (), -- Triggered when an input ends (e.g., key release)
+	InputChanged: (Entity: Instance, ...any) -> (), -- Triggered when an input changes (e.g., mouse move)
+	MouseButton1Click: (Entity: Instance, ...any) -> (), -- Triggered when the left mouse button is clicked
+	MouseButton2Click: (Entity: Instance, ...any) -> (), -- Triggered when the right mouse button is clicked
+	MouseButton1Down: (Entity: Instance, ...any) -> (), -- Triggered when the left mouse button is pressed down
+	MouseButton1Up: (Entity: Instance, ...any) -> (), -- Triggered when the left mouse button is released
+	MouseButton2Down: (Entity: Instance, ...any) -> (), -- Triggered when the right mouse button is pressed down
+	MouseButton2Up: (Entity: Instance, ...any) -> (), -- Triggered when the right mouse button is released
 	Offset: any,
 	TileSize: any,
 	TextStrokeColor3: any,
@@ -230,7 +238,7 @@ export type Properties = {
 	CornerRadius: any,
 
 	-- BillboardGui Events
-	AdorneeChanged: (adornee: Instance?) -> ()?, -- Triggered when the Adornee property changes
+	AdorneeChanged: (Entity: Instance, ...any) -> (), -- Triggered when the Adornee property changes
 
 	-- Tool Properties
 	RequiresHandle: any,
@@ -238,10 +246,10 @@ export type Properties = {
 	Enabled: any,
 
 	-- Tool Events
-	Activated: () -> ()?, -- Triggered when the tool is activated
-	Deactivated: () -> ()?, -- Triggered when the tool is deactivated
-	Equipped: (mouse: Mouse) -> ()?, -- Triggered when the tool is equipped
-	Unequipped: () -> ()?, -- Triggered when the tool is unequipped
+	Activated: (Entity: Instance, ...any) -> (), -- Triggered when the tool is activated
+	Deactivated: (Entity: Instance, ...any) -> (), -- Triggered when the tool is deactivated
+	Equipped: (Entity: Instance, ...any) -> (), -- Triggered when the tool is equipped
+	Unequipped: (Entity: Instance, ...any) -> (), -- Triggered when the tool is unequipped
 
 	-- Sound Properties
 	SoundId: any,
@@ -254,15 +262,15 @@ export type Properties = {
 	MinDistance: any,
 
 	-- Sound Events
-	Played: (...any) -> ()?, -- Triggered when the sound starts playing
-	Stopped: (...any) -> ()?, -- Triggered when the sound stops
-	Ended: (...any) -> ()?, -- Triggered when the sound finishes playing
-	Looped: (...any) -> ()?, -- Triggered when the sound loops
+	Played: (Entity: Instance, ...any) -> (), -- Triggered when the sound starts playing
+	Stopped: (Entity: Instance, ...any) -> (), -- Triggered when the sound stops
+	Ended: (Entity: Instance, ...any) -> (), -- Triggered when the sound finishes playing
+	Looped: (Entity: Instance, ...any) -> (), -- Triggered when the sound loops
 
 	-- Animation Properties
 	AnimationId: any,
 
 	-- Animation Events
-	KeyframeReached: (keyframeName: string) -> ()?, -- Triggered when a specific keyframe is reached
+	KeyframeReached: (Entity: Instance, ...any) -> (), -- Triggered when a specific keyframe is reached
 }
 return nil;

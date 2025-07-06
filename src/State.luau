@@ -79,7 +79,7 @@ end
 --[=[
     @method State
     @within Thread
-    @param FunctionToFire function
+    @param FunctionToFire () -> ();
     @param Thread any?
     @return State
     Creates a new State object that manages the given function.

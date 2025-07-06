@@ -249,7 +249,8 @@ Thread:Listener(Instance,{"ChildAdded","ChildRemoved"},function(Event:String, pa
     end
 end)
 ```
-### 10. Spawn
+### 10. Spawn and SpawnAfter
+#### Spawn
 This is a Task.Spawn wrapper version of running a function, This is good if you are adding features thay may yield the compilation.
 ```lua
 
@@ -259,6 +260,18 @@ This is a Task.Spawn wrapper version of running a function, This is good if you 
     end)
 }
 ```
+#### SpawnAfter
+Allows you to delay the call
+
+```lua
+
+{
+    Size = Thread:SpawnAfter(.2,function()
+        return UDim2.new(1,0,1,0)
+    end)
+}
+```
+To use these as you would task.spawn, or task.delay, you'd have to call :Perform() on them(check api)
 ### 11. Event and EventState
 These work similar to do and state but are for event listening
 ```lua
@@ -268,3 +281,28 @@ These work similar to do and state but are for event listening
     end):Connect(Signal3)
 }
 ```
+### 12. Schedule Calling
+This works like a cleaner, you can add anything to it, threads, functions,etc..
+If you add a function to it, it will call that function after the delay
+:::warning
+This is meant to be used outside of a props table
+:::
+```lua
+Thread:Schedule(.2,function()
+   ...
+end)
+```
+Works like Task.Delay, except its a cleaner.
+### 13. Attributes
+All Faye instance have the default attribute Instance methods like SetAttribute, GetAttribute, and GetAttributes, they work as expected. To listen to a attribute changed signal, you do.
+```lua
+local Part = Thread:Create "Part" {
+    Parent = workspace;
+    [Thread:AttributeChanged("hello_world")] = function(Entity,new)
+        print(new," is new attribute")
+    end,
+}
+
+Part:SetAttribute("attributename", value)
+```
+SetAttribute returns the self, so you can do Create:SetAttribute:SetAttribute...

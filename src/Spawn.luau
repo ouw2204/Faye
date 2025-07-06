@@ -12,6 +12,7 @@ local tins,tf,tc,tr = table.insert,table.find,table.clear,table.remove
     @within Spawn
     Deletes the task if not already deleted.
 ]=]
+local threadclean = task.cancel
 function m:Destroy()
     if self.Thread ~= nil then
         if self.Thread["Remove"] then
@@ -23,6 +24,10 @@ function m:Destroy()
             end
         end
     end
+    if self.createdtask ~= nil then
+        threadclean(self.createdtask)
+        self.createdtask = nil;
+    end
     tc(self)
     setmetatable(self,nil)
 end
@@ -32,7 +37,7 @@ end
     This method performs the tasks then self destructs right after.
 ]=]
 function m:Perform(Entity,Index,Compile,Thread)
-    local createdtask; createdtask = task.spawn(function()
+    local func = function()
         local ret = self.func(Entity)
         if ret ~= nil then
             if typeof(Index) == "number" then
@@ -41,39 +46,28 @@ function m:Perform(Entity,Index,Compile,Thread)
                 Entity[Index] = ret;
             end
         end
-
-        if Thread ~= nil then
-            if Thread["Remove"] ~= nil then
-                Thread:Remove(createdtask)
-            else
-                local f = tf(Thread,createdtask)
-                if f ~= nil then
-                    tr(Thread,f)
-                end;
-            end
-            createdtask = nil;
-        end
-    end)
-    if Thread ~= nil then
-        if Thread["Add"] ~= nil then
-            Thread:Add(createdtask)
-        else
-            tins(Thread,createdtask)
-        end
+        self.createdtask = nil;
+        self:Destroy();
     end
-    self:Destroy();
+    if self.Time ~= nil and self.Time >0 then
+        self.createdtask = task.delay(self.Time,func)
+    else
+        self.createdtask = task.spawn(func)
+    end
 end
 --[=[
     @method Spawn
     @within Thread
     @param func function
     @param Thread Thread?
+    @param Time number?
     Creates a new task
 ]=]
-return function(func: () -> (), Thread: Types.Thread)
+return function(func: () -> (), Thread: Types.Thread,Time: number?)
     local new = {
         func = func;
         Thread = Thread;
+        Time = Time;
     }
     setmetatable(new,m)
     if Thread ~= nil then

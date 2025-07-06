@@ -1,9 +1,9 @@
-local tf, tins, tr, tof, tc = table.find, table.insert, table.remove, typeof, table.clear
+local tof, tc = typeof, table.clear
 local ValueClasses = require(script.Parent.Parent.Parent.Misc.ValueClasses)
 local Types = require(script.Parent.Parent.Parent.Types)
 local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
 
-
+local tabletxt,niltxt,numbertxt,stringtxt = "table","nil","number","string"
 return function (Entity: Types.Instance, Index: any, Value: Types.Value)
     local Instance = Entity.Instance or Entity
 
@@ -11,7 +11,7 @@ return function (Entity: Types.Instance, Index: any, Value: Types.Value)
     local connections = {};
 
     local mainFunc; mainFunc = function(Gotten: any,Position: number?)
-        local gottenIsTable = tof(Gotten) == "table"
+        local gottenIsTable = tof(Gotten) == tabletxt
         Position = Position or 1;
         if gottenIsTable and Gotten.__type ~= nil and ValueClasses[Gotten.__type] then
             connectionslength = Position;
@@ -33,7 +33,7 @@ return function (Entity: Types.Instance, Index: any, Value: Types.Value)
                 end
                 local tofIndex = tof(Instance[Index])
                 local tofNew = tof(Gotten)
-                if tofIndex == tofNew or (tofIndex == "nil" and tofNew ~= nil) or ((tofIndex == "number" or tofIndex == "string") and (tofNew == "number" or tofNew == "string")) then
+                if tofIndex == tofNew or (tofIndex == niltxt and tofNew ~= nil) or ((tofIndex == numbertxt or tofIndex == stringtxt) and (tofNew == numbertxt or tofNew == stringtxt)) then
                     Instance[Index] = Gotten
                 end
                 tofIndex = nil

@@ -3,15 +3,7 @@ local tof = typeof
 local ValueClasses = require(script.Parent.Parent.Misc.ValueClasses)
 local tc = table.clear
 local Types = require(script.Parent.Parent.Types)
-function repeatedCompile(Index: number, Thread: Types.Thread, Ret: any, Compile: () -> (), Entity: any)
-	if Ret ~= nil then
-		if tof(Index) ~= "number" and typeof(Entity.Instance[Index]) ~= "RBXScriptSignal" then
-			Entity.Instance[Index] = Ret
-		else
-			Compile(Entity, (tof(Ret) == "table" and Ret.__type == nil and Ret) or { Ret }, Thread)
-		end
-	end
-end
+local repeatedCompile = require(script.repeatedCompile)
 local m = {
 	SetTo = function(Entity, Index, Value)
 		if Value["Value"] ~= nil and Value.Value["Set"] ~= nil then
@@ -69,6 +61,7 @@ local m = {
 			end
 		end)
 	end,
+	AttChanged = require(script.AttChanged);
 	EventCompiler = function(Entity, Index, Value, Compile)
 		local Instance = Entity.Instance
 		local Thread = Entity.InnerThread or Entity.Thread -- fetching innerthread or thread with priority

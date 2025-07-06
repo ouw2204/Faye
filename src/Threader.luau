@@ -92,6 +92,13 @@ function mt:SpringInfo(Time: number,Frequency: number,Damping: number, RepeatCou
     return Ret
 end
 
+--[=[
+    @within Thread
+    @method Connect
+    @param Connection RBXScriptSignal
+    @param Function: () -> ()
+    Signal connection
+]=]
 --connect
 function mt:Connect(Connection: RBXScriptSignal,Function: () -> ())
     self:Add(Connection:Connect(Function),true)
@@ -141,6 +148,9 @@ end
 local Spawn = require(Utilities.Spawn)
 function mt:Spawn(func: (...any) -> ())
     return Spawn(func,self)
+end
+function mt:SpawnAfter(Time: number,func: (...any) -> ())
+    return Spawn(func,self,Time)
 end
 --State
 local State = require(Utilities.State)
@@ -198,25 +208,31 @@ end
 function mt:EventState(Connections: RBXScriptSignal & {RBXScriptSignal} & () -> (),func: (...any) -> ()?)
     return Event(Connections, func,self,true);
 end
+local AttributeChanged = require(Utilities.AttChanged)
+function mt:AttributeChanged(Attribute: string)
+    return AttributeChanged(Attribute, self);
+end
 local tc = table.clear
 --[=[
     @within Thread
-    @method Timed
-    @param Item any
+    @method Schedule
     @param Time number?
+    @param Item any
+    @param ... any
     @return item
-    Cleans an item individually based off the time.
+    Cleans an item individually based off the time. can also be used to call functions after a time has passed.
 ]=]
-function  mt:Timed(Item: any, Time: number?)
+function  mt:Schedule(Time: number?,Item: any,...)
     if Item == nil then return end;
-    local d; d = task.delay(Time,function()
+    local d;
+    local func = function(...)
         local type = typeof(Item)
         if (type == "table" and Item["Destroy"] ~= nil) or type == "Instance" then
             Item:Destroy();
         elseif (type == "table" and Item["Clean"]) then
             Item:Clean()
         elseif type == "function" then
-            Item()
+            Item(...)
         elseif type == "RBXScriptConnection" then
             Item:Disconnect();
         elseif type == "thread" then
@@ -228,10 +244,17 @@ function  mt:Timed(Item: any, Time: number?)
                 tc(Item)
             end
         end
-        self:Remove(d)
-    end)
+        if d ~= nil then
+            self:Remove(d)
+            d = nil;
+        end;
+    end
+    
     if Time  ~= nil and Time >0 then
+        d = task.delay(Time,func,...)
         self:Add(d)
+    else
+        task.spawn(Time,func,...)
     end
     return Item;
 end

@@ -32,7 +32,42 @@ function removefunc(t: any, v: any)
 	end
 	return false
 end
-
+--[=[
+    @method SetAttribute
+    @within Create
+    @param Attribute string
+    @param Value any
+    @return Create
+    Similar to SetAttribute method for roblox instances
+]=]
+function mt:SetAttribute(Attribute: string, Value: any)
+	if self.Instance ~= nil then
+		self.Instance:SetAttribute(Attribute,Value)
+	end
+	return self;
+end
+--[=[
+    @method GetAttribute
+    @within Create
+    @param Attribute string
+    @return Value
+    Similar to the GetAttribute method for roblox instances
+]=]
+function mt:GetAttribute(Attribute: string)
+	if self.Instance ~= nil then
+		return self.Instance:GetAttribute(Attribute)
+	end
+end
+--[=[
+    @method GetAttributes
+    @within Create
+    Similar to the GetAttributes method for roblox instances
+]=]
+function mt:GetAttributes(Attribute: string)
+	if self.Instance ~= nil then
+		return self.Instance:GetAttributes()
+	end
+end
 --[=[
     @method Compile
     @within Create

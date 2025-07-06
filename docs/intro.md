@@ -18,8 +18,10 @@ sidebar_position: 1
 - Space
 - SetTo
 - Listener
-- Spawn
+- Spawn and SpawnAfter
 - Event and EventState
+- Schedule calling
+- Attributes
 ## [Important Tutorials](./ImportantTutorials)
 - OnClean,CleanDelay, and CleanFunction(**IMPORTANT**)
 - Importance of using spaces
