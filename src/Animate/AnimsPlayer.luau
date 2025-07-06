@@ -83,6 +83,10 @@ function AnimsHandler.Update(delta)
             else
                 Anim:Destroy()
             end
+            EndReached = nil;
+            MaxProg = nil;
+            Pivot = nil;
+            continue
         end
         EndReached = nil;
         MaxProg = nil;

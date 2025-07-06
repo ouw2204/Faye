@@ -6,11 +6,13 @@ Remember to occasionally check for new updates as there might be bug fixes.
 https://create.roblox.com/store/asset/74301103261718/Faye
 ### Wally
 ```
-Faye = "prophetouw/faye@1.4.14" 
+Faye = "prophetouw/faye@1.4.15" 
 ```
 ### Github
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.
 ## Update log
+### v1.4.15
+- Fixed types and renamed the Instance type to FayeInstance since it was interfering with the Instance type.
 ### v1.4.14
 - Fixed an Iterate bug
 ### v1.4.13

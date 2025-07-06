@@ -15,12 +15,12 @@ export type Value = {
     ItemExists: (self: Value, Entity: any) -> ();
 }
 export type FayeInstance = {
+	Props: {[any]: any}?;
 	Instance: Instance, Thread: BasicThread?, InnerThread: BasicThread?,
 	SetAttribute: (self: FayeInstance,Name: string,Value: any) -> FayeInstance,
 	GetAttribute: (self: FayeInstance,Name: string) -> any,
 	GetAttributes: (self: FayeInstance) -> {any: any};
 }
-export type Instance = {Instance: Instance, Props: {[any]: any}?,Thread: thread?, Innerthread: thread?}
 export type UserInputType = typeof(game:GetService("UserInputService"));
 export type BasicThread = {Remove: (self: BasicThread, Entity: any) -> (); Add: (self: BasicThread, Entity: any) -> ()}
 export type Animation = {

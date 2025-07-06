@@ -3,7 +3,7 @@ local ValueClasses = require(script.Parent.Parent.Parent.Misc.ValueClasses)
 local Types = require(script.Parent.Parent.Parent.Types)
 local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
 local removetxt,extendtxt,cleantxt,addtxt,tabletxt,numbertxt = "Remove","Extend","Clean","Add","table","number"
-local function subCompile(Thread: Types.Thread,ActualValue: {Function: (Index: any, Value: any, NewThread: any, Instance: any) -> ()},Entity:  Types.Instance, Holder: {[any]: any},Compile: (Entity: Types.Instance, Props: {[any]: any},...any) -> (),Index: any, Value: any, FirstIndex: any)
+local function subCompile(Thread: Types.Thread,ActualValue: {Function: (Index: any, Value: any, NewThread: any, Instance: any) -> ()},Entity:  Types.FayeInstance, Holder: {[any]: any},Compile: (Entity: Types.FayeInstance, Props: {[any]: any},...any) -> (),Index: any, Value: any, FirstIndex: any)
     if Index == nil or Value == nil then return end
 		local EquippedIndex = FirstIndex or Index
 		if Thread ~= nil then
@@ -56,7 +56,7 @@ local function cleanHolder(Thread: Types.Thread,Holder: {[any]: any})
     end
     tc(Holder)
 end
-return function(Entity: Types.Instance, _: string, Value: any, Compile: (Entity: Types.Instance, Props: {[any]: any},...any) -> ())
+return function(Entity: Types.FayeInstance, _: string, Value: any, Compile: (Entity: Types.FayeInstance, Props: {[any]: any},...any) -> ())
     local ActualThread: Types.Thread = Entity.Innerthread or Entity.Thread;
     if ActualThread ~= nil and ActualThread ~= Value.Thread then
 		if Value.Thread ~= nil then

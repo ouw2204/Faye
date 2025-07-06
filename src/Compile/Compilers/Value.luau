@@ -4,7 +4,7 @@ local Types = require(script.Parent.Parent.Parent.Types)
 local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
 
 local tabletxt,niltxt,numbertxt,stringtxt = "table","nil","number","string"
-return function (Entity: Types.Instance, Index: any, Value: Types.Value)
+return function (Entity: Types.FayeInstance, Index: any, Value: Types.Value)
     local Instance = Entity.Instance or Entity
 
     local connectionslength = 0;

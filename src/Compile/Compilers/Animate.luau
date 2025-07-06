@@ -111,8 +111,6 @@ return function(Entity: Types.Instance, Index: string, Value: Types.Animation)
         mainGoalFunc(Value.Goal)
     end
     
-
-    local id = math.random(1,999)
     local Clean; Clean = function()
         Value.__cleanFunction = nil;
         Utility.ClearAllConnections(infoConnections,infoConnectionsLength)
