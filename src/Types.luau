@@ -272,5 +272,8 @@ export type Properties = {
 
 	-- Animation Events
 	KeyframeReached: (Entity: Instance, ...any) -> (), -- Triggered when a specific keyframe is reached
+	-- part events
+	TagAdded: (Entity: Instance, ...any) -> (),
+	TagRemoved: (Entity: Instance, ...any) -> ()
 }
 return nil;

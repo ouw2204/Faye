@@ -20,7 +20,9 @@ function mt:Destroy()
             tr(self.Thread,f)
         end
     end
-    self.Attribute = nil;
+    self.Thread = nil;
+    self.Method = nil;
+    self.Index = nil;
     setmetatable(self,nil)
 end
 --[=[
@@ -31,8 +33,9 @@ end
     @return AttributeChanged
     Attribute changed listener
 ]=]
-return function (Attribute: string, Thread: Types.Thread?)
-    local d = {Attribute = Attribute,Thread = Thread};
+return function (Method: string,Index: string, Thread: Types.Thread?)
+    if Method == nil or Index == nil then return end;
+    local d = {Method = Method,Index = Index,Thread = Thread};
     setmetatable(d,mt)
     if Thread ~= nil then
         if Thread["Add"] then
