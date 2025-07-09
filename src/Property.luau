@@ -11,7 +11,7 @@ mt.__index = mt;
 local tof,tins,tr,tf = typeof,table.insert,table.remove,table.find
 local tc = table.clear
 local Signal = require(script.Parent.Packages.Signal)
-local Actions = require(script.Parent.Misc.PropertyAttributeActions)
+local Actions = require(script.Parent.Misc.PropertyActions)
 
 function mt.__add(tab,am)
     tab:Add(am)

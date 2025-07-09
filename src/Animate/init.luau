@@ -3,7 +3,7 @@
     A class that handles animations.
 ]=]
 
-local tc, tf, tr = table.clear, table.find, table.remove
+local tc, tf, tr,tof = table.clear, table.find, table.remove,typeof
 local OtherTypes = require(script.Parent.Types)
 local mt = {
 	__type = script.Name,
@@ -12,7 +12,7 @@ mt.__index = mt
 
 local Cleaner = require(script.Parent.Clean)
 
-local AnimsHandler = require(script.AnimsPlayer)
+local Helper = require(script.Helper)
 
 --[=[
     @method UpdateInfo
@@ -106,7 +106,7 @@ function mt:Destroy(FromStop)
 	self.__Frequency = nil
 	self.__Damping = nil
 	self.__RepeatCount = nil
-
+	self.AnimationsAmount = nil;
 	self.__cleanFunction = nil
 	self.Goal = nil
 	self.Entity = nil
@@ -115,7 +115,6 @@ function mt:Destroy(FromStop)
 	self.DontResetInitial = nil
 	self.Function = nil
 	self.__typeIndex = nil
-	self.Elapsed = nil
 	self.SkipToGoal = nil
 	if FromStop == nil then
 		tc(self)
@@ -130,13 +129,10 @@ end
     Stops the animation.
 ]=]
 function mt:Stop(FromDestroy)
+	local hasAnim = self.__Anim ~= nil;
 	if self.Thread ~= nil then
-		if self.Thread.AnimationsAmount ~= nil then
-			local removedAmount = AnimsHandler:RemoveAll(self)
-			print(removedAmount," is removed amount")
-			if removedAmount >0 then
-				self.Thread.AnimationsAmount = math.max(self.Thread.AnimationsAmount - removedAmount, 0)
-			end
+		if self.Thread.AnimationsAmount ~= nil and Helper.Remove(self) == true then
+			self.Thread.AnimationsAmount = math.max(self.Thread.AnimationsAmount - 1, 0)
 		end
 		if self.Thread.CleanWhenDone and (self.Thread.AnimationsAmount ~= nil and self.Thread.AnimationsAmount <= 0) then
 			self.Thread.AnimationsAmount = nil
@@ -145,7 +141,6 @@ function mt:Stop(FromDestroy)
 				self:Destroy(true)
 			end
 			if self.Thread ~= nil then
-				print("clean thread")
 				Cleaner(self.Thread)
 			end
 		else
@@ -153,13 +148,14 @@ function mt:Stop(FromDestroy)
 				self.Thread.AnimationsAmount = nil
 			end
 		end
+	else
+		Helper.Remove(self)
 	end
-	if self.Elapsed then
+	if hasAnim then
 		if self.__onetimeinfo ~= nil and self.__cleantempinfo then
 			self.__onetimeinfo = nil
 		end
 	end
-	self.Elapsed = nil
 end
 
 --[[
@@ -181,7 +177,7 @@ end
     @param To any
     Plays the animation.
 ]=]
-function mt:Play(To: any,Entity: Instance?, Property: string?)
+function mt:Play(To: any, Entity: Instance, Property: string,Default: any, DefaultProp: string)
 	if To == nil then
 		return
 	end
@@ -197,17 +193,14 @@ function mt:Play(To: any,Entity: Instance?, Property: string?)
 		return
 	end
 	self:Stop()
-	if self.Entity == nil or self.Property == nil then
+	--[[if self.Entity == nil or self.Property == nil then
 		warn(`Entity or property is missing - {debug.traceback()}`)
 		return
-	end
+	end]]
 	if self.Thread ~= nil then
 		self.Thread.AnimationsAmount = (self.Thread.AnimationsAmount or 0) + 1
 	end
-	if self.Animations == nil then
-		self.Animations = {};
-	end
-	AnimsHandler:Add(self,To,Entity,Property)
+	Helper.Add(self,To,Entity,Property,Default,DefaultProp)
 end
 
 --[=[
@@ -243,12 +236,11 @@ function mt:AlwaysFrom(Value: any)
 	return self
 end
 
+--[[
+local scriptname = script.Name;
 mt.__tostring = function(tab)
-    if tab.Property ~= nil and tab.Entity ~= nil then
-        return `Anim[{tab.Entity.Name}: {tab.Property}]`
-    end
-    return "Anim[Unknown: Unknown]"
-end
+    return scriptname
+end]]
 
 --[=[
     @function Animation
@@ -267,18 +259,20 @@ return function(
 	Info: OtherTypes.Info | OtherTypes.SpringInfo,
 	Thread: OtherTypes.Thread?
 ): OtherTypes.Animation
+	if Goal == nil or Thread == nil then warn("Animaion must be created via thread and must have a goal."); return end;
 	local new = {
 		Goal = Goal,
 		Thread = Thread,
-		Animations = nil,
 		Info = Info,
 
 		--
+		__Anim = nil;
 		__easingdirection = nil;
 		__Damping = nil;
 		__Frequency = nil;
 		__easingstyle = nil;
 		__typeIndex =  nil;
+		__Compiled = false;
 		__Time =  nil;
 		__Reverse = nil;
 		__DelayTime = nil;

@@ -5,14 +5,13 @@ function Recursive(Scope)
 	if Scope == nil then
 		return
 	end
-	print("clean ")
+
 	do
 		Scope._hc = nil
 		Scope.__Destroying = true;
 		Scope.ParentThread = nil
 		Scope.ConnectionsThread = nil
 		Scope._isCleanAncestor = nil
-		Scope.AnimationsAmount = nil
 		Scope.CleanWhenDone = nil
 		Scope.Cleaning = nil
 		for k = #Scope, 1, -1 do
@@ -40,6 +39,7 @@ function Recursive(Scope)
 			end
 			Scope[k] = nil
 		end
+		Scope.AnimationsAmount = nil
 		Scope.__Destroying = nil;
 		setmetatable(Scope, nil)
 	end

@@ -2,7 +2,7 @@ local tf, tins, tr, tof, tc = table.find, table.insert, table.remove, typeof, ta
 local ValueClasses = require(script.Parent.Parent.Parent.Misc.ValueClasses)
 local Types = require(script.Parent.Parent.Parent.Types)
 local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
-local removetxt,extendtxt,cleantxt,addtxt,tabletxt,numbertxt = "Remove","Extend","Clean","Add","table","number"
+local removetxt,extendtxt,destroytxt,addtxt,tabletxt,numbertxt = "Remove","Extend","Destroy","Add","table","number"
 local function subCompile(Thread: Types.Thread,ActualValue: {Function: (Index: any, Value: any, NewThread: any, Instance: any) -> ()},Entity:  Types.FayeInstance, Holder: {[any]: any},Compile: (Entity: Types.FayeInstance, Props: {[any]: any},...any) -> (),Index: any, Value: any, FirstIndex: any)
     if Index == nil or Value == nil then return end
 		local EquippedIndex = FirstIndex or Index
@@ -16,7 +16,7 @@ local function subCompile(Thread: Types.Thread,ActualValue: {Function: (Index: a
 						tr(Thread, Pos)
 					end
 				end
-				Holder[EquippedIndex]:Clean()
+				Holder[EquippedIndex]:Destroy()
 				Holder[EquippedIndex] = nil
 			end
 		end;
@@ -36,7 +36,7 @@ local function  cleanIndividual(Thread: Types.Thread,Holder: {any: any},Index: a
 	if Thread == nil or Holder == nil or Index == nil then return end;
     if Holder[Index] ~= nil then
 		Utility.RemoveFromThread(Thread,Holder[Index])
-        Holder[Index]:Clean()
+        Holder[Index]:Destroy()
         Holder[Index] = nil
     end
 end
@@ -50,8 +50,8 @@ local function cleanHolder(Thread: Types.Thread,Holder: {[any]: any})
                 tr(Thread, Pos)
             end
         end
-        if v ~= nil and v[cleantxt] then
-            v:Clean()
+        if v ~= nil and v[destroytxt] then
+            v:Destroy()
         end
     end
     tc(Holder)

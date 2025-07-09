@@ -155,7 +155,6 @@ function mt:Compile()
 					if f == nil then
 						return
 					end
-					print(self," is self before deletion ",getmetatable(self))
 					f(self.InnerThread or self.Thread, self.Instance)
 					for _, v in pairs(connected) do
 						removefunc(v, cf)
@@ -214,7 +213,6 @@ end
     Destroys the instance.
 ]=]
 function mt:Destroy()
-	print(self," is before clean",self.Instance.Name)
 	if self.Thread ~= nil then
 		if self.Thread["Remove"] then
 			self.Thread:Remove(self)

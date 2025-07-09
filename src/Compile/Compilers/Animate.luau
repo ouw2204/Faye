@@ -4,12 +4,17 @@ local Types = require(script.Parent.Parent.Parent.Types)
 local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
 local tabletxt = "table"
 return function(Entity: Types.FayeInstance, Index: string, Value: Types.Animation)
+    Value.Compiled = true;
     local infoConnections = {}
     local infoConnectionsLength = 0;
     local goalConnections = {};
     local goalConnectionsLength = 0;
     local Info = Value.Info;
     Value.Info = nil;
+
+    local Default = nil;
+    local DefaultProp = tof(Entity.Instance[Index])
+    
     local Thread = Entity.InnerThread or Entity.Thread
     --switching threads
     if Thread ~= nil and (Value.Thread == nil or Thread ~= Value.Thread) then
@@ -19,7 +24,6 @@ return function(Entity: Types.FayeInstance, Index: string, Value: Types.Animatio
         Value.Thread = Thread
         Utility.AddToThread(Thread,Value)
     end
-    -->
 
 
     local function  mainInfoFunc(Info: any,Position: number,First)
@@ -78,12 +82,11 @@ return function(Entity: Types.FayeInstance, Index: string, Value: Types.Animatio
                         Value.SkipToGoal = nil;
                     end]]
                     NoAnim = nil
-                    if Value.Property ~= nil and tof(Entity.Instance[Value.Property]) == goalType then
-                        Entity.Instance[Value.Property] = Goal
+                    if tof(Entity.Instance[Index]) == goalType then
+                        Entity.Instance[Index] = Goal
                     end
                 else
-                    if Value.Property ~= nil and tof(Entity.Instance[Value.Property]) == goalType then
-                        Value.Elapsed = nil
+                    if tof(Entity.Instance[Index]) == goalType then
                         if Value.__onetimeinfo ~= nil or Value.__cleantempinfo then
                             if Value.__cleantempinfo then
                                 Value.__onetimeinfo = nil
@@ -95,7 +98,8 @@ return function(Entity: Types.FayeInstance, Index: string, Value: Types.Animatio
                                 Value.__cleantempinfo = true
                             end
                         end
-                        Value:Play(Goal,Entity.Instance,Index)
+                        Default = Entity.Instance[Index];
+                        Value:Play(Goal,Entity.Instance,Index,Default,DefaultProp)
                     end
                 end
             end

@@ -258,10 +258,11 @@ function  mt:Schedule(Time: number?,Item: any,...)
     end
     return Item;
 end
+--[[
 local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;
-end
+end]]
 mt.Types = Types;
 return function() : Types.Thread
     local new = {}

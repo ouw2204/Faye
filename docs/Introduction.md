@@ -27,7 +27,7 @@ Thread:Create "Frame" {
     ...
 }
 task.wait(2)
-Thread:Clean()
+Thread:Destroy()
 ```
 #### Difference?
 Everything created using a Thread can be cleaned at once once the **Clean** function is called, this function cleans the contents, and the thread itself, hence the Thread isn't usable after its called. if you're not using any thread you must clean everything manuelly or assign a custom cleaning module(any cleaner that has an "Add" and/or "Remove" method):

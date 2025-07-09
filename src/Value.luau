@@ -8,7 +8,7 @@ local tins,tf,tr = table.insert,table.find,table.remove
 local tof = typeof
 local tc = table.clear
 
-local Actions = require(script.Parent.Misc.ValueTypeActions);
+local Actions = require(script.Parent.Misc.TypeActions);
 
 local mt = {};
 mt.__index = mt;
