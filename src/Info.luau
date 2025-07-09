@@ -13,7 +13,7 @@ local ThreadType = require(script.Parent.Types)
     @return Info
     Creates a new Info object with the given parameters.
 ]=]
-return function(Time: number,EasingStyle: Enum.EasingStyle,EasingDirection: Enum.EasingDirection, RepeatCount: number,Reverse: boolean,DelayTime: number)
+return function(Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?)
     local new = {
         __typeIndex = 1;
         Time = Time or 1;

@@ -28,6 +28,7 @@ export type Animation = {
     AlwaysFrom: (self: Animation, Value: any) -> Animation;
     Play: (self: Animation,To: any) -> ();
     Destroy: (self: Animation) -> ();
+	Animations: {[any]: any}?;
     OneTimeInfo: (self: Animation, Info: {Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?,Reverse: boolean?,DelayTime: number?,Frequency: number?,Damping: number?,RepeatCount: number?}) -> Animation;
     UpdateInfo: (self: Animation, Info: {Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?,Reverse: boolean?,DelayTime: number?,Frequency: number?,Damping: number?,RepeatCount: number?}) -> Animation;
 }
@@ -91,7 +92,7 @@ export type Thread = {
     Create: (self: Thread, ClassName: string) -> (Properties: Properties) -> FayeInstance;
     Configure: (self: Thread, Entity: any) -> (Properties: Properties) -> FayeInstance;
     Extend: (self: Thread) -> Thread;
-    Clean: (self: Thread) -> ();
+    Destroy: (self: Thread) -> ();
     Value: (self: Thread,Initial: any) -> Value;
     Animate: (self: Thread, Goal: any, Info: Info | SpringInfo) -> Animation;
     Info: (self: Thread, Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Info;
@@ -115,7 +116,7 @@ export type Thread = {
     Schedule: (self: Thread,Time: number?,Item: any,...any) -> any;
     Event: (self: Thread,any,func: (...any) -> ()?) -> Event;
     EventState: (self: Thread,any, func: (...any) -> ()) -> Event;
-	AttributeChanged: (self: Thread, Attribute: string) -> ();
+	MethodEvent: (self: Thread, Method: string, Index: string) -> ();
 }
 
 export type Properties = {
@@ -210,20 +211,20 @@ export type Properties = {
 	AutoButtonColor: any, -- For TextButton and ImageButton
 
 	-- UI Events (TextLabel, TextButton, ImageLabel, ImageButton, etc.)
-	MouseEnter: (Entity: Instance, ...any) -> (), -- Triggered when the mouse enters the UI element
-	MouseLeave: (Entity: Instance, ...any) -> (), -- Triggered when the mouse leaves the UI element
-	MouseMoved: (Entity: Instance, ...any) -> (), -- Triggered when the mouse moves over the element
-	MouseWheelForward: (Entity: Instance, ...any) -> (), -- Triggered when the mouse wheel scrolls forward
-	MouseWheelBackward: (Entity: Instance, ...any) -> (), -- Triggered when the mouse wheel scrolls backward
-	InputBegan: (Entity: Instance, ...any) -> (), -- Triggered when an input begins (e.g., key press)
-	InputEnded: (Entity: Instance, ...any) -> (), -- Triggered when an input ends (e.g., key release)
-	InputChanged: (Entity: Instance, ...any) -> (), -- Triggered when an input changes (e.g., mouse move)
-	MouseButton1Click: (Entity: Instance, ...any) -> (), -- Triggered when the left mouse button is clicked
-	MouseButton2Click: (Entity: Instance, ...any) -> (), -- Triggered when the right mouse button is clicked
-	MouseButton1Down: (Entity: Instance, ...any) -> (), -- Triggered when the left mouse button is pressed down
-	MouseButton1Up: (Entity: Instance, ...any) -> (), -- Triggered when the left mouse button is released
-	MouseButton2Down: (Entity: Instance, ...any) -> (), -- Triggered when the right mouse button is pressed down
-	MouseButton2Up: (Entity: Instance, ...any) -> (), -- Triggered when the right mouse button is released
+	MouseEnter: (Entity: Instance, ...any) -> ()?, -- Triggered when the mouse enters the UI element
+	MouseLeave: (Entity: Instance, ...any) -> ()?, -- Triggered when the mouse leaves the UI element
+	MouseMoved: (Entity: Instance, ...any) -> ()?, -- Triggered when the mouse moves over the element
+	MouseWheelForward: (Entity: Instance, ...any) -> ()?, -- Triggered when the mouse wheel scrolls forward
+	MouseWheelBackward: (Entity: Instance, ...any) -> ()?, -- Triggered when the mouse wheel scrolls backward
+	InputBegan: (Entity: Instance, ...any) -> ()?, -- Triggered when an input begins (e.g., key press)
+	InputEnded: (Entity: Instance, ...any) -> ()?, -- Triggered when an input ends (e.g., key release)
+	InputChanged: (Entity: Instance, ...any) -> ()?, -- Triggered when an input changes (e.g., mouse move)
+	MouseButton1Click: (Entity: Instance, ...any) -> ()?, -- Triggered when the left mouse button is clicked
+	MouseButton2Click: (Entity: Instance, ...any) -> ()?, -- Triggered when the right mouse button is clicked
+	MouseButton1Down: (Entity: Instance, ...any) -> ()?, -- Triggered when the left mouse button is pressed down
+	MouseButton1Up: (Entity: Instance, ...any) -> ()?, -- Triggered when the left mouse button is released
+	MouseButton2Down: (Entity: Instance, ...any) -> ()?, -- Triggered when the right mouse button is pressed down
+	MouseButton2Up: (Entity: Instance, ...any) -> ()?, -- Triggered when the right mouse button is released
 	Offset: any,
 	TileSize: any,
 	TextStrokeColor3: any,
@@ -238,7 +239,7 @@ export type Properties = {
 	CornerRadius: any,
 
 	-- BillboardGui Events
-	AdorneeChanged: (Entity: Instance, ...any) -> (), -- Triggered when the Adornee property changes
+	AdorneeChanged: (Entity: Instance, ...any) -> ()?, -- Triggered when the Adornee property changes
 
 	-- Tool Properties
 	RequiresHandle: any,
@@ -246,10 +247,10 @@ export type Properties = {
 	Enabled: any,
 
 	-- Tool Events
-	Activated: (Entity: Instance, ...any) -> (), -- Triggered when the tool is activated
-	Deactivated: (Entity: Instance, ...any) -> (), -- Triggered when the tool is deactivated
-	Equipped: (Entity: Instance, ...any) -> (), -- Triggered when the tool is equipped
-	Unequipped: (Entity: Instance, ...any) -> (), -- Triggered when the tool is unequipped
+	Activated: (Entity: Instance, ...any) -> ()?, -- Triggered when the tool is activated
+	Deactivated: (Entity: Instance, ...any) -> ()?, -- Triggered when the tool is deactivated
+	Equipped: (Entity: Instance, ...any) -> ()?, -- Triggered when the tool is equipped
+	Unequipped: (Entity: Instance, ...any) -> ()?, -- Triggered when the tool is unequipped
 
 	-- Sound Properties
 	SoundId: any,
@@ -262,18 +263,18 @@ export type Properties = {
 	MinDistance: any,
 
 	-- Sound Events
-	Played: (Entity: Instance, ...any) -> (), -- Triggered when the sound starts playing
-	Stopped: (Entity: Instance, ...any) -> (), -- Triggered when the sound stops
-	Ended: (Entity: Instance, ...any) -> (), -- Triggered when the sound finishes playing
-	Looped: (Entity: Instance, ...any) -> (), -- Triggered when the sound loops
+	Played: (Entity: Instance, ...any) -> ()?, -- Triggered when the sound starts playing
+	Stopped: (Entity: Instance, ...any) -> ()?, -- Triggered when the sound stops
+	Ended: (Entity: Instance, ...any) -> ()?, -- Triggered when the sound finishes playing
+	Looped: (Entity: Instance, ...any) -> ()?, -- Triggered when the sound loops
 
 	-- Animation Properties
 	AnimationId: any,
 
 	-- Animation Events
-	KeyframeReached: (Entity: Instance, ...any) -> (), -- Triggered when a specific keyframe is reached
+	KeyframeReached: (Entity: Instance, ...any) -> ()?, -- Triggered when a specific keyframe is reached
 	-- part events
-	TagAdded: (Entity: Instance, ...any) -> (),
-	TagRemoved: (Entity: Instance, ...any) -> ()
+	TagAdded: (Entity: Instance, ...any) -> ()?,
+	TagRemoved: (Entity: Instance, ...any) -> ()?
 }
 return nil;

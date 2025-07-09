@@ -12,19 +12,17 @@
 local mt = {};
 mt.__index = mt;
 local tins,tf,tr = table.insert,table.find,table.remove
+local destroytxt,tabletxt,cleantxt,instancetxt,functiontxt,rbxlscripttxt,threadtxt = "Destroy","table","Clean","Instance","function","RBXScriptConnection","thread"
 --types
-local Types = require(script.Parent.Types);
-
---utils
-local Utilities = script.Parent;
+local Types = require(script.Types);
 
 --methods
-local Create = require(script.Parent.Create)
+local Create = require(script.Create)
 function mt:Create(ClassName: string)
     return Create(ClassName,self)
 end
 --Configure
-local Configure = require(script.Parent.Configure)
+local Configure = require(script.Configure)
 function mt:Configure(Entity: any)
     return Configure(Entity,self)
 end
@@ -57,8 +55,8 @@ end
     @method Clean
     This method cleans everything added to the thread, and the thread itself. After this method gets called the thread is no longer useable.
 ]=]
-local Clean = require(script.Parent.Clean)
-function mt:Clean() : ()
+local Clean = require(script.Clean)
+function mt:Destroy() : ()
     if self.ParentThread ~= nil then
         self.ParentThread:Remove(self)
         self.ParentThread = nil;
@@ -66,26 +64,26 @@ function mt:Clean() : ()
     Clean(self)
 end
 --Value
-local Value = require(Utilities.Value);
+local Value = require(script.Value);
 function mt:Value(Initial: any)
     return Value(Initial,self)
 end
 
 --Animate
-local Animate = require(Utilities.Animate)
+local Animate = require(script.Animate)
 function mt:Animate(Goal: any, Info: Types.Info | Types.SpringInfo)
     return Animate(Goal,Info,self);
 end
 
 --TweenInfo
-local Info = require(Utilities.Info)
+local Info = require(script.Info)
 function mt:Info(Time: number,EasingStyle: Enum.EasingStyle,EasingDirection: Enum.EasingDirection, RepeatCount: number,Reverse: boolean,DelayTime: number)
     local Ret = Info(Time,EasingStyle,EasingDirection,RepeatCount,Reverse,DelayTime);
     self:Add(Ret);
    return Ret
 end
 --SpringInfo
-local Spring = require(Utilities.SpringInfo)
+local Spring = require(script.SpringInfo)
 function mt:SpringInfo(Time: number,Frequency: number,Damping: number, RepeatCount: number,Reverse: boolean,DelayTime: number)
     local Ret = Spring(Time,Frequency,Damping,RepeatCount,Reverse,DelayTime);
     self:Add(Ret);
@@ -113,12 +111,12 @@ local tof = typeof
 function mt:Add(Entity: any,IsConnection)
     if Entity == nil then return end;
     if IsConnection and self.ConnectionsThread ~= nil then
-        if tof(Entity) == "table" and Entity.__simplesignalconnection and Entity.lists == nil then
+        if tof(Entity) == tabletxt and Entity.__simplesignalconnection and Entity.lists == nil then
             Entity.lists = self.ConnectionsThread;
         end
         tins(self.ConnectionsThread,Entity)
     else
-        if tof(Entity) == "table" and Entity.__simplesignalconnection and Entity.lists == nil then
+        if tof(Entity) == tabletxt and Entity.__simplesignalconnection and Entity.lists == nil then
             Entity.lists = self;
         end
         tins(self,Entity)
@@ -140,12 +138,12 @@ function mt:Remove(Entity: any)
     return
 end
 --Do
-local Do = require(Utilities.Do)
+local Do = require(script.Do)
 function mt:Do(Function: (Grab: any, Entity: Instance) -> ())
     return Do(Function,self)
 end
 --Do
-local Spawn = require(Utilities.Spawn)
+local Spawn = require(script.Spawn)
 function mt:Spawn(func: (...any) -> ())
     return Spawn(func,self)
 end
@@ -153,27 +151,27 @@ function mt:SpawnAfter(Time: number,func: (...any) -> ())
     return Spawn(func,self,Time)
 end
 --State
-local State = require(Utilities.State)
+local State = require(script.State)
 function mt:State(Function: (Grab: any, InnerThread: Types.Thread,Entity: Instance) -> ())
     return State(Function,self)
 end
 --Iterate
-local Iterate = require(Utilities.Iterate)
+local Iterate = require(script.Iterate)
 function mt:Iterate(Table: any, Function: (Index: any,Value: any,InnerThread: Types.Thread?,Entity: Instance?) -> ())
     return Iterate(Table,Function,self)
 end
 --Delay value
-local DelayValue = require(Utilities.DelayValue)
+local DelayValue = require(script.DelayValue)
 function mt:DelayValue(Value: Types.Value, Time: number) : Types.DelayValue
     return DelayValue(Value,Time,self)
 end
 --Delay
-local Delay = require(Utilities.Delay)
+local Delay = require(script.Delay)
 function mt:Delay(Props: Types.Properties,Time: number) : Types.Delay
     return Delay(Props,Time,self)
 end
 --Property value
-local Propertyy = require(Utilities.Property)
+local Propertyy = require(script.Property)
 function mt:Property(Instance: any,Property: string)
     return Propertyy(Instance,Property,false,self);
 end
@@ -183,34 +181,34 @@ function mt:Attribute(Instance: any,Property: string)
 end
 
 --SetTo
-local SetTo = require(Utilities.SetTo)
+local SetTo = require(script.SetTo)
 function mt:SetTo(Value: Types.Value)
     return SetTo(Value,self)
 end
 --Signal
-local Signal = require(Utilities.Signal)
+local Signal = require(script.Signal)
 function mt:Signal()
     return Signal(self)
 end
 --Listener
-local Listener = require(Utilities.Listener)
+local Listener = require(script.Listener)
 function mt:Listener(Entity: any, Event: any, Function: () -> ()) : ()
     return Listener(Entity,Event,Function,self)
 end
-local Space = require(Utilities.Space)
+local Space = require(script.Space)
 function mt:Space(func: (...any) -> ())
     return Space(func,self);
 end
-local Event = require(Utilities.Event)
+local Event = require(script.Event)
 function mt:Event(Connections: RBXScriptSignal & {RBXScriptSignal} & () -> (),func: (...any) -> ()?)
     return Event(Connections, func,self);
 end
 function mt:EventState(Connections: RBXScriptSignal & {RBXScriptSignal} & () -> (),func: (...any) -> ()?)
     return Event(Connections, func,self,true);
 end
-local AttributeChanged = require(Utilities.AttChanged)
-function mt:AttributeChanged(Attribute: string)
-    return AttributeChanged(Attribute, self);
+local MethodEvent = require(script.MethodEvent)
+function mt:MethodEvent(Method: string, Index: string)
+    return MethodEvent(Method,Index, self);
 end
 local tc = table.clear
 --[=[
@@ -226,23 +224,25 @@ function  mt:Schedule(Time: number?,Item: any,...)
     if Item == nil then return end;
     local d;
     local func = function(...)
-        local type = typeof(Item)
-        if (type == "table" and Item["Destroy"] ~= nil) or type == "Instance" then
-            Item:Destroy();
-        elseif (type == "table" and Item["Clean"]) then
-            Item:Clean()
-        elseif type == "function" then
-            Item(...)
-        elseif type == "RBXScriptConnection" then
-            Item:Disconnect();
-        elseif type == "thread" then
-            task.cancel(Item);
-        elseif type == "table" then
-            if Item.__isThread == true then
-                Clean(Item)
+        local type = tof(Item)
+        if type == tabletxt then
+            if Item[destroytxt] ~= nil or v[cleantxt] ~= nil then
+                if Item[destroytxt] then
+                    Item:Destroy()
+                elseif Item[cleantxt] then
+                    Item:Clean()
+                end
             else
                 tc(Item)
             end
+        elseif type == instancetxt then
+            Item:Destroy()
+        elseif type == functiontxt then
+            Item(...)
+        elseif type == rbxlscripttxt then
+            Item:Disconnect()
+        elseif type == threadtxt then
+            task.cancel(Item)
         end
         if d ~= nil then
             self:Remove(d)

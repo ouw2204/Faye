@@ -11,7 +11,7 @@ local OtherTypes = require(script.Parent.Types)
     @param DelayTime number?
     @return SpringInfo
 ]=]
-return function(Time: number,Frequency: number,Damping: number, RepeatCount: number,Reverse: boolean,DelayTime: number)
+return function(Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?)
     local new = {
         __typeIndex = 2;
         Time = Time or 1;

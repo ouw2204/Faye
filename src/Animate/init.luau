@@ -131,18 +131,21 @@ end
 ]=]
 function mt:Stop(FromDestroy)
 	if self.Thread ~= nil then
-		if self.Thread.AnimationsAmount ~= nil and AnimsHandler:Remove(self) == true then
-			self.Thread.AnimationsAmount = math.max(self.Thread.AnimationsAmount - 1, 0)
+		if self.Thread.AnimationsAmount ~= nil then
+			local removedAmount = AnimsHandler:RemoveAll(self)
+			print(removedAmount," is removed amount")
+			if removedAmount >0 then
+				self.Thread.AnimationsAmount = math.max(self.Thread.AnimationsAmount - removedAmount, 0)
+			end
 		end
-		if
-			self.Thread.CleanWhenDone and (self.Thread.AnimationsAmount ~= nil and self.Thread.AnimationsAmount <= 0)
-		then
+		if self.Thread.CleanWhenDone and (self.Thread.AnimationsAmount ~= nil and self.Thread.AnimationsAmount <= 0) then
 			self.Thread.AnimationsAmount = nil
 			self.Thread.CleanWhenDone = nil
 			if FromDestroy == nil then
 				self:Destroy(true)
 			end
 			if self.Thread ~= nil then
+				print("clean thread")
 				Cleaner(self.Thread)
 			end
 		else
@@ -178,7 +181,7 @@ end
     @param To any
     Plays the animation.
 ]=]
-function mt:Play(To: any)
+function mt:Play(To: any,Entity: Instance?, Property: string?)
 	if To == nil then
 		return
 	end
@@ -201,8 +204,10 @@ function mt:Play(To: any)
 	if self.Thread ~= nil then
 		self.Thread.AnimationsAmount = (self.Thread.AnimationsAmount or 0) + 1
 	end
-	self.__To = To
-	AnimsHandler:Add(self)
+	if self.Animations == nil then
+		self.Animations = {};
+	end
+	AnimsHandler:Add(self,To,Entity,Property)
 end
 
 --[=[
@@ -237,13 +242,13 @@ function mt:AlwaysFrom(Value: any)
 	self.DontResetInitial = true
 	return self
 end
---[[
+
 mt.__tostring = function(tab)
     if tab.Property ~= nil and tab.Entity ~= nil then
         return `Anim[{tab.Entity.Name}: {tab.Property}]`
     end
     return "Anim[Unknown: Unknown]"
-end]]
+end
 
 --[=[
     @function Animation
@@ -265,9 +270,19 @@ return function(
 	local new = {
 		Goal = Goal,
 		Thread = Thread,
-		Entity = nil,
-		Property = nil,
+		Animations = nil,
 		Info = Info,
+
+		--
+		__easingdirection = nil;
+		__Damping = nil;
+		__Frequency = nil;
+		__easingstyle = nil;
+		__typeIndex =  nil;
+		__Time =  nil;
+		__Reverse = nil;
+		__DelayTime = nil;
+		__RepeatCount = nil;
 	}
 	setmetatable(new, mt)
 	if Thread ~= nil then

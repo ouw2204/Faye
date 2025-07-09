@@ -3,15 +3,13 @@ local ValueClasses = require(script.Parent.Parent.Parent.Misc.ValueClasses)
 local Types = require(script.Parent.Parent.Parent.Types)
 local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
 local tabletxt = "table"
-return function(Entity: Types.Instance, Index: string, Value: Types.Animation)
+return function(Entity: Types.FayeInstance, Index: string, Value: Types.Animation)
     local infoConnections = {}
     local infoConnectionsLength = 0;
     local goalConnections = {};
     local goalConnectionsLength = 0;
     local Info = Value.Info;
     Value.Info = nil;
-    Value.Entity = Entity.Instance
-	Value.Property = Index
     local Thread = Entity.InnerThread or Entity.Thread
     --switching threads
     if Thread ~= nil and (Value.Thread == nil or Thread ~= Value.Thread) then
@@ -97,7 +95,7 @@ return function(Entity: Types.Instance, Index: string, Value: Types.Animation)
                                 Value.__cleantempinfo = true
                             end
                         end
-                        Value:Play(Goal)
+                        Value:Play(Goal,Entity.Instance,Index)
                     end
                 end
             end

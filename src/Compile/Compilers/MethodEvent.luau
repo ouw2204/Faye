@@ -4,7 +4,7 @@ local tins = table.insert
 return function (Entity: Types.FayeInstance, Index: any, Value: Types.Value,Compile: (Entity: Types.FayeInstance, Props: {[any]: any},...any) -> () )
     local Instance = Entity.Instance
     local Thread = Entity.InnerThread or Entity.Thread -- fetching innerthread or thread with priority
-    local Signal = Instance:GetAttributeChangedSignal(Index.Attribute)
+    local Signal = Instance[Index.Method](Instance,Index.Attribute)
     Index:Destroy();
     if Thread ~= nil then -- thread exist
         if Thread["Connect"] ~= nil then
