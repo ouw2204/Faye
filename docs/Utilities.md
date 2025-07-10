@@ -115,11 +115,11 @@ Thread:Create "Frame" {
 :::warning
 For State and Do it is important to use the Thread parameter given instead of the one used to create the utility.
 :::
-### 5. Properties & Attributes
+### 5. InstanceProperty & InstanceAttributes
 You can attach these to any instance and it will connect to the given attribute or property. This is just another form of Value so you can do everything you can do with Value with them.
 ```lua
-local EnabledAttribute = Thread:Attribute(Workspace,"Enabled")
-local SizeProperty = Thread:Property(Frame,"Size")
+local EnabledAttribute = Thread:InstanceAttribute(Workspace,"Enabled")
+local SizeProperty = Thread:InstanceProperty(Frame,"Size")
 
 SizeProperty:Set(...);
 SizeProperty:Get(...);
@@ -128,7 +128,7 @@ EnabledAttribute += ...
 ```
 The only notable difference is the "ReCalibrate" method which lets u re-set the Instance and/or Attribute/Property.
 ```lua
-local SizeProperty = Thread:Property(Frame,"Size")
+local SizeProperty = Thread:InstanceProperty(Frame,"Size")
 SizeProperty:ReCalibrate(Frame2,"Position")
 --if u only wanna change the property its listening to you do:
 SizeProperty:ReCalibrate(nil,"Size")
@@ -293,16 +293,16 @@ Thread:Schedule(.2,function()
 end)
 ```
 Works like Task.Delay, except its a cleaner.
-### 13. Attributes
-All Faye instance have the default attribute Instance methods like SetAttribute, GetAttribute, and GetAttributes, they work as expected. To listen to a attribute changed signal, you do.
+### 13. MethodSignaled
+Used for method signals since they aren't supported in the normal signal thing.
 ```lua
 local Part = Thread:Create "Part" {
     Parent = workspace;
-    [Thread:AttributeChanged("hello_world")] = function(Entity,new)
-        print(new," is new attribute")
+    [Thread:MethodSignaled("GetAttributeChangedSignal","hello_world")] = function(Entity)
+
     end,
 }
 
 Part:SetAttribute("attributename", value)
 ```
-SetAttribute returns the self, so you can do Create:SetAttribute:SetAttribute...
+This would also work with 'GetPropertyChangedSignal', etc...

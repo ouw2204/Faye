@@ -61,7 +61,7 @@ local m = {
 			end
 		end)
 	end,
-	MethodEvent = require(script.MethodEvent);
+	MethodSignaled = require(script.MethodSignaled);
 	EventCompiler = function(Entity, Index, Value, Compile)
 		local Instance = Entity.Instance
 		local Thread = Entity.InnerThread or Entity.Thread -- fetching innerthread or thread with priority

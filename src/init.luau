@@ -172,11 +172,11 @@ function mt:Delay(Props: Types.Properties,Time: number) : Types.Delay
 end
 --Property value
 local Propertyy = require(script.Property)
-function mt:Property(Instance: any,Property: string)
+function mt:InstanceProperty(Instance: Instance,Property: string)
     return Propertyy(Instance,Property,false,self);
 end
 --Attribute
-function mt:Attribute(Instance: any,Property: string)
+function mt:InstanceAttribute(Instance: Instance,Property: string)
     return Propertyy(Instance,Property,true,self);
 end
 
@@ -206,9 +206,9 @@ end
 function mt:EventState(Connections: RBXScriptSignal & {RBXScriptSignal} & () -> (),func: (...any) -> ()?)
     return Event(Connections, func,self,true);
 end
-local MethodEvent = require(script.MethodEvent)
-function mt:MethodEvent(Method: string, Index: string)
-    return MethodEvent(Method,Index, self);
+local MethodSignaled = require(script.MethodSignaled)
+function mt:MethodSignaled(Method: string, Index: string)
+    return MethodSignaled(Method,Index, self);
 end
 local tc = table.clear
 --[=[
@@ -226,7 +226,7 @@ function  mt:Schedule(Time: number?,Item: any,...)
     local func = function(...)
         local type = tof(Item)
         if type == tabletxt then
-            if Item[destroytxt] ~= nil or v[cleantxt] ~= nil then
+            if Item[destroytxt] ~= nil or Item[cleantxt] ~= nil then
                 if Item[destroytxt] then
                     Item:Destroy()
                 elseif Item[cleantxt] then

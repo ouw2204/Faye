@@ -109,6 +109,7 @@ function mt:Destroy(FromStop)
 	self.AnimationsAmount = nil;
 	self.__cleanFunction = nil
 	self.Goal = nil
+	self.Compiled = nil;
 	self.Entity = nil
 	self.Property = nil
 	self.Initial = nil

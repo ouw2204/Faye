@@ -4,6 +4,10 @@ local Types = require(script.Parent.Parent.Parent.Types)
 local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
 local tabletxt = "table"
 return function(Entity: Types.FayeInstance, Index: string, Value: Types.Animation)
+    if Value.Compiled then
+        warn('This Animate object is already compiled')
+        return;
+    end
     Value.Compiled = true;
     local infoConnections = {}
     local infoConnectionsLength = 0;
@@ -11,7 +15,6 @@ return function(Entity: Types.FayeInstance, Index: string, Value: Types.Animatio
     local goalConnectionsLength = 0;
     local Info = Value.Info;
     Value.Info = nil;
-
     local Default = nil;
     local DefaultProp = tof(Entity.Instance[Index])
     

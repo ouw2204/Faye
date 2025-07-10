@@ -6,20 +6,14 @@ Remember to occasionally check for new updates as there might be bug fixes.
 https://create.roblox.com/store/asset/74301103261718/Faye
 ### Wally
 ```
-Faye = "prophetouw/faye@1.4.15" 
+Faye = "prophetouw/faye@1.4.16" 
 ```
 ### Github
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.
 ## Update log
-### v1.4.15
-- Fixed types and renamed the Instance type to FayeInstance since it was interfering with the Instance type.
-### v1.4.14
-- Fixed an Iterate bug
-### v1.4.13
-- Changed Timed to Schedule
-- Added Thread:SpawnAfter which is a delayed version of Thread:Spawn
-### v1.4.12
-- Changed fix
-### v1.4.11
-- Animate updateInfo function fix
-- Type fix
+v1.4.16
+- Renamde 'Attribute' and 'Property' to 'InstanceAttribute' and 'InstanceProperty'
+- Added a 'MethodSignal' class that lets you listen to signals like 'GetAttributeChangedSignal', 'InstanceAddedSignal', 'GetPropertyChangedSignal',etc...
+- Added 'AddTag', 'RemoveTag', and 'GetTags' functions to Faye Instances.
+- Changed Thread:Clean to Thread:Destroy()
+- Removed Threader, you can now just require the Faye path

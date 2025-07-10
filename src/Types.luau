@@ -20,6 +20,10 @@ export type FayeInstance = {
 	SetAttribute: (self: FayeInstance,Name: string,Value: any) -> FayeInstance,
 	GetAttribute: (self: FayeInstance,Name: string) -> any,
 	GetAttributes: (self: FayeInstance) -> {any: any};
+	AddTag: (self: FayeInstance,Tag: string) -> FayeInstance,
+	RemoveTag: (self: FayeInstance,Tag: string) -> FayeInstance,
+	HasTag: (self: FayeInstance,Tag: string) -> boolean,
+	GetTags: (self: FayeInstance) -> {string};
 }
 export type UserInputType = typeof(game:GetService("UserInputService"));
 export type BasicThread = {Remove: (self: BasicThread, Entity: any) -> (); Add: (self: BasicThread, Entity: any) -> ()}
@@ -101,8 +105,8 @@ export type Thread = {
     Do: (self: Thread, Function : (Grab: any) -> (),Entity: Instance?) -> DoType;
     State: (self: Thread, Function : (Grab: any,InnerThread: Thread,Entity: Instance?) -> ()) -> ();
     Iterate: (self: Thread, Table: any,Function: (Index: any,Value: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
-    Property: (self:any, Entity: any, Property: string) -> Value;
-    Attribute: (self:any, Entity: any, Attribute: string) -> Value;
+    InstanceProperty: (self:Thread, Entity: Instance, Property: string) -> Value;
+    InstanceAttribute: (self:Thread, Entity: Instance, Attribute: string) -> Value;
     DelayValue: (self: Thread, Value: Value, Time: number) -> DelayValue;
     Delay: (self: Thread, Props: Properties,Time: number) -> Delay;
     SetTo: (self: Thread, Value: Value) -> {};
@@ -116,7 +120,7 @@ export type Thread = {
     Schedule: (self: Thread,Time: number?,Item: any,...any) -> any;
     Event: (self: Thread,any,func: (...any) -> ()?) -> Event;
     EventState: (self: Thread,any, func: (...any) -> ()) -> Event;
-	MethodEvent: (self: Thread, Method: string, Index: string) -> ();
+	MethodSignaled: (self: Thread, Method: string, Index: string) -> ();
 }
 
 export type Properties = {

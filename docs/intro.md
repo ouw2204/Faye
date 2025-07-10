@@ -13,7 +13,7 @@ sidebar_position: 1
 - Animations
 - Do
 - State
-- Property & Attribute
+- InstanceProperty & InstanceAttribute
 - Iterate
 - Space
 - SetTo
@@ -21,7 +21,7 @@ sidebar_position: 1
 - Spawn and SpawnAfter
 - Event and EventState
 - Schedule calling
-- Attributes
+- MethodSignaled
 ## [Important Tutorials](./ImportantTutorials)
 - OnClean,CleanDelay, and CleanFunction(**IMPORTANT**)
 - Importance of using spaces
