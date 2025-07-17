@@ -78,15 +78,15 @@ end
 --TweenInfo
 local Info = require(script.Info)
 function mt:Info(Time: number,EasingStyle: Enum.EasingStyle,EasingDirection: Enum.EasingDirection, RepeatCount: number,Reverse: boolean,DelayTime: number)
-    local Ret = Info(Time,EasingStyle,EasingDirection,RepeatCount,Reverse,DelayTime);
-    self:Add(Ret);
+   local Ret = Info(Time,EasingStyle,EasingDirection,RepeatCount,Reverse,DelayTime);
+   --self:Add(Ret);
    return Ret
 end
 --SpringInfo
 local Spring = require(script.SpringInfo)
 function mt:SpringInfo(Time: number,Frequency: number,Damping: number, RepeatCount: number,Reverse: boolean,DelayTime: number)
     local Ret = Spring(Time,Frequency,Damping,RepeatCount,Reverse,DelayTime);
-    self:Add(Ret);
+    --self:Add(Ret);
     return Ret
 end
 
@@ -143,12 +143,12 @@ function mt:Do(Function: (Grab: any, Entity: Instance) -> ())
     return Do(Function,self)
 end
 --Do
-local Spawn = require(script.Spawn)
-function mt:Spawn(func: (...any) -> ())
-    return Spawn(func,self)
+local Unyielded = require(script.Unyielded)
+function mt:Unyielded(func: (...any) -> ())
+    return Unyielded(func,self)
 end
-function mt:SpawnAfter(Time: number,func: (...any) -> ())
-    return Spawn(func,self,Time)
+function mt:DelayUnyielded(Time: number,func: (...any) -> ())
+    return Unyielded(func,self,Time)
 end
 --State
 local State = require(script.State)

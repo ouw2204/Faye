@@ -118,35 +118,49 @@ function mt:Compile()
 	local Props = self.Props
 	if Props ~= nil then
 		local AddClean = nil
-		if Props.CleanDelay ~= nil or Props.OnClean ~= nil then
-			if self.Thread ~= nil then
-				self.Thread._hc = true --hc = hasclean
-				self.Thread._isCleanAncestor = true
+		local ThreadUsing = self.InnerThread or self.Thread;
+		local PropsOrCleanCheck = Props.CleanDelay ~= nil or Props.OnClean ~= nil
+		if (ThreadUsing._hc or ThreadUsing._isCleanAncestor) and PropsOrCleanCheck then
+			if Props.CleanFunction == nil and Props.OnClean ~= nil then
+				AddClean = true;
+				Props.CleanFunction = Props.OnClean
 			end
-			if self.InnerThread == nil then
-				self.InnerThread = (self.Thread ~= nil and self.Thread:Extend(true)) or {}
-				self.InnerThread._isCleanAncestor = true
-			end
-
-			if Props.CleanDelay ~= nil then
-				self.CleanDelay = Props.CleanDelay
-				Props.CleanDelay = nil
-			end
-			if Props.OnClean ~= nil then
-				self.OnClean = Props.OnClean
-				self.OnCleanCreated = true
-				Props.OnClean = nil
-			end
-			if Props.CleanFunction ~= nil then
-				AddClean = true
-			end
+			Props.CleanDelay = nil;
+			Props.OnClean = nil;
 		else
-			if Props.CleanFunction ~= nil then
-				AddClean = true
+			if PropsOrCleanCheck then
+				if self.Thread ~= nil then
+					self.Thread._hc = true --hc = hasclean
+					self.Thread._isCleanAncestor = true
+				end
+				if self.InnerThread == nil then
+					self.InnerThread = (self.Thread ~= nil and self.Thread:Extend(true)) or {}
+					self.InnerThread._isCleanAncestor = true
+				end
+
+				if Props.CleanDelay ~= nil then
+					self.CleanDelay = Props.CleanDelay
+					Props.CleanDelay = nil
+				end
+				if Props.OnClean ~= nil then
+					self.OnClean = Props.OnClean
+					self.OnCleanCreated = true
+					Props.OnClean = nil
+				end
+				if Props.CleanFunction ~= nil then
+					AddClean = true
+				end
+			else
+				if Props.CleanFunction ~= nil then
+					AddClean = true
+				end
 			end
 		end
+		PropsOrCleanCheck = nil;
+		ThreadUsing = nil;
 		if AddClean == true then
 			if self.Thread ~= nil and self.Thread._isCleanAncestor then
+				print("add")
 				local f = Props.CleanFunction
 				local eq = self.Thread
 				local connected = {}

@@ -249,24 +249,24 @@ Thread:Listener(Instance,{"ChildAdded","ChildRemoved"},function(Event:String, pa
     end
 end)
 ```
-### 10. Spawn and SpawnAfter
-#### Spawn
+### 10. Unyielded and DelayUnyielded
+#### Unyielded
 This is a Task.Spawn wrapper version of running a function, This is good if you are adding features thay may yield the compilation.
 ```lua
 
 {
-    Size = Thread:Spawn(function()
+    Size = Thread:Unyielded(function()
         return UDim2.new(1,0,1,0)
     end)
 }
 ```
-#### SpawnAfter
+#### DelayUnyielded
 Allows you to delay the call
 
 ```lua
 
 {
-    Size = Thread:SpawnAfter(.2,function()
+    Size = Thread:DelayUnyielded(.2,function()
         return UDim2.new(1,0,1,0)
     end)
 }

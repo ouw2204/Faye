@@ -237,11 +237,11 @@ function mt:AlwaysFrom(Value: any)
 	return self
 end
 
---[[
+
 local scriptname = script.Name;
 mt.__tostring = function(tab)
     return scriptname
-end]]
+end
 
 --[=[
     @function Animation

@@ -115,8 +115,8 @@ export type Thread = {
     Add: (self: Thread,Entity: any) -> ();
     Remove: (self: Thread,Entity: any) -> ();
     Space: (self: Thread, func: (...any) -> ()) -> Space,
-    Spawn: (self: Thread,func: (...any)-> ()) -> Spawn;
-	SpawnAfter: (self: Thread,Time: number,func: (...any)-> ()) -> Spawn;
+    Unyielded: (self: Thread,func: (...any)-> ()) -> Spawn;
+	DelayUnyielded: (self: Thread,Time: number,func: (...any)-> ()) -> Spawn;
     Schedule: (self: Thread,Time: number?,Item: any,...any) -> any;
     Event: (self: Thread,any,func: (...any) -> ()?) -> Event;
     EventState: (self: Thread,any, func: (...any) -> ()) -> Event;

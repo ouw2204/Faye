@@ -18,7 +18,7 @@ sidebar_position: 1
 - Space
 - SetTo
 - Listener
-- Spawn and SpawnAfter
+- Unyielded and DelayUnyielded
 - Event and EventState
 - Schedule calling
 - MethodSignaled
