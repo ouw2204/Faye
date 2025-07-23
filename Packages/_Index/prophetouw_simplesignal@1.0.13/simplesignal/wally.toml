@@ -1,8 +1,0 @@
-[package]
-name = "prophetouw/simplesignal"
-version = "1.0.13"
-registry = "https://github.com/UpliftGames/wally-index"
-realm = "shared"
-license = "MIT"
-description = "A simple signaler"
-authors = ["ProphetOuw <ouwproduction@gmail.com>"]

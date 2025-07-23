@@ -1,8 +1,6 @@
 local tins, tf, tr = table.insert, table.find, table.remove
 local tof = typeof
-local ValueClasses = require(script.Parent.Parent.Misc.ValueClasses)
 local tc = table.clear
-local Types = require(script.Parent.Parent.Types)
 local repeatedCompile = require(script.repeatedCompile)
 local m = {
 	SetTo = function(Entity, Index, Value)
@@ -19,23 +17,22 @@ local m = {
 		local Thread = Entity.Thread
 		local InnerThread = Entity.InnerThread
 		if Props ~= nil then
-			if Value.Props.OnClean == nil and Value.Props.CleanDelay == nil then
-				if InnerThread ~= nil and InnerThread ~= Thread then
-					if Thread["Remove"] then
-						Thread:Remove(Value)
-					else
-						local pos = tf(Thread, Value)
-						if pos ~= nil then
-							tr(Thread, pos)
-						end
+			--#thu 17 2025
+			if InnerThread ~= nil and InnerThread ~= Thread and ((Value.Props.OnClean == nil and Value.Props.CleanDelay == nil) or InnerThread._isCleanAncestor) then
+				if Thread["Remove"] then
+					Thread:Remove(Value)
+				else
+					local pos = tf(Thread, Value)
+					if pos ~= nil then
+						tr(Thread, pos)
 					end
-					if InnerThread["Add"] then
-						InnerThread:Add(Value)
-					else
-						tins(InnerThread, Value)
-					end
-					Value.InnerThread = InnerThread
 				end
+				if InnerThread["Add"] then
+					InnerThread:Add(Value)
+				else
+					tins(InnerThread, Value)
+				end
+				Value.InnerThread = InnerThread
 			end
 			if Props.Parent == nil then
 				Props.Parent = Entity.Instance
@@ -236,8 +233,8 @@ local m = {
 		end)
 		Value:Destroy()
 	end,
-	Animate = require(script.Animate);
-	Value = require(script.Value)
+	Animation = require(script.CompileAnimations);
+	Value = require(script.CompileValue)
 }
 
 return m

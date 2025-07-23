@@ -24,7 +24,7 @@ return function (Entity: Types.FayeInstance, Index: any, Value: Types.Value)
                 end
                 connectionslength = Position;
                 mainFunc(new,Position + 1)
-            end)
+            end,connections)
             mainFunc(Gotten:Get(),Position + 1)
         else
              if Entity ~= nil and Instance ~= nil then

@@ -120,7 +120,7 @@ function mt:Compile()
 		local AddClean = nil
 		local ThreadUsing = self.InnerThread or self.Thread;
 		local PropsOrCleanCheck = Props.CleanDelay ~= nil or Props.OnClean ~= nil
-		if (ThreadUsing._hc or ThreadUsing._isCleanAncestor) and PropsOrCleanCheck then
+		if (ThreadUsing._hc or ThreadUsing._isCleanAncestor) and PropsOrCleanCheck and self.InnerThread ~= nil and self.InnerThread._isCleanAncestor then
 			if Props.CleanFunction == nil and Props.OnClean ~= nil then
 				AddClean = true;
 				Props.CleanFunction = Props.OnClean
@@ -160,7 +160,6 @@ function mt:Compile()
 		ThreadUsing = nil;
 		if AddClean == true then
 			if self.Thread ~= nil and self.Thread._isCleanAncestor then
-				print("add")
 				local f = Props.CleanFunction
 				local eq = self.Thread
 				local connected = {}
@@ -291,7 +290,7 @@ function mt:Destroy()
 end
 
 local scriptName = script.Name
---[[function mt.__tostring()
+function mt.__tostring()
 	return scriptName
-end]]
+end
 return mt

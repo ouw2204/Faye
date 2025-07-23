@@ -69,22 +69,28 @@ function mt:Value(Initial: any)
     return Value(Initial,self)
 end
 
---Animate
-local Animate = require(script.Animate)
-function mt:Animate(Goal: any, Info: Types.Info | Types.SpringInfo)
-    return Animate(Goal,Info,self);
+--Animation
+local Animation = require(script.Animation)
+function mt:Animation(Goal: any, Info: (Types.Info | Types.SpringInfo)?,Modifications: Types.AnimationModifications?)
+    return Animation(Goal,Info,Modifications,self);
 end
+--| Animation functions
+local ModifyAnimation = require(script.ModifyAnimation)
+function mt.ModifyAnimation(Animaiton: {any: any},Modifications: Types.AnimationModifications?)
+    return ModifyAnimation(Animaiton,Modifications)
+end
+--|
 
 --TweenInfo
 local Info = require(script.Info)
-function mt:Info(Time: number,EasingStyle: Enum.EasingStyle,EasingDirection: Enum.EasingDirection, RepeatCount: number,Reverse: boolean,DelayTime: number)
+function mt.Info(Time: number,EasingStyle: Enum.EasingStyle,EasingDirection: Enum.EasingDirection, RepeatCount: number,Reverse: boolean,DelayTime: number)
    local Ret = Info(Time,EasingStyle,EasingDirection,RepeatCount,Reverse,DelayTime);
    --self:Add(Ret);
    return Ret
 end
 --SpringInfo
 local Spring = require(script.SpringInfo)
-function mt:SpringInfo(Time: number,Frequency: number,Damping: number, RepeatCount: number,Reverse: boolean,DelayTime: number)
+function mt.SpringInfo(Time: number,Frequency: number,Damping: number, RepeatCount: number,Reverse: boolean,DelayTime: number)
     local Ret = Spring(Time,Frequency,Damping,RepeatCount,Reverse,DelayTime);
     --self:Add(Ret);
     return Ret
@@ -258,11 +264,11 @@ function  mt:Schedule(Time: number?,Item: any,...)
     end
     return Item;
 end
---[[
+
 local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;
-end]]
+end
 mt.Types = Types;
 return function() : Types.Thread
     local new = {}

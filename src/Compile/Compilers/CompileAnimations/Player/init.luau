@@ -1,0 +1,280 @@
+local Types = require(script.Parent.Parent.Parent.Parent.Types)
+local Utility = require(script.Parent.Parent.Parent.Parent.Misc.Utility)
+local m = {}
+
+--Lists
+local Storage = require(script.AnimatorStorage);
+
+-- roblox services
+local RunService = game:GetService("RunService")
+local Tweenservice = game:GetService("TweenService")
+
+-- anim functions
+local Lerps = require(script.Parent.Lerps)
+local Spring = require(script.Parent.Spring);
+
+--Defaults
+local DefaultEasingStyle = Enum.EasingStyle.Linear
+local DefaultEasingDirection = Enum.EasingDirection.Out
+
+--rep txt
+local easingStyleTxt,numbertxt = "EasingStyle","number"
+
+--rep functions
+function ApplyProperty(Entity: Instance,PropertyType: string,Property: string,To: any,Default: any,Pivot: number,Lerp: (Pivot: number) -> (),EndReached: boolean)
+    if PropertyType == numbertxt then
+        Entity[Property] = Default+ ((To-Default)*Pivot);
+    elseif Lerps[PropertyType] ~= nil then
+        Entity[Property] = Lerp(Pivot)
+    end
+end
+function update(delta: number)
+    --| disconnect step if anim count is 0 |--
+    if Storage.Count == 0 then
+        Storage.Step:Disconnect()
+        Storage.Step = nil;
+    end
+    --|
+    for i = Storage.Count,1,-1 do
+        local Id = Storage.Ids[i]
+        local Anim = Storage.Holder[Id]
+        if Anim ~= nil then
+            
+            if Anim.Entity ~= nil and Anim.Entity.Parent ~= nil then
+                Anim.Elapsed += delta;
+                if Anim.Ran == false then
+                    warn(`Animation: {Id} Errored.`)
+                    Anim.Delete(true)
+                    continue
+                end
+                Anim.Ran = false;
+
+                --| prog
+                if Anim.Elapsed <= Anim.DelayTime and Anim.Direction then
+                    Anim.Ran = true;
+                    continue
+                end
+
+                local Prog = Utility.max( (Anim.Elapsed-Anim.DelayTime) % Anim.Time,0)
+                local NatureProg = Prog
+                local MaxProg = 1;
+                if Anim.Direction == false then
+                    MaxProg = 0;
+                    Prog = Anim.Time-Prog;
+                end
+                Prog /= Anim.Time;
+                --|> prog
+
+                local EndReached = nil;
+                local Pivot = MaxProg;
+                if Anim.ProgBefore ~= nil and NatureProg < Anim.ProgBefore then
+                    if Anim.Reverse == true and Anim.Direction == true then
+                        Anim.Direction = false;
+                    else
+                        Anim.Direction = true;
+                        
+                        if Anim.RepeatsLeft == 0 then
+                            EndReached = true;
+                        else
+                            if Anim.Reverse then
+                                Anim.ProgBefore = nil;
+                                Anim.Elapsed = 0;
+                            end
+                            if Anim.RepeatsLeft >=1 then
+                                Anim.RepeatsLeft -=1
+                            end
+                        end
+                    end
+                else
+                    --Animate
+                    if Anim.EasingStyle ~= nil then
+                        Pivot =  Tweenservice:GetValue(Prog,Anim.EasingStyle,Anim.EasingDirection)
+                    elseif Anim.Frequency ~=  nil then
+                        Pivot = Spring(Prog,Anim.Frequency,Anim.Damping)
+                    end
+                    --set
+                end
+
+                --| apply property
+                ApplyProperty(Anim.Entity,Anim.PropertyType,Anim.Property,Anim.To,Anim.Default,Pivot,Anim.Lerp,EndReached)
+                if Anim.Others ~= nil then
+                    for x = 1,Anim.Others.Count do
+                        ApplyProperty(Anim.Others[x].Entity,Anim.Others[x].PropertyType,Anim.Others[x].Property,Anim.To,Anim.Others[x].Default,Pivot,Anim.Others[x].Lerp,EndReached)
+                    end
+                end
+                --|> apply property
+                if EndReached then
+                    if Anim.IsValue then
+                        Anim.Delete(true,true);
+                    else
+                        Anim.Delete(true)
+                    end
+                    EndReached = nil;
+                    MaxProg = nil;
+                    Pivot = nil;
+                    continue
+                end
+                Anim.Ran = true;
+                EndReached = nil;
+                MaxProg = nil;
+                Pivot = nil;
+                if Anim.Elapsed ~= 0 then
+                    Anim.ProgBefore = NatureProg;
+                end
+            else
+                m.Remove(Id)
+            end
+        else
+            Storage.Ids[i] = nil;
+        end
+    end
+end
+
+function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, Delete: () -> (),Instance: Instance, Property: string, Others: { {Entity: Instance,Property: string} },IsValue: boolean,PropertyType,Initial)
+    local InfoExists = Info ~= nil;
+    if Storage.TweenserviceBanned[PropertyType] or (InfoExists and Info.Frequency ~= nil) then
+        --| for complex data types
+        local newObject = {
+        To = Goal;
+        Elapsed = 0;
+        Direction = true;
+        PropertyType = PropertyType;
+        ProgBefore = nil;
+        RepeatsLeft = (InfoExists and Info.RepeatCount) or 0;
+        Delete = Delete;
+        Reverse = (InfoExists and Info.Reverse) or nil;
+        Time = (InfoExists and Info.Time) or 1;
+        Entity = Instance;
+        IsValue = IsValue;
+        Property = Property;
+        DelayTime = (InfoExists and Info.DelayTime) or 0;
+        Multiplier = Storage.Multipliers[PropertyType]
+        }
+        if Info == nil then
+            newObject.EasingStyle = DefaultEasingStyle
+            newObject.EasingDirection = DefaultEasingDirection
+        else
+            if Info[easingStyleTxt] then
+                newObject.EasingStyle = Info.EasingStyle
+                newObject.EasingDirection = Info.EasingDirection or DefaultEasingDirection
+            else
+                newObject.Frequency = Info.Frequency or 1;
+                newObject.Damping = Info.Damping or .25;
+            end
+        end
+        if Others ~= nil then
+            newObject.Others = Others;
+            for x = 1,newObject.Others.Count do
+                if Initial ~= nil then
+                    newObject.Others[x].Entity[newObject.Others[x].Property] = Initial;
+                end
+                newObject.Others[x].Default = newObject.Initial or newObject.Others[x].Entity[newObject.Others[x].Property]
+                newObject.Others[x].Lerp = Lerps[newObject.Others[x].PropertyType](newObject.Others[x].Default,Goal)
+            end
+        end
+        if Initial ~= nil then
+            newObject.Initial = Initial;
+            Instance[Property] = Initial;
+        end
+        newObject.Default = newObject.Initial or newObject.Entity[newObject.Property]
+        newObject.Lerp = Lerps[newObject.PropertyType](newObject.Default,Goal)
+        if Storage.Ids == nil then
+            Storage.Ids = {};
+        end
+        Utility.tins(Storage.Ids,Id)
+        if Storage.Holder == nil then
+            Storage.Holder = {};
+        end
+        Storage.Holder[Id] = newObject
+        if Storage.Count == 0 then
+            Storage.Count = 1;
+            Storage.Step = RunService.PreRender:Connect(update)
+        else
+            Storage.Count += 1;
+        end
+        InfoExists = nil;
+        --|
+    else
+        --| tweenservice
+        local Time,EasingStyle,EasingDirection,RepeatCount,Reverse,DelayTime = 
+            1,DefaultEasingStyle,DefaultEasingDirection,0,false,0
+        if InfoExists == true then
+            Time = Info.Time; EasingStyle = Info.EasingStyle; EasingDirection = Info.EasingDirection; RepeatCount = Info.RepeatCount;
+            Reverse = Info.Reverse; DelayTime = Info.DelayTime
+        end
+        if Storage.RegularTweenHolder == nil then
+            Storage.RegularTweenHolder = {};
+        end
+        if Initial ~= nil then
+            Instance[Property] = Initial;
+        end
+        Storage.RegularTweenCount += 1;
+        Storage.RegularTweenHolder[Id] = {Info = TweenInfo.new(
+            Time,EasingStyle,EasingDirection,RepeatCount,Reverse,DelayTime
+        ),To = Goal,Initial = Initial};
+        Storage.RegularTweenHolder[Id].Main = Tweenservice:Create(Instance,Storage.RegularTweenHolder[Id].Info,{[Property] = Goal})
+        Storage.RegularTweenHolder[Id].Main:Play()
+
+
+        if Others ~= nil then
+            Storage.RegularTweenHolder[Id].Others = {Count = 0};
+            for i = 1,Others.Count do
+                if Others[i] ~= nil then
+                    if Initial ~= nil then
+                        Others[i].Entity[Property] = Initial;
+                    end
+                    Storage.RegularTweenHolder[Id].Others[i] = Tweenservice:Create(Others[i].Entity,Storage.RegularTweenHolder[Id].Info,{[Others[i].Property] = Goal})
+                    Storage.RegularTweenHolder[Id].Others[i]:Play()
+                    Storage.RegularTweenHolder[Id].Others.Count = i;
+                end
+            end
+        end
+        Storage.RegularTweenHolder[Id].Connection = Storage.RegularTweenHolder[Id].Main.Completed:Connect(function(playbackState)
+            if playbackState == Enum.PlaybackState.Completed then
+                if IsValue then
+                    Delete(true,true)
+                else
+                    Delete(true)
+                end
+            end
+        end)
+    end
+end
+function  m.Remove(Id: string)
+   if Id == nil then return end;
+   if Storage.Holder ~= nil and Storage.Holder[Id] ~= nil then
+    Utility.TableRemove(Storage.Ids,Id)
+    if Storage.Holder[Id].AnimLog then
+        Utility.tc(Storage.Holder[Id].AnimLog)
+        Storage.Holder[Id].AnimLog = nil;
+    end
+    Utility.tc(Storage.Holder[Id])
+    Storage.Holder[Id] = nil;
+    Storage.Count -= 1;
+    if Storage.Count == 0 and Storage.Step ~= nil then
+        Storage.Holder = nil;
+        Storage.Ids = nil;
+        Storage.Step:Disconnect()
+    end
+    return true
+   elseif Storage.RegularTweenHolder ~= nil and Storage.RegularTweenHolder[Id] ~= nil then
+        Storage.RegularTweenHolder[Id].Main:Cancel()
+        if Storage.RegularTweenHolder[Id].Others ~= nil then
+            for i = Storage.RegularTweenHolder[Id].Others.Count,1,-1 do
+                Storage.RegularTweenHolder[Id].Others[i]:Cancel()
+                Storage.RegularTweenHolder[Id].Others[i] = nil;
+            end
+            Storage.RegularTweenHolder[Id].Others.Count = nil;
+            Storage.RegularTweenHolder[Id].Others = nil;
+        end
+        Storage.RegularTweenHolder[Id].Connection:Disconnect()
+        Utility.tc(Storage.RegularTweenHolder[Id])
+        Storage.RegularTweenHolder[Id] = nil;
+        Storage.RegularTweenCount -= 1;
+        if Storage.RegularTweenCount == 0 then
+            Storage.RegularTweenHolder = nil;
+        end
+        return true;
+   end
+end
+return m;

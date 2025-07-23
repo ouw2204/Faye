@@ -154,7 +154,7 @@ return function(Entity: Types.FayeInstance, _: string, Value: any, Compile: (Ent
 						end
 						--> is adds/remove
 					end
-				end)
+				end,ConnectionsHolder)
 				mainFunc(Content:Get(),Position + 1)
 			else
 				cleanHolder(Value.Thread,Holder);

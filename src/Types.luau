@@ -28,13 +28,9 @@ export type FayeInstance = {
 export type UserInputType = typeof(game:GetService("UserInputService"));
 export type BasicThread = {Remove: (self: BasicThread, Entity: any) -> (); Add: (self: BasicThread, Entity: any) -> ()}
 export type Animation = {
-    From: (self: Animation, Value: any) -> Animation;
-    AlwaysFrom: (self: Animation, Value: any) -> Animation;
-    Play: (self: Animation,To: any) -> ();
-    Destroy: (self: Animation) -> ();
-	Animations: {[any]: any}?;
-    OneTimeInfo: (self: Animation, Info: {Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?,Reverse: boolean?,DelayTime: number?,Frequency: number?,Damping: number?,RepeatCount: number?}) -> Animation;
-    UpdateInfo: (self: Animation, Info: {Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?,Reverse: boolean?,DelayTime: number?,Frequency: number?,Damping: number?,RepeatCount: number?}) -> Animation;
+    __animId: string;
+	From: (Value: any) -> Animation;
+	From: any?;
 }
 export type Info = {Time: number; EasingStyle: Enum.EasingStyle; EasingDirection: Enum.EasingDirection; RepeatCount: number; Reverse: boolean; DelayTime: number}
 export type SpringInfo = {Time: number; Frequency: number; Damping: number; RepeatCount: number; Reverse: boolean; DelayTime: number}
@@ -42,6 +38,15 @@ export type SpringInfo = {Time: number; Frequency: number; Damping: number; Repe
 export type Connection = {
     Disconnect: (self: Connection) -> ();
     Destroy: (self: Connection) -> ();
+}
+export type AnimationModifications = {
+	PermInfo: (Info| SpringInfo)?;
+	PermGoal: any?;
+	FirstGoal: any?;
+	FirstInfo: (Info| SpringInfo)?;
+	From: any?;
+	AlwaysFrom: any?;
+	
 }
 export type Signal = {
     Fire: (self: Signal) -> (),
@@ -98,9 +103,9 @@ export type Thread = {
     Extend: (self: Thread) -> Thread;
     Destroy: (self: Thread) -> ();
     Value: (self: Thread,Initial: any) -> Value;
-    Animate: (self: Thread, Goal: any, Info: Info | SpringInfo) -> Animation;
-    Info: (self: Thread, Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Info;
-    SpringInfo: (self: Thread, Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> SpringInfo;
+    Animation: (self: Thread, Goal: any, Info: (Info | SpringInfo)?,Modifications: AnimationModifications?) -> Animation;
+    Info: (Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Info;
+    SpringInfo: (Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> SpringInfo;
     Connect: (self: Thread, Connection: RBXScriptSignal, Function: (...any) -> ()) -> (),
     Do: (self: Thread, Function : (Grab: any) -> (),Entity: Instance?) -> DoType;
     State: (self: Thread, Function : (Grab: any,InnerThread: Thread,Entity: Instance?) -> ()) -> ();

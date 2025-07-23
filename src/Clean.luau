@@ -7,7 +7,6 @@ function Recursive(Scope)
 	end
 
 	do
-		Scope._hc = nil
 		Scope.__Destroying = true;
 		Scope.ParentThread = nil
 		Scope.ConnectionsThread = nil

@@ -22,6 +22,7 @@ mt.__index = mt;
     Destroys the object and cleans up resources.
 ]=]
 function mt:Destroy()
+    print("clean state")
     for i = #self.Connections,1,-1 do
         local Connection = self.Connections[i]
         self.Connections[i] = nil;
