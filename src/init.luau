@@ -79,6 +79,10 @@ local ModifyAnimation = require(script.ModifyAnimation)
 function mt.ModifyAnimation(Animaiton: {any: any},Modifications: Types.AnimationModifications?)
     return ModifyAnimation(Animaiton,Modifications)
 end
+local CloneAnimation = require(script.CloneAnimation)
+function mt.CloneAnimation(Animaiton: {any: any},Modifications: Types.AnimationModifications?)
+    return CloneAnimation(Animaiton,Modifications)
+end
 --|
 
 --TweenInfo
@@ -215,6 +219,10 @@ end
 local MethodSignaled = require(script.MethodSignaled)
 function mt:MethodSignaled(Method: string, Index: string)
     return MethodSignaled(Method,Index, self);
+end
+local PlayAnimation = require(script.PlayAnimation)
+function mt:PlayAnimation(Entity: Instance, Property: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?)
+    return PlayAnimation(Entity, Property,Goal, Info, self)
 end
 local tc = table.clear
 --[=[

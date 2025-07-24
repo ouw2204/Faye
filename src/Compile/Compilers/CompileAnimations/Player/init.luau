@@ -130,16 +130,16 @@ function update(delta: number)
     end
 end
 
-function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, Delete: () -> (),Instance: Instance, Property: string, Others: { {Entity: Instance,Property: string} },IsValue: boolean,PropertyType,Initial)
+function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, Delete: () -> (),Instance: Instance, Property: string, Others: { {Entity: Instance,Property: string} }?,IsValue: boolean?,PropertyType: string,Initial: any?,BasicAnim: boolean?,CustomElasped: number?,CustomDirection: boolean?,CustomProgBefore: number?)
     local InfoExists = Info ~= nil;
     if Storage.TweenserviceBanned[PropertyType] or (InfoExists and Info.Frequency ~= nil) then
         --| for complex data types
         local newObject = {
         To = Goal;
-        Elapsed = 0;
-        Direction = true;
+        Elapsed = CustomElasped or 0;
+        Direction = CustomDirection or true;
         PropertyType = PropertyType;
-        ProgBefore = nil;
+        ProgBefore = CustomProgBefore or nil;
         RepeatsLeft = (InfoExists and Info.RepeatCount) or 0;
         Delete = Delete;
         Reverse = (InfoExists and Info.Reverse) or nil;
@@ -162,7 +162,7 @@ function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, De
                 newObject.Damping = Info.Damping or .25;
             end
         end
-        if Others ~= nil then
+        if BasicAnim == nil and Others ~= nil then
             newObject.Others = Others;
             for x = 1,newObject.Others.Count do
                 if Initial ~= nil then
@@ -202,6 +202,20 @@ function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, De
             Time = Info.Time; EasingStyle = Info.EasingStyle; EasingDirection = Info.EasingDirection; RepeatCount = Info.RepeatCount;
             Reverse = Info.Reverse; DelayTime = Info.DelayTime
         end
+        local Info = TweenInfo.new(
+            Time,EasingStyle,EasingDirection,RepeatCount,Reverse,DelayTime
+        )
+        local Tween = Tweenservice:Create(Instance,Info,{[Property] = Goal});
+        local Connection = Tween.Completed:Connect(function(playbackState)
+            if playbackState == Enum.PlaybackState.Completed then
+                if IsValue then
+                    Delete(true,true)
+                else
+                    Delete(true)
+                end
+            end
+        end)
+        if BasicAnim then return Tween,Connection end; -- basic tween
         if Storage.RegularTweenHolder == nil then
             Storage.RegularTweenHolder = {};
         end
@@ -209,12 +223,9 @@ function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, De
             Instance[Property] = Initial;
         end
         Storage.RegularTweenCount += 1;
-        Storage.RegularTweenHolder[Id] = {Info = TweenInfo.new(
-            Time,EasingStyle,EasingDirection,RepeatCount,Reverse,DelayTime
-        ),To = Goal,Initial = Initial};
-        Storage.RegularTweenHolder[Id].Main = Tweenservice:Create(Instance,Storage.RegularTweenHolder[Id].Info,{[Property] = Goal})
+        Storage.RegularTweenHolder[Id] = {Info,To = Goal,Initial = Initial};
+        Storage.RegularTweenHolder[Id].Main = Tween
         Storage.RegularTweenHolder[Id].Main:Play()
-
 
         if Others ~= nil then
             Storage.RegularTweenHolder[Id].Others = {Count = 0};
@@ -229,15 +240,7 @@ function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, De
                 end
             end
         end
-        Storage.RegularTweenHolder[Id].Connection = Storage.RegularTweenHolder[Id].Main.Completed:Connect(function(playbackState)
-            if playbackState == Enum.PlaybackState.Completed then
-                if IsValue then
-                    Delete(true,true)
-                else
-                    Delete(true)
-                end
-            end
-        end)
+        Storage.RegularTweenHolder[Id].Connection = Connection
     end
 end
 function  m.Remove(Id: string)

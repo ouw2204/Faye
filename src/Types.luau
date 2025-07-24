@@ -88,6 +88,12 @@ export type Space = {
     Connect: (self: Space, Connection: RBXScriptSignal,Id: string) -> RBXScriptConnection;
     Destroy: (self: Space) -> ();
 }
+export type PlayableAnimation = {
+	Play: (self: PlayableAnimation) -> PlayableAnimation;
+	Stop: (self: PlayableAnimation) -> ();
+	Pause: (self: PlayableAnimation) -> PlayableAnimation;
+	Resume: (self: PlayableAnimation) -> PlayableAnimation;
+}
 export type Spawn = {
     Perform: (self: Spawn) -> ();
     Destroy: (self: Spawn) -> ();
@@ -126,6 +132,9 @@ export type Thread = {
     Event: (self: Thread,any,func: (...any) -> ()?) -> Event;
     EventState: (self: Thread,any, func: (...any) -> ()) -> Event;
 	MethodSignaled: (self: Thread, Method: string, Index: string) -> ();
+	PlayAnimation: (self: Thread, Entity: Instance, Property: string,Goal: any, Info: (Info | SpringInfo)?) -> PlayableAnimation;
+	ModifyAnimation: (self: Thread, Animaiton: {any: any},Modifications: AnimationModifications) -> {any: any};
+	CloneAnimation: (self: Thread, Animaiton: {any: any},Modifications: AnimationModifications) -> {any: any};
 }
 
 export type Properties = {
