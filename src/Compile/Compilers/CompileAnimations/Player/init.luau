@@ -223,7 +223,7 @@ function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, De
             Instance[Property] = Initial;
         end
         Storage.RegularTweenCount += 1;
-        Storage.RegularTweenHolder[Id] = {Info,To = Goal,Initial = Initial};
+        Storage.RegularTweenHolder[Id] = {Info = Info,To = Goal,Initial = Initial};
         Storage.RegularTweenHolder[Id].Main = Tween
         Storage.RegularTweenHolder[Id].Main:Play()
 

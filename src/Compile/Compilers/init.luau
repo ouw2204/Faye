@@ -151,7 +151,7 @@ local m = {
 		Value.__Initiated = true
 	end,
 
-	Iterate = require(script.Iterate),
+	Iterate = require(script.CompileIterate),
 
 	--<Do/State
 	Do = function(Entity, Index, Value)

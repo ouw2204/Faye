@@ -80,8 +80,8 @@ function mt.ModifyAnimation(Animaiton: {any: any},Modifications: Types.Animation
     return ModifyAnimation(Animaiton,Modifications)
 end
 local CloneAnimation = require(script.CloneAnimation)
-function mt.CloneAnimation(Animaiton: {any: any},Modifications: Types.AnimationModifications?)
-    return CloneAnimation(Animaiton,Modifications)
+function mt:CloneAnimation(Animaiton: {any: any},Modifications: Types.AnimationModifications?)
+    return CloneAnimation(Animaiton,Modifications,self)
 end
 --|
 
@@ -194,11 +194,6 @@ end
 local SetTo = require(script.SetTo)
 function mt:SetTo(Value: Types.Value)
     return SetTo(Value,self)
-end
---Signal
-local Signal = require(script.Signal)
-function mt:Signal()
-    return Signal(self)
 end
 --Listener
 local Listener = require(script.Listener)
