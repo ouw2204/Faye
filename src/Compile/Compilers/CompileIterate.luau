@@ -1,8 +1,9 @@
+
 local Types = require(script.Parent.Parent.Parent.Types)
 local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
 local extendtxt,destroytxt,tabletxt,numbertxt = "Extend","Destroy","table","number"
 local ValueClasses = require(script.Parent.Parent.Parent.Misc.ValueClasses)
-local Faye = require(script.Parent.Parent.Parent)
+
 local function  cleanIndividual(Holder: {any: any},Index: any)
     if Holder[Index] ~= nil then
         Holder[Index]:Destroy()
@@ -14,7 +15,7 @@ local function subCompile(Thread: Types.Thread, Function: (...any) -> any,Entity
     if Index == nil or Value == nil then return end
     local EquippedIndex = FirstIndex or Index
     cleanIndividual(Holder, EquippedIndex)
-    local NewThread = (Thread ~= nil and Thread[extendtxt] ~= nil and Thread:Extend()) or Faye();
+    local NewThread = Thread:Extend();
     local I, V = Function(Index, Value, NewThread, Entity.Instance)
     local NewCompile
     if V == nil then
@@ -43,8 +44,8 @@ local function cleanHolder(Holder: {[any]: any})
 end
 
 return function (Instance: Types.FayeInstance,_, Iterate: Types.Value,Compile: (Entity: Types.FayeInstance, Props: {[any]: any},...any) -> ())
-    print("Compile ",Instance,Iterate)
     local Thread = Instance.InnerThread or Instance.Thread;
+    if Thread == nil or Thread["Extend"] == nil then warn("Iteterate only works if the entity has a thread and the thread has an :Extend method") return end;
     if Iterate.Compiled then
         if Iterate.Others == nil then
             Iterate.Others = {Count = 0}
