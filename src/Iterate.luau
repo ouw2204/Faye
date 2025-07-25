@@ -1,7 +1,7 @@
 local Types = require(script.Parent.Types)
-local typetxt = "Iterate";
+local typetxt = script.Name;
 local Utility = require(script.Parent.Misc.Utility)
-return function(Tab: {any: any},Func: (Index: any,Value: any,InnerThread: Types.Thread?,Entity: Instance?) -> (),Thread: Types.Thread)
+return function(Tab: any,Func: (Index: any,Value: any,InnerThread: Types.Thread?,Entity: Instance?) -> (),Thread: Types.Thread)
     local Iterate = {
         Tab = Tab,
         Function = Func,

@@ -1,5 +1,6 @@
 local m = {tof = typeof,max = math.max, tr = table.remove, tf = table.find, tins = table.insert,tc = table.clear}
 local Types = require(script.Parent.Parent.Types)
+local Clean = require(script.Parent.Parent.Clean)
 function m.RemoveFromThread(Thread: Types.Thread, Item: any)
     if Thread == nil or Item == nil then return end;
     if Thread["Remove"] then
@@ -9,6 +10,14 @@ function m.RemoveFromThread(Thread: Types.Thread, Item: any)
         if f ~= nil then
             m.tr(Thread,f)
         end
+    end
+end
+function m.CallDestroy(Item: any)
+    if Item == nil then return end;
+    if Item["Destroy"] then
+        Item:Destroy();
+    else
+        Clean(Item)
     end
 end
 function m.TableRemove(Table: {any: any}, Item: any)

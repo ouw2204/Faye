@@ -120,9 +120,9 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
                     Anim.Workers.Count = nil;
                     Anim.Workers = nil;
                 end
-                if not (Anim.NoThread == true) then
+                --[[if not (Anim.NoThread == true) then
                     Utility.tc(Anim)
-                end
+                end]]
                 Anim.Loaded = nil;
                 Anim.StartingSet = nil;
                 Anim = nil;
@@ -198,7 +198,7 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
     --||
 
     --| cleanup |--
-    Thread:Remove(Anim)
+    --Thread:Remove(Anim)
     Thread:Add(Delete)
    end
 end

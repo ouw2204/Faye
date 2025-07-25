@@ -38,6 +38,7 @@ function mt:Extend(NoAttachment) : Types.Thread
     local new: any = {};
     setmetatable(new,mt);
     if NoAttachment ~= true then
+        self._isCleanAncestor = self._isCleanAncestor
         table.insert(self,new);
     else
         if self.ConnectionsThread ~= nil then
