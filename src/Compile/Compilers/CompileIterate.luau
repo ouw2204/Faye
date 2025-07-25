@@ -16,6 +16,7 @@ local function subCompile(Thread: Types.Thread, Function: (...any) -> any,Entity
     local EquippedIndex = FirstIndex or Index
     cleanIndividual(Holder, EquippedIndex)
     local NewThread = Thread:Extend();
+
     local I, V = Function(Index, Value, NewThread, Entity.Instance)
     local NewCompile
     if V == nil then
