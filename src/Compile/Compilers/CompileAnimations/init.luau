@@ -199,6 +199,6 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
 
     --| cleanup |--
     --Thread:Remove(Anim)
-    Thread:Add(Delete)
+    Utility.AddToThread(Thread,Delete)
    end
 end

@@ -1,5 +1,4 @@
-
-local tc = table.clear
+local tof,tc = typeof,table.clear
 local destroytxt,tabletxt,cleantxt,instancetxt,functiontxt,rbxlscripttxt,threadtxt = "Destroy","table","Clean","Instance","function","RBXScriptConnection","thread"
 function Recursive(Scope)
 	if Scope == nil then
@@ -15,7 +14,8 @@ function Recursive(Scope)
 		Scope.Cleaning = nil
 		for k = #Scope, 1, -1 do
 			local v = Scope[k]
-			local type = typeof(v)
+			local type = tof(v)
+			Scope[k] = nil
 			if type == tabletxt then
 				if v[destroytxt] ~= nil or v[cleantxt] ~= nil then
 					if v.__Destroying then Scope[k] = nil; continue end;
@@ -36,7 +36,6 @@ function Recursive(Scope)
 			elseif type == threadtxt then
 				task.cancel(v)
 			end
-			Scope[k] = nil
 		end
 		Scope.AnimationsAmount = nil
 		Scope.__Destroying = nil;

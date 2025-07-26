@@ -1,4 +1,6 @@
-local m = {tof = typeof,max = math.max, tr = table.remove, tf = table.find, tins = table.insert,tc = table.clear}
+local m = {tof = typeof,max = math.max, tr = table.remove, tf = table.find, tins = table.insert,tc = table.clear,
+
+tabletxt = "table",numbertxt = "number"}
 local Types = require(script.Parent.Parent.Types)
 local Clean = require(script.Parent.Parent.Clean)
 function m.RemoveFromThread(Thread: Types.Thread, Item: any)
@@ -9,6 +11,19 @@ function m.RemoveFromThread(Thread: Types.Thread, Item: any)
         local f = m.tf(Thread,Item)
         if f ~= nil then
             m.tr(Thread,f)
+        end
+    end
+end
+function m.Connect(Signal: RBXScriptSignal,Function: (...any) -> (),Thread: Types.Thread?)
+    if Signal == nil or Function == nil then return end;
+    local Connect = Signal:Connect(Function)
+    if Thread ~= nil then
+        if Thread["Connect"] then
+            Thread:Connect(Signal,Function)
+        elseif Thread["Add"] then
+            Thread:Add(Connect)
+        else
+            m.tins(Thread,Connect)
         end
     end
 end

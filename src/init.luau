@@ -38,7 +38,7 @@ function mt:Extend(NoAttachment) : Types.Thread
     local new: any = {};
     setmetatable(new,mt);
     if NoAttachment ~= true then
-        self._isCleanAncestor = self._isCleanAncestor
+        new._isCleanAncestor = self._isCleanAncestor
         table.insert(self,new);
     else
         if self.ConnectionsThread ~= nil then
@@ -149,10 +149,10 @@ function mt:Remove(Entity: any)
     return
 end
 --Do
-local Do = require(script.Do)
+--[[local Do = require(script.Do)
 function mt:Do(Function: (Grab: any, Entity: Instance) -> ())
     return Do(Function,self)
-end
+end]]
 --Do
 local Unyielded = require(script.Unyielded)
 function mt:Unyielded(func: (...any) -> ())
@@ -164,7 +164,7 @@ end
 --State
 local State = require(script.State)
 function mt:State(Function: (Grab: any, InnerThread: Types.Thread,Entity: Instance) -> ())
-    return State(Function,self)
+    return State(Function,true,self)
 end
 --Iterate
 local Iterate = require(script.Iterate)
@@ -268,12 +268,11 @@ function  mt:Schedule(Time: number?,Item: any,...)
     end
     return Item;
 end
-
+--[[
 local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;
-end
-mt.Types = Types;
+end]]
 return function() : Types.Thread
     local new = {}
     setmetatable(new,mt)

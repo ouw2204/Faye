@@ -16,7 +16,6 @@ local function subCompile(Thread: Types.Thread, Function: (...any) -> any,Entity
     local EquippedIndex = FirstIndex or Index
     cleanIndividual(Holder, EquippedIndex)
     local NewThread = Thread:Extend();
-
     local I, V = Function(Index, Value, NewThread, Entity.Instance)
     local NewCompile
     if V == nil then
@@ -28,7 +27,6 @@ local function subCompile(Thread: Types.Thread, Function: (...any) -> any,Entity
         Holder[EquippedIndex] = NewThread
         Compile(Entity, NewCompile, NewThread)
     else
-        print("Nothing was returned from the iterate function, this is likely a bug in the code.")
         Utility.CallDestroy(NewThread)
     end
 end
@@ -37,8 +35,6 @@ local function cleanHolder(Holder: {[any]: any})
     for i, v in pairs(Holder) do
         if v ~= nil and v[destroytxt] then
             v:Destroy()
-        else
-            print("Failed to clean ",v," its missing a destroy function.")
         end
     end
     Utility.tc(Holder)
@@ -47,18 +43,18 @@ end
 return function (Instance: Types.FayeInstance,_, Iterate: Types.Value,Compile: (Entity: Types.FayeInstance, Props: {[any]: any},...any) -> ())
     local Thread = Instance.InnerThread or Instance.Thread;
     if Thread == nil or Thread["Extend"] == nil then warn("Iteterate only works if the entity has a thread and the thread has an :Extend method") return end;
-    if Iterate.Compiled then
-        if Iterate.Others == nil then
-            Iterate.Others = {Count = 0}
-        end
-        Iterate.Others[Iterate.Others.Count + 1] = Instance;
-        Iterate.Others.Count += 1;
-    else
+    do
         local Holder = {};
-        local ConnectionsHolder = {};
-        local connectionslength = 0;
-        local function Delete()
-
+        local ConnectionsHolder
+        local connectionslength;
+        local function Delete(NotFromThread: boolean?)
+            if NotFromThread then
+                Utility.RemoveFromThread(Thread,Delete)
+            end
+            if Holder ~= nil then
+                cleanHolder(Holder);
+                Holder = nil;
+            end
         end
         --| main func
         local function mainFunc(Content: Types.Value,Position: number?)
@@ -77,6 +73,9 @@ return function (Instance: Types.FayeInstance,_, Iterate: Types.Value,Compile: (
             else
                 if Content.__type ~= nil and ValueClasses[Content.__type] then
                     connectionslength = Position;
+                    if ConnectionsHolder == nil then
+                        ConnectionsHolder = {};
+                    end
                     ConnectionsHolder[Position] = Content.Changed:Connect(function(__reserved, Index: any, NewValue: any?, ChangeType: number?, IsConventional: boolean?)
                         if Index == nil or ChangeType == nil then
                             Index = __reserved
@@ -145,7 +144,7 @@ return function (Instance: Types.FayeInstance,_, Iterate: Types.Value,Compile: (
         end
         mainFunc(Iterate.Tab)
         --|> main func end
-        Thread:Add(Delete)
+        Utility.AddToThread(Thread,Delete)
     end
 
     

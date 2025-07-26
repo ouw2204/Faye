@@ -180,32 +180,7 @@ local m = {
 		end
 		task.spawn(Value.OnValueChanged)
 	end,
-	State = function(Entity, Index, Value)
-		local Thread = Entity.InnerThread or Entity.Thread
-		if Thread ~= nil and Thread ~= Value.Thread then
-			if Value.Thread ~= nil then
-				if Value.Thread["Remove"] then
-					Value.Thread:Remove(Value)
-				else
-					local f = tf(Value.Thread, Value)
-					if f ~= nil then
-						tr(Value.Thread, f)
-					end
-				end
-			end
-			Value.Thread = Thread
-			if Thread["Add"] then
-				Thread:Add(Value)
-			else
-				tins(Thread, Value)
-			end
-		end
-		Value.Entity = Entity
-		if tof(Index) ~= "number" then
-			Value.Property = Index
-		end
-		task.spawn(Value.OnValueChanged)
-	end,
+	State = require(script.CompileState);
 	--> Do/State
 
 	Delay = function(Entity, Index, Value, Compile)

@@ -9,6 +9,7 @@ local tablestr,numberstr,functionstr,RBXScriptSignalstr,ClearTableInCompulations
 local OnChangedInitstr,OnChangedstr,Valuestr,Instancestr,Addstr = "OnChangedInit","OnChanged","Value","Instance","Add"
 local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any}, Props: any,InstanceThread: any)
     -- Main loop
+    print(Props," are props")
     for i, v in pairs(Props) do
         if i == ClearTableInCompulationstr then continue end; -- Skip if the key is "ClearTableInCompulation"
         local tov = to(v)
@@ -73,5 +74,11 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
 end
 
 return function(Entity: {Instance: Instance, Thread: any, InnerThread: any}, Props: {},...)
-    Recursive(Entity, Props,...)
+    if Props.__type ~= nil and Compilers[Props.__type] then
+        print("A")
+        Compilers[Props.__type](Entity,1, Props, Recursive, ...)
+    else
+        print(Entity,Props)
+        Recursive(Entity, Props,...)
+    end
 end
