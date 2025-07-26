@@ -164,7 +164,7 @@ end
 --State
 local State = require(script.State)
 function mt:State(Function: (Grab: any, InnerThread: Types.Thread,Entity: Instance) -> ())
-    return State(Function,true,self)
+    return State(Function,self)
 end
 --Iterate
 local Iterate = require(script.Iterate)

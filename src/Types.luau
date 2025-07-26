@@ -109,8 +109,8 @@ export type Thread = {
     Info: (Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Info;
     SpringInfo: (Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> SpringInfo;
     Connect: (self: Thread, Connection: RBXScriptSignal, func: (...any) -> ()) -> (),
-    Do: (self: Thread, func : (Grab: (Property: string?,InstanceMethod: string?) -> (),Entity: Instance?) -> ()) -> any;
-    State: (self: Thread, func : (Grab: (Property: string?,InstanceMethod: string?) -> (),Thread: Thread, Entity: Instance?) -> ()) -> any;
+    Do: (self: Thread, func : (Grab: (Value: Instance | Value,Property: string?,InstanceMethod: string?) -> (),Entity: Instance?) -> ()) -> any;
+    State: (self: Thread, func : (Grab: (Value: Instance | Value,Property: string?,InstanceMethod: string?) -> (),Thread: Thread, Entity: Instance?) -> ()) -> any;
     Iterate: (self: Thread, Table: any,func: (Index: any,Value: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
     InstanceProperty: (self:Thread, Entity: Instance, Property: string) -> Value;
     InstanceAttribute: (self:Thread, Entity: Instance, Attribute: string) -> Value;

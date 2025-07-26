@@ -29,7 +29,7 @@ return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile:
                 if res2 ~= nil then
                     Compile(Entity,{[res1] = res2},InnerThread)
                 else
-                    Compile(Entity,res1,InnerThread)
+                    Compile(Entity,{res1},InnerThread)
                 end
             end
             Entity = nil;
