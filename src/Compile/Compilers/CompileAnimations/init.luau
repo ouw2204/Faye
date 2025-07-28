@@ -1,7 +1,7 @@
 local ValueClasses = require(script.Parent.Parent.Parent.Misc.ValueClasses)
 local Types = require(script.Parent.Parent.Parent.Types)
 local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
-local tabletxt = "table"
+
 local Player = require(script.Player)
 local Cleaner = require(script.Parent.Parent.Parent.Clean)
 -- roblox services
@@ -67,7 +67,7 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
     local InfoValue, infoConnectionsLength, infoConnections
     local function  mainInfoFunc(Info: any,Position: number,First)
         if Info == nil then return end;
-        if Utility.tof(Info) ~= tabletxt then
+        if Utility.tof(Info) ~= Utility.tabletxt then
             warn(`Info to set is not a table - {debug.traceback()}`)
             return
         end
@@ -98,16 +98,25 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
     --| play trackers |--
     local UsedFrom
     --| Goal |--
-    local IsValue = Utility.tof(Anim.Goal) == tabletxt and Anim.Goal.__type ~= nil and ValueClasses[Anim.Goal.__type]
+    local InitialGoalType = Utility.tof(Anim.Goal)
+    local IsInstanceValue = (InitialGoalType == Utility.instanceTxt and Anim.Goal:IsA(Utility.valueBaseTxt))
+    local IsValue = IsInstanceValue or ( InitialGoalType == Utility.tabletxt and Anim.Goal.__type ~= nil and ValueClasses[Anim.Goal.__type])
     local goalConnectionsLength,goalConnections
     local id = Anim.__animId;
-
+    local InstanceConnection
     --| delete portion
     local Delete; Delete = function (FromPlayer: boolean,Stop: boolean)
         if Anim ~= nil then
             Anim.IsPlaying = nil;
         end
         if Stop == nil then
+            if InstanceConnection ~= nil then
+                InstanceConnection:Disconnect();
+                InstanceConnection = nil;
+            end
+            if Thread ~= nil then
+                Utility.RemoveFromThread(Thread,Delete)
+            end
             if goalConnectionsLength ~= nil and goalConnectionsLength >0 then
                 Utility.ClearAllConnections(goalConnections,goalConnectionsLength)
             end
@@ -152,12 +161,15 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
         end;
         --|
     end
-    --|< delete portion
+    --|> delete portion
     local function  mainGoalFunc(Goal: any,Position: number?,NoAnim: boolean?)
         if Goal == nil then return end;
         Position = Position or 1;
-        if typeof(Goal) == tabletxt then
-            if Goal.__type ~= nil and ValueClasses[Goal.__type] then
+        local GaolType = typeof(Goal);
+        local IsTable = GaolType == Utility.tabletxt
+        local IsInstance = not IsTable and GaolType == Utility.instanceTxt and Goal:IsA(Utility.valueBaseTxt)
+        if IsTable or IsInstance then
+            if IsInstance or (Goal.__type ~= nil and ValueClasses[Goal.__type]) then
                 if goalConnections == nil then goalConnections = {} end;
                 goalConnectionsLength = Position;
                 goalConnections[Position] = Goal.Changed:Connect(function(NewGoal: any)
@@ -170,7 +182,7 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
                     goalConnectionsLength = Position;
                     mainGoalFunc(NewGoal,Position + 1)
                 end,goalConnections)
-                mainGoalFunc(Goal:Get(), Position + 1,NoAnim)
+                mainGoalFunc((IsInstance and Goal.Value) or Goal:Get(), Position + 1,NoAnim)
             end
         else
             if Entity ~= nil and Entity.Instance ~= nil then
@@ -199,6 +211,13 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
 
     --| cleanup |--
     --Thread:Remove(Anim)
+    if IsInstanceValue then
+        InstanceConnection = Anim.Goal:GetPropertyChangedSignal("Parent"):Connect(function()
+            if Anim == nil or Anim.Parent ==nil then
+                Delete()
+            end
+        end)
+    end
     Utility.AddToThread(Thread,Delete)
    end
 end

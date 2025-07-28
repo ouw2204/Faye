@@ -5,24 +5,32 @@ local sb = string.sub
 local tins = table.insert
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
 local Compilers = require(script.Compilers)
-local tablestr,numberstr,functionstr,RBXScriptSignalstr,ClearTableInCompulationstr = "table","number","function","RBXScriptSignal","ClearTableInCompulation"
-local OnChangedInitstr,OnChangedstr,Valuestr,Instancestr,Addstr = "OnChangedInit","OnChanged","Value","Instance","Add"
+local tablestr,numberstr,functionstr,RBXScriptSignalstr = "table","number","function","RBXScriptSignal"
+local OnChangedInitstr,OnChangedstr,Valuestr,Instancestr,Addstr,valuebasestr = "OnChangedInit","OnChanged","Value","Instance","Add","ValueBase"
 local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any}, Props: any,InstanceThread: any)
     -- Main loop
     for i, v in pairs(Props) do
-        if i == ClearTableInCompulationstr then continue end; -- Skip if the key is "ClearTableInCompulation"
         local tov = to(v)
         local toi = --[[tov == "table" and v.__type and to(v.__type) or]] to(i)
         local compilerFunc = (toi ~= tablestr and Compilers[i]) or nil
         if compilerFunc then
             compilerFunc(Entity, i, v, Recursive)
         elseif tov == Instancestr then
-            v.Parent = Entity.Instance
-            if InstanceThread ~= nil then
-                if InstanceThread[Addstr] ~= nil then
-                    InstanceThread:Add(v)
-                else
-                    tins(Instance,v);
+            --> instance compile
+            if toi == numberstr then
+                --object parenting
+                v.Parent = Entity.Instance
+                if InstanceThread ~= nil then
+                    if InstanceThread[Addstr] ~= nil then
+                        InstanceThread:Add(v)
+                    else
+                        tins(Instance,v);
+                    end
+                end
+            else
+                -- supported values
+                if v:IsA(valuebasestr) then
+                    Compilers.Value(Entity, i, v)
                 end
             end
         elseif tov == tablestr then
@@ -64,11 +72,7 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
                 end
             end
         end
-        if Props[ClearTableInCompulationstr] then
-            Props[i] = nil -- Avoid if Props is large
-        end
     end
-    Props.ClearTableInCompulation = nil;
     --tc(Props)
 end
 

@@ -128,6 +128,7 @@ export type Thread = {
     Event: (self: Thread,any,func: (...any) -> ()?) -> Event;
     EventState: (self: Thread,any, func: (...any) -> ()) -> Event;
 	MethodSignaled: (self: Thread, Method: string, Index: string) -> ();
+	Spawn: (self: Thread, func: (...any) -> (),...any) -> Spawn;
 	PlayAnimation: (self: Thread, Entity: Instance, Property: string,Goal: any, Info: (Info | SpringInfo)?) -> PlayableAnimation;
 	ModifyAnimation: (self: Thread, Animaiton: {any: any},Modifications: AnimationModifications) -> {any: any};
 	CloneAnimation: (self: Thread, Animaiton: {any: any},Modifications: AnimationModifications) -> {any: any};
@@ -136,7 +137,6 @@ export type Thread = {
 export type Properties = {
 	Video: any,
 	ClearTextOnFocus: any,
-	ClearTableInCompulation: any,
 	Rotation: any,
 	Wraps: any,
 	CellSize: any,

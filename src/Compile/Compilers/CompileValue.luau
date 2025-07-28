@@ -1,9 +1,8 @@
-local tof, tc = typeof, table.clear
 local ValueClasses = require(script.Parent.Parent.Parent.Misc.ValueClasses)
 local Types = require(script.Parent.Parent.Parent.Types)
 local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
 
-local tabletxt,niltxt,numbertxt,stringtxt = "table","nil","number","string"
+local tabletxt,niltxt,numbertxt,stringtxt,instancetxt,ValueBasetxt = "table","nil","number","string","Instance","ValueBase";
 return function (Entity: Types.FayeInstance, Index: any, Value: Types.Value)
     local Instance = Entity.Instance or Entity
 
@@ -11,9 +10,11 @@ return function (Entity: Types.FayeInstance, Index: any, Value: Types.Value)
     local connections = {};
 
     local mainFunc; mainFunc = function(Gotten: any,Position: number?)
-        local gottenIsTable = tof(Gotten) == tabletxt
+        local GottenType = Utility.tof(Gotten)
+        local gottenIsTable = GottenType == tabletxt
+        local gottenIsInstance = not gottenIsTable and GottenType == instancetxt and Gotten:IsA(ValueBasetxt)
         Position = Position or 1;
-        if gottenIsTable and Gotten.__type ~= nil and ValueClasses[Gotten.__type] then
+        if gottenIsInstance or (gottenIsTable and Gotten.__type ~= nil and ValueClasses[Gotten.__type]) then
             connectionslength = Position;
             connections[Position] = Gotten.Changed:Connect(function(new)
                 if connectionslength > Position then
@@ -25,14 +26,14 @@ return function (Entity: Types.FayeInstance, Index: any, Value: Types.Value)
                 connectionslength = Position;
                 mainFunc(new,Position + 1)
             end,connections)
-            mainFunc(Gotten:Get(),Position + 1)
+            mainFunc( (gottenIsInstance and Gotten.Value) or Gotten:Get(),Position + 1)
         else
              if Entity ~= nil and Instance ~= nil then
                 if gottenIsTable then
                     Gotten = Gotten.Instance or Gotten
                 end
-                local tofIndex = tof(Instance[Index])
-                local tofNew = tof(Gotten)
+                local tofIndex = Utility.tof(Instance[Index])
+                local tofNew = Utility.tof(Gotten)
                 if tofIndex == tofNew or (tofIndex == niltxt and tofNew ~= nil) or ((tofIndex == numbertxt or tofIndex == stringtxt) and (tofNew == numbertxt or tofNew == stringtxt)) then
                     Instance[Index] = Gotten
                 end
@@ -43,18 +44,31 @@ return function (Entity: Types.FayeInstance, Index: any, Value: Types.Value)
     end
     mainFunc(Value)
     local Thread = Entity.Innerthread or Entity.Thread
+    local ValueConnection
     local clean; clean = function()
+        if ValueConnection ~= nil then
+            ValueConnection:Disconnect();
+            ValueConnection = nil;
+        end
         if Thread ~= nil then
             Utility.RemoveFromThread(Thread,clean)
         end;
-        Value.__cleanFunction = nil;
         Thread = nil;
-        Utility.ClearAllConnections(connections,connectionslength)
-        tc(connections)
-        connections = nil;
-        --print("clean ",script.Name)
+        if connections ~= nil then
+            Utility.ClearAllConnections(connections,connectionslength)
+            Utility.tc(connections)
+            connections = nil;
+        end;
     end
-    Value.__cleanFunction = clean
+    if Value.ClassName ~= nil then
+        ValueConnection = Value:GetPropertyChangedSignal("Parent"):Connect(function()
+            if Value == nil or Value.Parent == nil then
+                clean()
+            end
+        end)
+    else
+        Value.__cleanFunction = clean
+    end
     if Thread ~= nil then
         Utility.AddToThread(Thread,clean)
     end

@@ -37,7 +37,7 @@ end
 function mt:Extend(NoAttachment) : Types.Thread
     local new: any = {};
     setmetatable(new,mt);
-    if NoAttachment ~= true then
+    if NoAttachment == nil then
         new._isCleanAncestor = self._isCleanAncestor
         table.insert(self,new);
     else
@@ -50,7 +50,15 @@ function mt:Extend(NoAttachment) : Types.Thread
     new.ParentThread = self
     return new;
 end
-
+--[=[
+    @within Thread
+    @method Spawn
+    Similar to Task.spawn, not to be used within a compileable table.
+]=]
+function mt:Spawn(func: (...any) -> (),...)
+    if func == nil then return end;
+    self:Add(task.spawn(func,...))
+end
 --[=[
     @within Thread
     @method Clean
@@ -149,10 +157,10 @@ function mt:Remove(Entity: any)
     return
 end
 --Do
---[[local Do = require(script.Do)
+local Do = require(script.Do)
 function mt:Do(Function: (Grab: any, Entity: Instance) -> ())
     return Do(Function,self)
-end]]
+end
 --Do
 local Unyielded = require(script.Unyielded)
 function mt:Unyielded(func: (...any) -> ())

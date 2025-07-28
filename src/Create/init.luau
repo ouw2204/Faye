@@ -42,7 +42,6 @@ return function(ClassName: string, Thread: { Add: (self: {}, Entity: any) -> () 
 		if Simple then
 			return Object
 		else
-			props.ClearTableInCompulation = true
 			local Wrapper = setmetatable({
 				Instance = Object,
 				Props = props,

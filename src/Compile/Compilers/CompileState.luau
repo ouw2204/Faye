@@ -18,11 +18,11 @@ return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile:
             InnerThread = nil;
         end
         if State.IsState then
-            InnerThread = Thread:Extend();
+            InnerThread = Thread:Extend(true);
         end
-        local res1,res2 = if State.IsState then State.Func(Grab,InnerThread,Instance.Instance) else State.Func(Grab,Instance.Instance)
+        local res1,res2 = if State.IsState then State.Func(Grab,InnerThread,Instance.Instance) else State.Func(Grab,Thread,Instance.Instance)
+        local Entity = (State.IsState and {Instance = Instance.Instance, Thread = InnerThread}) or Instance
         if res1 ~= nil then
-            local Entity = {Instance = Instance.Instance,Thread = InnerThread};
             if Index ~= nil and Utility.tof(Index) ~= Utility.numbertxt then
                 Compile(Entity,{[Index] = res1},InnerThread)
             else
@@ -32,14 +32,12 @@ return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile:
                     Compile(Entity,{res1},InnerThread)
                 end
             end
-            Entity = nil;
         else
             if InnerThread ~= nil then
                 InnerThread:Destroy();
                 InnerThread = nil;
             end
         end
-
     end
     --|> Trigger
     --| grab
@@ -64,8 +62,13 @@ return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile:
     Trigger()
     --| delete
     if Thread == nil then return end;
+    local EqThread = Thread;
     local function Delete()
-        Utility.RemoveFromThread(Thread,Delete)
+        Utility.RemoveFromThread(EqThread,Delete)
+        if InnerThread ~= nil then
+            InnerThread:Destroy();
+            InnerThread = nil;
+        end
         if Log ~= nil then
             Utility.tc(Log);
             Log = nil;
@@ -76,7 +79,16 @@ return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile:
         end
         Grab = nil;
         Trigger = nil;
-        print("Delete")
     end
-    Utility.AddToThread(Thread,Delete)
+    if Thread._isCleanAncestor then
+        local CurrentPos = EqThread
+        while CurrentPos ~= nil do
+            if CurrentPos._hc then
+                break;
+            end
+            CurrentPos = EqThread.ParentThread;
+        end
+        EqThread = CurrentPos or EqThread;
+    end
+    Utility.AddToThread(EqThread,Delete)
 end

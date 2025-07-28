@@ -1,30 +1,5 @@
 local Types = require(script.Parent.Types)
-local tins,tf,tr = table.insert,table.find,table.remove
-local mt = {__type = script.Name}
-mt.__index = mt;
---[=[
-    @class AttributeChanged
-    For Attribute changed signals
-]=]
---[=[
-    @method Destroy
-    @within AttributeChanged
-    Destroy function
-]=]
-function mt:Destroy()
-    if self.Thread["Remove"] then
-        self.Thread:Remove(self)
-    else
-        local f = tf(self.Thread,self)
-        if f ~= nil then
-            tr(self.Thread,f)
-        end
-    end
-    self.Thread = nil;
-    self.Method = nil;
-    self.Index = nil;
-    setmetatable(self,nil)
-end
+local Utility = require(script.Parent.Misc.Utility)
 --[=[
     @method AttributeChanged
     @within Thread
@@ -33,16 +8,12 @@ end
     @return AttributeChanged
     Attribute changed listener
 ]=]
+local typetxt = script.Name;
 return function (Method: string,Index: string, Thread: Types.Thread?)
     if Method == nil or Index == nil then return end;
-    local d = {Method = Method,Index = Index,Thread = Thread};
-    setmetatable(d,mt)
+    local d = {Method = Method,Index = Index,Thread = Thread, __type = typetxt};
     if Thread ~= nil then
-        if Thread["Add"] then
-            Thread:Add(d)
-        else
-            tins(Thread,d)
-        end
-    end
+        Utility.AddToThread(Thread,d)
+    end;
     return d;
 end

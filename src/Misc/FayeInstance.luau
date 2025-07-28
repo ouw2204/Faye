@@ -2,17 +2,17 @@ local ValueClasses = require(script.Parent.Parent.Misc.ValueClasses)
 local Compilers = require(script.Parent.Parent.Compile.Compilers)
 local Compile = require(script.Parent.Parent.Compile)
 local Clean = require(script.Parent.Parent.Clean)
-
+local Types = require(script.Parent.Parent.Types)
 local tof = typeof
 local tr = table.remove
 local tins = table.insert
 local tf = table.find
-
+local Utility = require(script.Parent.Parent.Misc.Utility)
 local mt = { __type = "Instance" }
 mt.__index = mt
 
 local tc = table.clear
-function removefunc(t: any, v: any)
+function removefunc(t: Types.Thread, v: any)
 	if t == nil or v == nil then
 		return
 	end
@@ -120,7 +120,7 @@ function mt:Compile()
 		local AddClean = nil
 		local ThreadUsing = self.InnerThread or self.Thread;
 		local PropsOrCleanCheck = Props.CleanDelay ~= nil or Props.OnClean ~= nil
-		if (ThreadUsing._hc or ThreadUsing._isCleanAncestor) and PropsOrCleanCheck and self.InnerThread ~= nil and self.InnerThread._isCleanAncestor then
+		if (ThreadUsing._hc or ThreadUsing._isCleanAncestor) and PropsOrCleanCheck and self.InnerThread ~= nil and self.InnerThread._isCleanAncestor and ThreadUsing.ParentThread ~= nil then
 			if Props.CleanFunction == nil and Props.OnClean ~= nil then
 				AddClean = true;
 				Props.CleanFunction = Props.OnClean
@@ -128,6 +128,7 @@ function mt:Compile()
 			Props.CleanDelay = nil;
 			Props.OnClean = nil;
 		else
+			
 			if PropsOrCleanCheck then
 				if self.Thread ~= nil then
 					self.Thread._hc = true --hc = hasclean
@@ -144,7 +145,6 @@ function mt:Compile()
 				end
 				if Props.OnClean ~= nil then
 					self.OnClean = Props.OnClean
-					self.OnCleanCreated = true
 					Props.OnClean = nil
 				end
 				if Props.CleanFunction ~= nil then
@@ -156,39 +156,35 @@ function mt:Compile()
 				end
 			end
 		end
+
 		PropsOrCleanCheck = nil;
 		ThreadUsing = nil;
 		if AddClean == true then
 			if self.Thread ~= nil and self.Thread._isCleanAncestor then
 				local f = Props.CleanFunction
-				local eq = self.Thread
-				local connected = {}
-				local cf
-				cf = function()
+				self.cf = function()
 					if f == nil then
 						return
 					end
 					f(self.InnerThread or self.Thread, self.Instance)
-					for _, v in pairs(connected) do
-						removefunc(v, cf)
-					end
+					removefunc(self.connected,self.cf)
 					f = nil
-					tc(connected)
-					cf = nil
+					self.cf = nil
+					self.connected = nil;
 				end
-				eq:Add(cf)
-				tins(connected, eq)
+				local eq = self.Thread
 				if eq.ParentThread ~= nil then
 					local current = eq
-					repeat
-						current = current.ParentThread
-						if current ~= nil and current._hc then
-							current:Add(cf)
-							tins(connected, current)
+					while current ~= nil do
+						if current._hc then
+							break
 						end
-					until current == nil or current.ParentThread == nil
-					current = nil
+						current = current.ParentThread
+					end
+					eq = current or eq;
 				end
+				eq:Add(self.cf)
+				self.connected = eq;
 			else
 				self.CleanFunction = Props.CleanFunction
 			end
@@ -237,6 +233,17 @@ function mt:Destroy()
 		end
 	end
 
+	--< remove all clean incase they are no yields so they aren't any errors
+	if self.connected ~= nil then
+		if self.Thread ~= self.connected then
+			Utility.RemoveFromThread(self.Thread,self.cf)
+		end;
+		removefunc(self.connected, self.cf)
+		self.connected = nil;
+		self.cf = nil;
+	end
+	-->
+
 	if self.CleanFunction ~= nil then
 		self.CleanFunction(self.InnerThread or self.Thread, self.Instance)
 		self.CleanFunction = nil
@@ -247,6 +254,7 @@ function mt:Destroy()
 		else
 			table.insert(self.InnerThread, self.Instance)
 		end
+
 		self.OnClean(self.InnerThread, self.Instance)
 		if self.InnerThread ~= nil then
 			if self.InnerThread.AnimationsAmount == nil or self.InnerThread.AnimationsAmount <= 0 then
@@ -288,9 +296,9 @@ function mt:Destroy()
 	self.Thread = nil
 	setmetatable(self, nil)
 end
-
+--[[
 local scriptName = script.Name
 function mt.__tostring()
 	return scriptName
-end
+end]]
 return mt
