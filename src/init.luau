@@ -55,9 +55,16 @@ end
     @method Spawn
     Similar to Task.spawn, not to be used within a compileable table.
 ]=]
+local removetxt = "Remove"
 function mt:Spawn(func: (...any) -> (),...)
     if func == nil then return end;
-    self:Add(task.spawn(func,...))
+    local task; task = task.spawn(function(...)
+        func(...)
+        if self[removetxt] ~= nil then
+            self:Remove(task)
+        end
+    end,...)
+    self:Add(task)
 end
 --[=[
     @within Thread
@@ -191,11 +198,11 @@ function mt:Delay(Props: Types.Properties,Time: number) : Types.Delay
 end
 --Property value
 local Propertyy = require(script.Property)
-function mt:InstanceProperty(Instance: Instance,Property: string)
+function mt:InstancePropertySync(Instance: Instance,Property: string)
     return Propertyy(Instance,Property,false,self);
 end
 --Attribute
-function mt:InstanceAttribute(Instance: Instance,Property: string)
+function mt:InstanceAttributeSync(Instance: Instance,Property: string)
     return Propertyy(Instance,Property,true,self);
 end
 
@@ -213,12 +220,13 @@ local Space = require(script.Space)
 function mt:Space(func: (...any) -> ())
     return Space(func,self);
 end
-local Event = require(script.Event)
-function mt:Event(Connections: RBXScriptSignal & {RBXScriptSignal} & () -> (),func: (...any) -> ()?)
-    return Event(Connections, func,self);
+local Signal = require(script.Signal)
+function mt:Signal(Connections: RBXScriptSignal | {RBXScriptSignal},func: (...any) -> ()?)
+    return Signal(Connections, func,self);
 end
-function mt:EventState(Connections: RBXScriptSignal & {RBXScriptSignal} & () -> (),func: (...any) -> ()?)
-    return Event(Connections, func,self,true);
+local SignalState = require(script.Signal)
+function mt:SignalState(Connections: RBXScriptSignal | {RBXScriptSignal},func: (...any) -> ()?)
+    return SignalState(Connections, func,self);
 end
 local MethodSignaled = require(script.MethodSignaled)
 function mt:MethodSignaled(Method: string, Index: string)

@@ -3,11 +3,11 @@
     A class that represents a value with a delay and threading.
 ]=]
 local Types = require(script.Parent.Types)
-local tof,tins,tf,tr,tc = typeof,table.insert,table.find,table.remove,table.clear
 local Signal = require(script.Parent.Packages.Signal);
-
+local Utility = require(script.Parent.Misc.Utility)
+local typetxt = script.Name;
 local mt = {
-    __type = script.Name;
+    __type = typetxt;
 };
 mt.__index = mt;
 
@@ -22,9 +22,9 @@ function mt:Destroy()
         if thread["Remove"] then
             thread:Remove(self)
         else
-            local pos = tf(thread, self)
+            local pos = Utility.tf(thread, self)
             if pos ~= nil then
-                tr(thread, pos)
+                Utility.tr(thread, pos)
             end
         end
         self.Thread = nil
@@ -38,7 +38,7 @@ function mt:Destroy()
         self.Connection = nil
     end
     if self.Custom ~= nil then
-        tc(self.Custom)
+        Utility.tc(self.Custom)
         self.Custom = nil;
     end
     setmetatable(self,nil)
@@ -48,7 +48,7 @@ function mt:Destroy()
     self.Time = nil;
     self.Id = nil;
     self.IsActive = nil;
-    tc(self)
+    Utility.tc(self)
 end
 
 --[=[
@@ -58,7 +58,7 @@ end
     Sets the delay time.
 ]=]
 function mt:SetTime(New: number)
-    if not (New == nil or tof(New) == "number") then return self end;
+    if not (New == nil or Utility.tof(New) == "number") then return self end;
     self.Time = New;
     return self;
 end
@@ -145,7 +145,7 @@ end
 ]=]
 return function(Value: Types.Value, Time: number, Thread: Types.Thread)
     if Value == nil then warn(`Value or Time parameter are missing - {debug.traceback()}`); return end;
-    if tof(Value) ~= "table" then warn(`Parameters must be of the format: Value: Value, Time: number - {debug.traceback()}`); return end;
+    if Utility.tof(Value) ~= "table" then warn(`Parameters must be of the format: Value: Value, Time: number - {debug.traceback()}`); return end;
     Id += 1;
     local new = {
         Initial = Value.Initial;
@@ -155,7 +155,7 @@ return function(Value: Types.Value, Time: number, Thread: Types.Thread)
         curentUsageId = 0;
         DefaultTime = Time;
         Time = Time;
-        Id = "DelayValue-"..Id;
+        Id =typetxt .. Id;
         IsActive = true;
         Changed = Signal.new();
     }
@@ -178,11 +178,7 @@ return function(Value: Types.Value, Time: number, Thread: Types.Thread)
         end
     end)
     if Thread ~= nil then
-        if Thread["Add"] then
-            Thread:Add(new)
-        else
-            tins(Thread,new)
-        end
+        Utility.AddToThread(Thread,new)
     end
     return new;
 end

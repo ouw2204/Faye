@@ -48,17 +48,12 @@ export type AnimationModifications = {
 	AlwaysFrom: any?;
 	
 }
-export type Signal = {
-    Fire: (self: Signal) -> (),
-    Connect: (self: Signal, func: () -> ()) -> Connection,
-    Once: (self: Signal, func: () -> ()) -> Connection,
-    DisconnectAll: (self: Signal) -> (),
-    Destroy: (self: Signal) -> ()
-}
+
 export type DelayValue = {
     Get: (self: DelayValue) -> ();
     Changed: RBXScriptSignal;
     SetTime: (self: DelayValue, Time: number) -> ();
+	Refresh: (self: DelayValue) -> ();
     Sensitive: (self: DelayValue) -> DelayValue;
     ResetTime: (self: DelayValue) -> ();
     For: (self: DelayValue, Value: any, Time: number?) -> DelayValue;
@@ -79,7 +74,7 @@ export type SpaceTask = {
 }
 export type Space = {
     Call: (self: Space, Task: SpaceTask) -> Space;
-    Add: (self: Space, Params: {[any]: any}, Thread: Thread?,IsDictionary: boolean?) -> SpaceTask;
+    Add: (self: Space, Params: {[any]: any}, Thread: Thread?,NoUnpack: boolean?) -> SpaceTask;
     Remove: (self: Space, Task: SpaceTask) -> ();
     Connect: (self: Space, Connection: RBXScriptSignal,Id: string) -> RBXScriptConnection;
     Destroy: (self: Space) -> ();
@@ -94,10 +89,10 @@ export type Spawn = {
     Perform: (self: Spawn) -> ();
     Destroy: (self: Spawn) -> ();
 }
-export type Event = {
-    Destroy: (self: Event) -> ();
-    Call: (...any) -> Event;
-    Connect: (self: Event, Connection: RBXScriptSignal) -> Event;
+export type Signal = {
+    Destroy: (self: Signal) -> ();
+    Call: (...any) -> Signal;
+    Connect: (self: Signal, Connection: RBXScriptSignal) -> Signal;
 }
 export type Thread = {
     Create: (self: Thread, ClassName: string) -> (Properties: Properties) -> FayeInstance;
@@ -112,12 +107,12 @@ export type Thread = {
     Do: (self: Thread, func : (Grab: (Value: Instance | Value,Property: string?,InstanceMethod: string?) -> (),Entity: Instance?) -> ()) -> any;
     State: (self: Thread, func : (Grab: (Value: Instance | Value,Property: string?,InstanceMethod: string?) -> (),Thread: Thread, Entity: Instance?) -> ()) -> any;
     Iterate: (self: Thread, Table: any,func: (Index: any,Value: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
-    InstanceProperty: (self:Thread, Entity: Instance, Property: string) -> Value;
-    InstanceAttribute: (self:Thread, Entity: Instance, Attribute: string) -> Value;
+    InstancePropertySync: (self:Thread, Entity: Instance, Property: string) -> Value;
+    InstanceAttributeSync: (self:Thread, Entity: Instance, Attribute: string) -> Value;
     DelayValue: (self: Thread, Value: Value, Time: number) -> DelayValue;
     Delay: (self: Thread, Props: Properties,Time: number) -> Delay;
     SetTo: (self: Thread, Value: Value) -> {};
-    Signal: (self: Thread) -> Signal;
+
     Listener: (self: Thread, Entity: any, Event: string & {string}, func: (string,...any) -> ()) -> ();
     Add: (self: Thread,Entity: any) -> ();
     Remove: (self: Thread,Entity: any) -> ();
@@ -125,8 +120,8 @@ export type Thread = {
     Unyielded: (self: Thread,func: (...any)-> ()) -> Spawn;
 	DelayUnyielded: (self: Thread,Time: number,func: (...any)-> ()) -> Spawn;
     Schedule: (self: Thread,Time: number?,Item: any,...any) -> any;
-    Event: (self: Thread,any,func: (...any) -> ()?) -> Event;
-    EventState: (self: Thread,any, func: (...any) -> ()) -> Event;
+    Signal: (self: Thread,any,func: (...any) -> ()?) -> Signal;
+    SignalState: (self: Thread,any, func: (...any) -> ()) -> Signal;
 	MethodSignaled: (self: Thread, Method: string, Index: string) -> ();
 	Spawn: (self: Thread, func: (...any) -> (),...any) -> Spawn;
 	PlayAnimation: (self: Thread, Entity: Instance, Property: string,Goal: any, Info: (Info | SpringInfo)?) -> PlayableAnimation;

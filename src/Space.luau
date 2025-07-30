@@ -1,7 +1,5 @@
-local tins = table.insert
-local tc = table.clear
-local tf = table.find
-local tr = table.remove
+local Types = require(script.Parent.Types)
+local Utility = require(script.Parent.Misc.Utility)
 --[=[
     @class Space
     A code runner that helps manage multiple [tasks](./Task)/components to avoid excessive code/connections running at once.
@@ -39,7 +37,7 @@ function parammt:Connect(Connection: RBXScriptSignal)
         self.__connections = {}
     end
     local connection = Connection:Connect(self.Call,self.__connections)
-    tins(self.__connections,connection)
+    Utility.tins(self.__connections,connection)
     return connection;
 end
 --[=[
@@ -52,7 +50,7 @@ function parammt:AddParameter(Index: any,Value: any)
     if Value ~= nil then
         self[Index] = Value;
     else
-        tins(self,Index)
+        Utility.tins(self,Index)
     end
     return self;
 end
@@ -62,19 +60,12 @@ end
     Cleans up the task and removes it from the Space. This will also disconnect any connections made to the task.
 ]=]
 function parammt:Destroy()
-    local f = tf(self.__holder.Tasks,self)
+    local f = Utility.tf(self.__holder.Tasks,self)
     if f ~= nil then
-        tr(self.__holder.Tasks,f)
+        Utility.tr(self.__holder.Tasks,f)
     end
     if self.__thread ~= nil then
-        if self.__thread["Remove"] then
-            self.__thread:Remove(self)
-        else
-            local f2 = tf(self.__thread,self)
-            if f2 ~= nil then
-                tr(self.__thread,f2)
-            end
-        end
+        Utility.RemoveFromThread(self.__thread,self)
     end
     if self.__connections ~= nil then
         for i = #self.__connections,1,-1 do
@@ -84,18 +75,16 @@ function parammt:Destroy()
     end
     self.__holder = nil;
     self.Call = nil;
-    tc(self)
+    Utility.tc(self)
     setmetatable(self,nil)
 end
-
-local Types = require(script.Parent.Types)
 --[=[
     @method Call
     @within Space
     Calls all tasks in the Space.
 ]=]
 function mt:Call()
-    if self.Cleaning == true then return end;
+    if self.Cleaning then return end;
     for i = #self.Tasks,1,-1 do
         self.Tasks[i].Call();
     end
@@ -108,7 +97,7 @@ end
     @param Thread Thread?
     Adds/Creates a task to the Space. The task will be called when the Space is called.
 ]=]
-function mt:Add(Params: {[any]: any},Thread: Types.Thread,IsDictionary: boolean?)
+function mt:Add(Params: {[any]: any},Thread: Types.Thread,NoUnpack: boolean?)
     if self.Cleaning == true then return end;
     if Params == nil then return end;
     Thread = Thread or self.Thread;
@@ -120,7 +109,7 @@ function mt:Add(Params: {[any]: any},Thread: Types.Thread,IsDictionary: boolean?
         Executes the task.
     ]=]
     function Params.Call()
-        if IsDictionary == true then
+        if NoUnpack then
             Params.__holder.func(Params)
         else
             Params.__holder.func(table.unpack(Params))
@@ -128,14 +117,11 @@ function mt:Add(Params: {[any]: any},Thread: Types.Thread,IsDictionary: boolean?
         return Params;
     end
     if Thread ~= self.Thread then
-        if Thread["Add"] then
-            Thread:Add(Params)
-        else
-            tins(Thread,Params)
-        end
+        Utility.AddToThread(Thread,Params)
     end
+
     setmetatable(Params,parammt);
-    tins(self.Tasks,Params)
+    Utility.tins(self.Tasks,Params)
     return Params;
 end
 --[=[
@@ -147,7 +133,7 @@ end
 function mt:Remove(Task)
     if self.Cleaning == true then return end;
     if Task == nil then return end;
-    local find = tf(self.Tasks,Task)
+    local find = Utility.tf(self.Tasks,Task)
     if find ~= nil then
         self.Tasks[find]:Destroy();
     end
@@ -162,8 +148,9 @@ end
 function mt:Connect(Connection: RBXScriptSignal,Id: string?)
     if self.Cleaning then return end;
     if Id == nil then
+        print("add to thread")
         local connection = Connection:Connect(self.ReceiverFunction,self.Thread)
-        self.Thread:Add(connection)
+        Utility.AddToThread(self.Thread,Connection)
         return connection;
     else
         task.spawn(function()
@@ -175,7 +162,7 @@ function mt:Connect(Connection: RBXScriptSignal,Id: string?)
                         self.Tasks[i].__connections = {}
                     end
                     local TaskConnection = Connection:Connect(self.Tasks[i].Call,self.Tasks[i].__connections)
-                    tins(self.Tasks[i].__connections,TaskConnection)
+                    Utility.tins(self.Tasks[i].__connections,TaskConnection)
                     return TaskConnection;
                 end
             end
@@ -194,14 +181,7 @@ function mt:Destroy()
     self.ReceiverFunction = nil;
 
     if self.Thread ~= nil then
-        if self.Thread["Remove"] then
-            self.Thread:Remove(self)
-        else
-            local f = tf(self.Thread,self)
-            if f ~= nil then
-                tr(self.Thread,f)
-            end
-        end
+        Utility.RemoveFromThread(self.Thread,self)
         self.Thread = nil;
     end
     for i = #self.Tasks,1,-1 do
@@ -232,16 +212,12 @@ return function(func: (...any) -> (),Thread: Types.Thread)
     };
     m.ReceiverFunction = function()
         if m.Cleaning then return end;
-        for i,v in pairs(m.Tasks) do
+        for _,v in pairs(m.Tasks) do
             v.Call();
         end
     end
     if Thread ~= nil then
-        if Thread["Add"] then
-            Thread:Add(m)
-        else
-            tins(Thread,m)
-        end
+        Utility.AddToThread(Thread,m)
     end
     setmetatable(m,mt)
     return m;

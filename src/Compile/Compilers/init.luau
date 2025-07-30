@@ -107,50 +107,7 @@ local m = {
 
 		--Thread = nil;
 	end,
-	Event = function(Entity, Index, Value)
-		local Thread = Entity.InnerThread or Entity.Thread
-		if Value.__Thread ~= Thread then
-			if Value.__Thread ~= nil then
-				if Value.__Thread["Remove"] then
-					Value.__Thread:Remove(Value)
-				else
-					local f = tf(Value.__Thread, Value)
-					if f ~= nil then
-						tr(Value.__Thread, f)
-					end
-				end
-
-				if Value.__currentcleaner ~= nil then
-					if Value.__Thread["Remove"] then
-						Value.__Thread:Remove(Value.__currentcleaner)
-					else
-						local pos = tf(Value.__Thread, Value.__currentcleaner)
-						if pos ~= nil then
-							tr(Value.__Thread, pos)
-						end
-					end
-					if Thread["Add"] then
-						Thread:Add(Value.__currentcleaner)
-					else
-						tins(Thread, Value.__currentcleaner)
-					end
-				end
-			end
-			Value.__Thread = Thread
-		end
-		Value.__entity = Entity
-		if tof(Index) ~= "number" then
-			Value.__property = Index
-		end
-		if Value.__callOnInit then
-			task.spawn(function()
-				Value.__prefunc(table.unpack(Value.__callOnInit))
-			end)
-			table.clear(Value.__callOnInit)
-			Value.__callOnInit = nil
-		end
-		Value.__Initiated = true
-	end,
+	Signal = require(script.CompileSignal),
 
 	Iterate = require(script.CompileIterate),
 
