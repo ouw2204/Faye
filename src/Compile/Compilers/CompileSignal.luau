@@ -29,11 +29,14 @@ return function (Instance: Types.FayeInstance,Index, Signal: Types.Signal)
 
         --| Delete entry
         if Entry ~= nil then
+            if Entry.Thread ~= nil then
+                Utility.CallDestroy(Entry.Thread)
+                Entry.Thread = nil;
+            end
             Utility.tc(Entry)
             Entry = nil;
         end
         --|>
-        print("Delete", Signal)
     end
     if Signal.Entries == nil then
         Signal.Entries = {Count = 0};
@@ -42,6 +45,17 @@ return function (Instance: Types.FayeInstance,Index, Signal: Types.Signal)
     Signal.Entries.Count += 1;
     
     if Thread ~= nil then
-        Utility.AddToThread(Thread,Delete)
+        local EqThread = Thread;
+        if EqThread._isCleanAncestor then
+            local CurrentPos = EqThread
+            while CurrentPos ~= nil do
+                if CurrentPos._hc then
+                    break;
+                end
+                CurrentPos = CurrentPos.ParentThread;
+            end
+            EqThread = CurrentPos or EqThread;
+        end
+        Utility.AddToThread(EqThread,Delete)
     end
 end

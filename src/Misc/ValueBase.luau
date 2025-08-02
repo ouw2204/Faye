@@ -170,7 +170,7 @@ function m:Get()
     else
         --| Regular Value
         if self.ValueTypeIsTable and self.Value ~= nil and self.Value.__type == Utility.instanceTxt then
-            return self.Instance
+            return self.Value.Instance
         end
         return self.Value
     end
@@ -208,6 +208,7 @@ end
 
 --| Prop/Attribute
 function m:ReCalibrate(Instance: Instance?,Property: string?)
+    
     if self.IsProperty then
         if Instance == nil or Property == nil then return end;
         if Instance ~= nil then
@@ -247,7 +248,7 @@ function m:Destroy()
     if self.Changed ~= nil then
         self.Changed:Destroy();
         self.Changed = nil;
-    end
+    end 
     Utility.tc(self)
     setmetatable(self,nil)
 end

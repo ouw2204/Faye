@@ -129,9 +129,9 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
                     Anim.Workers.Count = nil;
                     Anim.Workers = nil;
                 end
-                --[[if not (Anim.NoThread == true) then
+                if not (Anim.DestroyOnClean == true) then
                     Utility.tc(Anim)
-                end]]
+                end
                 Anim.Loaded = nil;
                 Anim.StartingSet = nil;
                 Anim = nil;
@@ -145,6 +145,7 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
                 Thread.AnimationsAmount = Utility.max(Thread.AnimationsAmount - 1, 0)
             end
             if (Thread.CleanWhenDone and (Thread.AnimationsAmount ~= nil and Thread.AnimationsAmount <= 0)) then
+                print("Delete ",Entity.Instance.Name)
                 Thread.AnimationsAmount = nil
                 Thread.CleanWhenDone = nil
                 Thread:Remove(Delete)
@@ -157,6 +158,8 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
                 Anim = nil;
                 Cleaner(Thread)
                 Thread = nil;
+            else
+                print("No deletion on ",Entity.Instance.Name,Thread.AnimationsAmount,Thread.Signiture,id)
             end
         end;
         --|

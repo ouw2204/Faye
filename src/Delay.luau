@@ -1,53 +1,10 @@
 local Types = require(script.Parent.Types)
-local mt = {
-    __type = script.Name;
-};
-mt.__index = mt;
-
-local tins = table.insert
-local tf = table.find
-local tr = table.remove
-local tc = table.clear
-
+local Utility = require(script.Parent.Misc.Utility)
 --[=[
     @class Delay
     A class that represents a delay with properties and threading.
 ]=]
 
---[=[
-    @method Destroy
-    @within Delay
-    Destroys the delay object and cleans up its resources.
-]=]
-function mt:Destroy()
-    if self.Thread ~= nil then
-        if self.Thread["Remove"] then
-            self.Thread:Remove(self)
-        else
-            local pos = tf(self.Thread,self)
-            if pos ~= nil then
-                tr(self.Thread,pos);
-            end
-        end
-        self.Thread = nil;
-    end
-    self.Time = nil;
-    self.ToCompile = nil;
-    tc(self)
-    setmetatable(self,nil);
-end
-
---[=[
-    @method From
-    @within Delay
-    @param Props Types.Properties
-    Initializes the delay object with the given properties.
-    @return Delay
-]=]
-function mt:From(Props: Types.Properties)
-    self.Init = Props;
-    return self;
-end
 
 --[=[
     @method Delay
@@ -58,20 +15,18 @@ end
     @return Delay
     Creates a new delay object.
 ]=]
-return function(Props: Types.Properties,Time: number,Thread: Types.Thread)
+local typetxt = script.Name;
+return function(Props: Types.Properties,Time: number,From: any,Thread: Types.Thread?)
     if Time == nil or Props == nil then warn(`Time or properties is missing - {debug.traceback()}`); return end;
-    local new = setmetatable({
+    local new = {
         Time = Time;
         ToCompile = Props;
-        Thread = Thread;
-    },mt);
+        Init = From;
+        __type = typetxt
+    };
 
     if Thread ~= nil then
-        if Thread["Add"] then
-            Thread:Add(new)
-        else
-            tins(Thread,new)
-        end
+        Utility.AddToThread(Thread,new)
     end
     return new;
 end

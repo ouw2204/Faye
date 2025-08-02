@@ -10,7 +10,7 @@ local SupportedValues = {
 }
 local function  cleanIndividual(Holder: {any: any},Index: any)
     if Holder[Index] ~= nil then
-        Holder[Index]:Destroy()
+        Utility.CallDestroy(Holder[Index])
         Holder[Index] = nil
     end
 end
@@ -38,7 +38,7 @@ end
 local function cleanHolder(Holder: {[any]: any})
     for i, v in pairs(Holder) do
         if v ~= nil and v[destroytxt] then
-            v:Destroy()
+            Utility.CallDestroy(v)
         end
     end
     Utility.tc(Holder)

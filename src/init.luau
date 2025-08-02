@@ -35,7 +35,7 @@ end
     Creates a sub-thread. Leave the NoLink to nil and the thread will be linked to the parent thread(will delete with parent), set NoLink to true for the thread to be independent.
 ]=]
 function mt:Extend(NoAttachment) : Types.Thread
-    local new: any = {};
+    local new: any = {Signiture = math.random(1,99999)};
     setmetatable(new,mt);
     if NoAttachment == nil then
         new._isCleanAncestor = self._isCleanAncestor
@@ -58,13 +58,13 @@ end
 local removetxt = "Remove"
 function mt:Spawn(func: (...any) -> (),...)
     if func == nil then return end;
-    local task; task = task.spawn(function(...)
+    local tsk; tsk = task.spawn(function(...)
         func(...)
         if self[removetxt] ~= nil then
-            self:Remove(task)
+            self:Remove(tsk)
         end
     end,...)
-    self:Add(task)
+    self:Add(tsk)
 end
 --[=[
     @within Thread
@@ -137,14 +137,10 @@ local tof = typeof
 function mt:Add(Entity: any,IsConnection)
     if Entity == nil then return end;
     if IsConnection and self.ConnectionsThread ~= nil then
-        if tof(Entity) == tabletxt and Entity.__simplesignalconnection and Entity.lists == nil then
-            Entity.lists = self.ConnectionsThread;
-        end
+
         tins(self.ConnectionsThread,Entity)
     else
-        if tof(Entity) == tabletxt and Entity.__simplesignalconnection and Entity.lists == nil then
-            Entity.lists = self;
-        end
+        
         tins(self,Entity)
     end
 end
@@ -170,12 +166,10 @@ function mt:Do(Function: (Grab: any, Entity: Instance) -> ())
 end
 --Do
 local Unyielded = require(script.Unyielded)
-function mt:Unyielded(func: (...any) -> ())
-    return Unyielded(func,self)
+function mt:Unyielded(func: (...any) -> (),DelayTime: number?)
+    return Unyielded(func,DelayTime,self)
 end
-function mt:DelayUnyielded(Time: number,func: (...any) -> ())
-    return Unyielded(func,self,Time)
-end
+
 --State
 local State = require(script.State)
 function mt:State(Function: (Grab: any, InnerThread: Types.Thread,Entity: Instance) -> ())
@@ -193,8 +187,8 @@ function mt:DelayValue(Value: Types.Value, Time: number) : Types.DelayValue
 end
 --Delay
 local Delay = require(script.Delay)
-function mt:Delay(Props: Types.Properties,Time: number) : Types.Delay
-    return Delay(Props,Time,self)
+function mt:Delay(Props: Types.Properties,Time: number,From: Types.Properties?) : Types.Delay
+    return Delay(Props,Time,From,self)
 end
 --Property value
 local Propertyy = require(script.Property)
@@ -224,7 +218,7 @@ local Signal = require(script.Signal)
 function mt:Signal(Connections: RBXScriptSignal | {RBXScriptSignal},func: (...any) -> ()?)
     return Signal(Connections, func,self);
 end
-local SignalState = require(script.Signal)
+local SignalState = require(script.SignalState)
 function mt:SignalState(Connections: RBXScriptSignal | {RBXScriptSignal},func: (...any) -> ()?)
     return SignalState(Connections, func,self);
 end
@@ -235,6 +229,14 @@ end
 local PlayAnimation = require(script.PlayAnimation)
 function mt:PlayAnimation(Entity: Instance, Property: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?)
     return PlayAnimation(Entity, Property,Goal, Info, self)
+end
+local Reactive = require(script.Reactive)
+function mt:Reactive(func: (Grab: (Value: Instance | Types.Value) -> any) -> ())
+    return Reactive(func,self)
+end
+local CloneTable = require(script.CloneTable)
+function mt.CloneTable(Table: {any: any}, cloneFunction: (Index: any, Value: any) -> (any?, any?)?)
+    return CloneTable(Table,cloneFunction)
 end
 local tc = table.clear
 --[=[

@@ -4,14 +4,45 @@ local tc = table.clear
 local repeatedCompile = require(script.repeatedCompile)
 local Utility = require(script.Parent.Parent.Misc.Utility)
 local m = {
-	SetTo = function(Entity, Index, Value)
-		if Value["Value"] ~= nil and Value.Value["Set"] ~= nil then
+	SetTo = function(Entity,_, Value)
+		if Value.Value ~= nil and Value.Value["Set"] ~= nil then
 			Value.Value:Set(Entity)
 		end
-		Value:Destroy()
 	end,
-	Spawn = function(Entity, Index, Value, Compile)
-		Value:Perform(Entity, Index, Compile, Value.Thread or (Entity.InnerThread or Entity.Thread))
+	Unyielded = function(Entity, Index, Value, Compile)
+		local Thread = Entity.InnerThread or Entity.Thread;
+		local taskthread;
+		local mainFunc = function()
+			local res1,res2 = Value.func(Thread,Entity.Instance)
+			if res1 ~= nil then
+				if Index ~= nil and Utility.tof(Index) ~= Utility.numbertxt then
+					Compile(Entity,{[Index] = res1})
+				else
+					if res2 ~= nil then
+						Compile(Entity,{[res1] = res2})
+					else
+						Compile(Entity, (Utility.tof(res1) == Utility.tabletxt and res1.__type == nil and res1) or {res1})
+					end
+				end
+			end
+			if taskthread ~= nil and Thread ~= nil then
+				Utility.RemoveFromThread(Thread,task)
+			end
+		end
+		taskthread = (Value.DelayTime ~= nil and task.delay(Value.DelayTime,mainFunc)) or task.spawn(mainFunc)
+		if Thread ~= nil then
+			if Thread._isCleanAncestor then
+				local CurrentPos = Thread
+				while CurrentPos ~= nil do
+					if CurrentPos._hc then
+						break;
+					end
+					CurrentPos = CurrentPos.ParentThread;
+				end
+				Thread = CurrentPos or Thread;
+			end
+			Utility.AddToThread(Thread,taskthread)
+		end
 	end,
 	Instance = function(Entity, Index, Value, Compile, From)
 		local Props = Value.Props
@@ -45,16 +76,16 @@ local m = {
 		local Instance = Entity.Instance
 		local Thread = Entity.InnerThread or Entity.Thread
 		if Init == true then
-			local Ret = Value(Instance, Instance[Index])
+			local Ret,Ret2 = Value(Instance, Instance[Index])
 			if Ret ~= nil then
-				repeatedCompile(Index, Thread, Ret, Compile, Entity)
+				repeatedCompile(Index, --[[Thread, ]]Ret, Ret2, Compile, Entity)
 				Ret = nil
 			end
 		end
 		Thread:Connect(Instance:GetPropertyChangedSignal(Index), function()
-			local Ret = Value(Instance, Instance[Index])
+			local Ret,Ret2 = Value(Instance, Instance[Index])
 			if Ret ~= nil then
-				repeatedCompile(Index, Thread, Ret, Compile, Entity)
+				repeatedCompile(Index, --[[Thread, ]]Ret, Ret2, Compile, Entity)
 				Ret = nil
 			end
 		end)
@@ -66,18 +97,18 @@ local m = {
 		if Thread ~= nil then -- thread exist
 			if Thread["Connect"] ~= nil then
 				Thread:Connect(Instance[Index], function(...)
-					local Ret = Value(Instance, ...)
+					local Ret,Ret2 = Value(Instance, ...)
 					if Ret ~= nil then
-						repeatedCompile(Index, Thread, Ret, Compile, Entity)
+						repeatedCompile(Index, --[[Thread, ]]Ret, Ret2, Compile, Entity)
 						Ret = nil
 					end
 				end)
 			elseif Thread["Add"] ~= nil then -- is a specialized cleaner
 				Thread:Add(
 					Instance[Index]:Connect(function(...)
-						local Ret = Value(Instance, ...)
+						local Ret,Ret2 = Value(Instance, ...)
 						if Ret ~= nil then
-							repeatedCompile(Index, Thread, Ret, Compile, Entity)
+							repeatedCompile(Index, --[[Thread, ]]Ret, Ret2, Compile, Entity)
 							Ret = nil
 						end
 					end),
@@ -87,9 +118,9 @@ local m = {
 				tins(
 					Thread,
 					Instance[Index]:Connect(function(...)
-						local Ret = Value(Instance, ...)
+						local Ret,Ret2 = Value(Instance, ...)
 						if Ret ~= nil then
-							repeatedCompile(Index, Thread, Ret, Compile, Entity)
+							repeatedCompile(Index, --[[Thread, ]]Ret, Ret2, Compile, Entity)
 							Ret = nil
 						end
 					end)
@@ -97,9 +128,9 @@ local m = {
 			end
 		else -- no threads
 			Instance[Index]:Connect(function(...)
-				local Ret = Value(Instance, ...)
+				local Ret,Ret2 = Value(Instance, ...)
 				if Ret ~= nil then
-					repeatedCompile(Index, Thread, Ret, Compile, Entity)
+					repeatedCompile(Index, --[[Thread, ]]Ret,Ret2, Compile, Entity)
 					Ret = nil
 				end
 			end)
@@ -119,7 +150,7 @@ local m = {
 		local Init = Value.Init
 		local ToCompile = Value.ToCompile
 		if Init ~= nil then
-			if tof(Init) == "table" then
+			if tof(Init) == "table" and Init.__type == nil then
 				Compile(Entity, Init)
 				tc(Init)
 			else
@@ -129,7 +160,7 @@ local m = {
 		end
 		task.delay(Value.Time, function()
 			if Entity ~= nil and Entity.Instance ~= nil then
-				if tof(ToCompile) == "table" then
+				if tof(ToCompile) == "table" and ToCompile.__type == nil then
 					Compile(Entity, ToCompile)
 					tc(ToCompile)
 				else
@@ -138,7 +169,6 @@ local m = {
 				ToCompile = nil
 			end
 		end)
-		Value:Destroy()
 	end,
 	Animation = require(script.CompileAnimations);
 	Value = require(script.CompileValue)

@@ -103,30 +103,31 @@ export type Thread = {
     Animation: (self: Thread, Goal: any, Info: (Info | SpringInfo)?,Modifications: AnimationModifications?) -> Animation;
     Info: (Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Info;
     SpringInfo: (Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> SpringInfo;
-    Connect: (self: Thread, Connection: RBXScriptSignal, func: (...any) -> ()) -> (),
-    Do: (self: Thread, func : (Grab: (Value: Instance | Value,Property: string?,InstanceMethod: string?) -> (),Entity: Instance?) -> ()) -> any;
-    State: (self: Thread, func : (Grab: (Value: Instance | Value,Property: string?,InstanceMethod: string?) -> (),Thread: Thread, Entity: Instance?) -> ()) -> any;
+    Connect: (self: Thread, Cofnnection: RBXScriptSignal, func: (...any) -> ()) -> (),
+    Do: (self: Thread, func : (Grab: (Value: Instance | Value) -> any,Entity: Instance?) -> ()) -> any;
+    State: (self: Thread, func : (Grab: (Value: Instance | Value) -> any,Thread: Thread, Entity: Instance?) -> ()) -> any;
     Iterate: (self: Thread, Table: any,func: (Index: any,Value: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
     InstancePropertySync: (self:Thread, Entity: Instance, Property: string) -> Value;
     InstanceAttributeSync: (self:Thread, Entity: Instance, Attribute: string) -> Value;
     DelayValue: (self: Thread, Value: Value, Time: number) -> DelayValue;
-    Delay: (self: Thread, Props: Properties,Time: number) -> Delay;
+    Delay: (self: Thread, Props: Properties,Time: number,From: Properties?) -> Delay;
     SetTo: (self: Thread, Value: Value) -> {};
 
     Listener: (self: Thread, Entity: any, Event: string & {string}, func: (string,...any) -> ()) -> ();
     Add: (self: Thread,Entity: any) -> ();
     Remove: (self: Thread,Entity: any) -> ();
     Space: (self: Thread, func: (...any) -> ()) -> Space,
-    Unyielded: (self: Thread,func: (...any)-> ()) -> Spawn;
-	DelayUnyielded: (self: Thread,Time: number,func: (...any)-> ()) -> Spawn;
+    Unyielded: (self: Thread,func: (...any)-> (),DelayTime: number?) -> Spawn;
     Schedule: (self: Thread,Time: number?,Item: any,...any) -> any;
-    Signal: (self: Thread,any,func: (...any) -> ()?) -> Signal;
-    SignalState: (self: Thread,any, func: (...any) -> ()) -> Signal;
+    Signal: (self: Thread,any,func: (Thread: Thread, Entity: Instance, ...any) -> ()?) -> Signal;
+    SignalState: (self: Thread,any, func: (Thread: Thread, Entity: Instance, ...any) -> ()) -> Signal;
 	MethodSignaled: (self: Thread, Method: string, Index: string) -> ();
 	Spawn: (self: Thread, func: (...any) -> (),...any) -> Spawn;
 	PlayAnimation: (self: Thread, Entity: Instance, Property: string,Goal: any, Info: (Info | SpringInfo)?) -> PlayableAnimation;
 	ModifyAnimation: (self: Thread, Animaiton: {any: any},Modifications: AnimationModifications) -> {any: any};
 	CloneAnimation: (self: Thread, Animaiton: {any: any},Modifications: AnimationModifications) -> {any: any};
+	Reactive: (self: Thread, func: (Grab: (Value: Instance | Value) -> any) -> ()) -> (() -> ())?;
+	CloneTable: (Table: {any: any}, cloneFunction: (Index: any, Value: any) -> (any?, any?)?) -> {any: any}
 }
 
 export type Properties = {

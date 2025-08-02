@@ -1,6 +1,7 @@
 local Types = require(script.Parent.Parent.Parent.Types)
 local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
 
+local firsttxt = "is_first123"
 return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile: (Entity: Types.FayeInstance, Props: {[any]: any},...any) -> ())
     local Thread = Instance.InnerThread or Instance.Thread;
     if State.IsState and (Thread == nil or Thread["Extend"] == nil) then
@@ -10,17 +11,19 @@ return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile:
     local Log;
     local Connections;
     local Grab,Trigger;
+    local Delete;
     --| Trigger
     local InnerThread;
-    Trigger = function()
+    Trigger = function(ft: string?)
         if InnerThread ~= nil then
-            InnerThread:Destroy();
+            Utility.CallDestroy(InnerThread)
             InnerThread = nil;
         end
         if State.IsState then
             InnerThread = Thread:Extend(true);
         end
-        local res1,res2 = if State.IsState then State.Func(Grab,InnerThread,Instance.Instance) else State.Func(Grab,Thread,Instance.Instance)
+        
+        local res1,res2 = State.Func(Grab,InnerThread or Thread,Instance.Instance)
         local Entity = (State.IsState and {Instance = Instance.Instance, Thread = InnerThread}) or Instance
         if res1 ~= nil then
             if Index ~= nil and Utility.tof(Index) ~= Utility.numbertxt then
@@ -33,15 +36,21 @@ return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile:
                 end
             end
         else
-            if InnerThread ~= nil then
-                InnerThread:Destroy();
-                InnerThread = nil;
+            if ft == firsttxt and Log == nil then
+                Delete()
+            else
+                if InnerThread ~= nil then
+                    Utility.CallDestroy(InnerThread)
+                    InnerThread = nil;
+                end
             end
+            
         end
     end
     --|> Trigger
     --| grab
-    Grab = function(Value: any, Property: string?,InstanceMethod: string?)
+    
+    Grab = function(Value: any)
         if Value == nil then return end;
         if Log == nil then Log = {}; Connections = {} end;
         if Value.ClassName ~= nil then
@@ -59,14 +68,15 @@ return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile:
             return Value:Get();
         end
     end
-    Trigger()
+    
     --| delete
-    if Thread == nil then return end;
-    local EqThread = Thread;
-    local function Delete()
-        Utility.RemoveFromThread(EqThread,Delete)
+    local EqThread
+    Delete = function()
+        if EqThread ~= nil then
+            Utility.RemoveFromThread(EqThread,Delete)
+        end;
         if InnerThread ~= nil then
-            InnerThread:Destroy();
+            Utility.CallDestroy(InnerThread)
             InnerThread = nil;
         end
         if Log ~= nil then
@@ -79,14 +89,18 @@ return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile:
         end
         Grab = nil;
         Trigger = nil;
+        Delete = nil;
     end
-    if Thread._isCleanAncestor then
+    Trigger(firsttxt)
+    if Thread == nil then return end;
+    EqThread = Thread;
+    if EqThread._isCleanAncestor then
         local CurrentPos = EqThread
         while CurrentPos ~= nil do
             if CurrentPos._hc then
                 break;
             end
-            CurrentPos = EqThread.ParentThread;
+            CurrentPos = CurrentPos.ParentThread;
         end
         EqThread = CurrentPos or EqThread;
     end

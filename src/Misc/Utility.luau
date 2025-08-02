@@ -32,7 +32,9 @@ function m.CallDestroy(Item: any)
     if Item["Destroy"] then
         Item:Destroy();
     else
-        Clean(Item)
+        local Count = #Item
+        if Count <= 0 then return end;
+        Clean(Item,Count)
     end
 end
 function m.TableRemove(Table: {any: any}, Item: any)
@@ -50,12 +52,13 @@ function  m.AddToThread(Thread: Types.Thread, Item: any)
         m.tins(Thread,Item)
     end
 end
+local disconnecttxt = "Disconnect"
 function m.ClearAllConnections(Connections: {[number]: RBXScriptConnection},connectionsNumb: number)
     for i = connectionsNumb or #Connections,1,-1 do
-        if Connections[i] ~= nil then
+        if Connections[i] ~= nil and Connections[i][disconnecttxt] ~= nil then
             Connections[i]:Disconnect();
-            Connections[i] = nil;
         end
+        Connections[i] = nil;
     end
 end
 local ValueClasses = require(script.Parent.ValueClasses)

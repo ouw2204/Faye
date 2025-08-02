@@ -261,6 +261,7 @@ function mt:Destroy()
 				Clean(self.InnerThread)
 			else
 				self.InnerThread.CleanWhenDone = true
+				print("Set clean when done to true ",self.Instance.Name)
 			end
 			self.InnerThread = nil
 		end
@@ -296,9 +297,9 @@ function mt:Destroy()
 	self.Thread = nil
 	setmetatable(self, nil)
 end
---[[
+
 local scriptName = script.Name
-function mt.__tostring()
-	return scriptName
-end]]
+function mt.__tostring(self)
+	return self.Instance.Name; --scriptName
+end
 return mt

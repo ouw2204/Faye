@@ -1,6 +1,6 @@
 local tof,tc = typeof,table.clear
 local destroytxt,tabletxt,cleantxt,instancetxt,functiontxt,rbxlscripttxt,threadtxt = "Destroy","table","Clean","Instance","function","RBXScriptConnection","thread"
-function Recursive(Scope)
+function Recursive(Scope,Count: number?)
 	if Scope == nil then
 		return
 	end
@@ -12,7 +12,8 @@ function Recursive(Scope)
 		Scope._isCleanAncestor = nil
 		Scope.CleanWhenDone = nil
 		Scope.Cleaning = nil
-		for k = #Scope, 1, -1 do
+		Scope._hc = nil;
+		for k = Count or #Scope, 1, -1 do
 			local v = Scope[k]
 			local type = tof(v)
 			Scope[k] = nil

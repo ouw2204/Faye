@@ -29,9 +29,7 @@ end
     @within Task
     Connects a signal to the task. The task will be called when the signal is fired.
 ]=]
-function  parammt.__tostring()
-    return "Task"
-end
+
 function parammt:Connect(Connection: RBXScriptSignal)
     if self.__connections == nil then
         self.__connections = {}
@@ -148,7 +146,6 @@ end
 function mt:Connect(Connection: RBXScriptSignal,Id: string?)
     if self.Cleaning then return end;
     if Id == nil then
-        print("add to thread")
         local connection = Connection:Connect(self.ReceiverFunction,self.Thread)
         Utility.AddToThread(self.Thread,Connection)
         return connection;
