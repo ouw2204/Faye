@@ -299,10 +299,10 @@ function  mt:Schedule(Time: number?,Item: any,...)
 end
 
 local scriptName = script.Name;
+
 function mt.__tostring()
     return scriptName;
 end
-
 return {
     new = function()
         local new = {}

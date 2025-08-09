@@ -54,6 +54,7 @@ local m = {
 		if Props ~= nil then
 			--#thu 17 2025
 			if InnerThread ~= nil and InnerThread ~= Thread and ((Value.Props.OnClean == nil and Value.Props.CleanDelay == nil) or InnerThread._isCleanAncestor) then
+				print("instance switch ",Value.Instance.Name)
 				if Thread["Remove"] then
 					Thread:Remove(Value)
 				else

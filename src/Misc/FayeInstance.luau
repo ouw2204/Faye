@@ -131,7 +131,6 @@ function mt:Compile()
 		local PropsOrCleanCheck = Props.CleanDelay ~= nil or Props.OnClean ~= nil
 		
 		if (ThreadUsing._hc or ThreadUsing._isCleanAncestor) and PropsOrCleanCheck and self.InnerThread ~= nil and self.InnerThread._isCleanAncestor and ThreadUsing.ParentThread ~= nil then
-			print(22)
 			if Props.CleanFunction == nil and Props.OnClean ~= nil then
 				AddClean = true;
 				Props.CleanFunction = Props.OnClean
@@ -140,7 +139,6 @@ function mt:Compile()
 			Props.OnClean = nil;
 		else
 			if PropsOrCleanCheck then
-				print(11)
 				if self.Thread ~= nil then
 					self.Thread._hc = true --hc = hasclean
 					self.Thread._isCleanAncestor = true
@@ -165,7 +163,6 @@ function mt:Compile()
 					AddClean = true
 				end
 			elseif Props.CleanFunction ~= nil or Props.OnClean ~= nil then
-				print("last resort add clean")
 				if Props.CleanFunction == nil and Props.OnClean ~= nil then
 					Props.CleanFunction = Props.OnClean
 				end
@@ -178,7 +175,6 @@ function mt:Compile()
 		PropsOrCleanCheck = nil;
 		ThreadUsing = nil;
 		if AddClean == true then
-			print("Add clean to ",self.Instance.Name)
 			if (self.Thread ~= nil and self.Thread._isCleanAncestor) and self.CleanDelay == nil then
 				local f = Props.CleanFunction
 				local connected;
@@ -276,7 +272,6 @@ function mt:Destroy()
 			self.InnerThread.ConnectionsHolder = nil;
 		end
 		--> clear connections
-		print("on clean thing")
 		local res1,res2 = self.OnClean(self.InnerThread, self.Instance)
 		repCompile(res1,res2,self)
 		if self.InnerThread ~= nil then
@@ -328,9 +323,10 @@ function mt:Destroy()
 	self.Thread = nil
 	setmetatable(self, nil)
 end
---[[
+
+
 local scriptName = script.Name
 function mt.__tostring(self)
 	return scriptName;
-end]]
+end
 return mt

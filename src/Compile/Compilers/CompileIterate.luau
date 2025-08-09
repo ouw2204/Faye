@@ -37,6 +37,7 @@ local function subCompile(IsNotAdvanced: boolean, Thread: Types.Thread, Function
         if not IsNotAdvanced then
             Holder[EquippedIndex] = NewThread
         end
+        local Entity = {Instance = Entity.Instance, Thread = NewThread}
         Compile(Entity, NewCompile, NewThread)
     else
         if IsNotAdvanced then
