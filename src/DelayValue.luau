@@ -3,7 +3,7 @@
     A class that represents a value with a delay and threading.
 ]=]
 local Types = require(script.Parent.Types)
-local Signal = require(script.Parent.Packages.Signal);
+local Signal = require(script.Parent.Packages.SimpleSignal);
 local Utility = require(script.Parent.Misc.Utility)
 local typetxt = script.Name;
 local mt = {

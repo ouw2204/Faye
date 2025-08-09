@@ -26,8 +26,6 @@ Thread:Animation(Goal: any,Info: Types.Info,Modifications: Types.AnimationModifi
 
 --in types module
 AnimationModifications = {
-    PermInfo: (Info| SpringInfo)?;
-	PermGoal: any?;
 	FirstGoal: any?;
 	FirstInfo: (Info| SpringInfo)?;
 	From: any?;

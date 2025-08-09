@@ -97,7 +97,7 @@ end
 ]=]
 function mt:Add(Params: {[any]: any},Thread: Types.Thread,NoUnpack: boolean?)
     if self.Cleaning == true then return end;
-    if Params == nil then return end;
+    if Params == nil then Params = {}; end;
     Thread = Thread or self.Thread;
     Params.__holder = self;
     Params.__thread = Thread;
@@ -146,9 +146,9 @@ end
 function mt:Connect(Connection: RBXScriptSignal,Id: string?)
     if self.Cleaning then return end;
     if Id == nil then
-        local connection = Connection:Connect(self.ReceiverFunction,self.Thread)
-        Utility.AddToThread(self.Thread,Connection)
-        return connection;
+        local connectedConnection = Connection:Connect(self.ReceiverFunction,self.Thread)
+        Utility.AddToThread(self.Thread,connectedConnection)
+        return connectedConnection;
     else
         task.spawn(function()
             task.wait()

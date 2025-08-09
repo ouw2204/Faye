@@ -24,6 +24,7 @@ export type FayeInstance = {
 	RemoveTag: (self: FayeInstance,Tag: string) -> FayeInstance,
 	HasTag: (self: FayeInstance,Tag: string) -> boolean,
 	GetTags: (self: FayeInstance) -> {string};
+	Clone: (self: FayeInstance) -> Instance;
 }
 export type UserInputType = typeof(game:GetService("UserInputService"));
 export type BasicThread = {Remove: (self: BasicThread, Entity: any) -> (); Add: (self: BasicThread, Entity: any) -> ()}
@@ -40,13 +41,10 @@ export type Connection = {
     Destroy: (self: Connection) -> ();
 }
 export type AnimationModifications = {
-	PermInfo: (Info| SpringInfo)?;
-	PermGoal: any?;
 	FirstGoal: any?;
-	FirstInfo: (Info| SpringInfo)?;
+	FirstInfo: (Info & SpringInfo)?;
 	From: any?;
 	AlwaysFrom: any?;
-	
 }
 
 export type DelayValue = {
@@ -107,6 +105,7 @@ export type Thread = {
     Do: (self: Thread, func : (Grab: (Value: Instance | Value) -> any,Entity: Instance?) -> ()) -> any;
     State: (self: Thread, func : (Grab: (Value: Instance | Value) -> any,Thread: Thread, Entity: Instance?) -> ()) -> any;
     Iterate: (self: Thread, Table: any,func: (Index: any,Value: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
+	AdvancedIterate: (self: Thread, Table: any,func: (Index: any,Value: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
     InstancePropertySync: (self:Thread, Entity: Instance, Property: string) -> Value;
     InstanceAttributeSync: (self:Thread, Entity: Instance, Attribute: string) -> Value;
     DelayValue: (self: Thread, Value: Value, Time: number) -> DelayValue;

@@ -5,9 +5,7 @@ local Clean = require(script.Parent.Parent.Clean)
 local Types = require(script.Parent.Parent.Types)
 local tof = typeof
 local tr = table.remove
-local tins = table.insert
 local tf = table.find
-local Utility = require(script.Parent.Parent.Misc.Utility)
 local mt = { __type = "Instance" }
 mt.__index = mt
 
@@ -108,19 +106,32 @@ function mt:GetTags()
 		return self.Instance:GetTags()
 	end
 end
-
+--[=[
+    @method Clone
+    @within Create
+    Clone the roblox object(Not faye Instance)
+]=]
+function mt:Clone()
+	if self.Instance ~= nil then
+		return self.Instance:Clone();
+	end
+end
 --[=[
     @method Compile
     @within Create
     Compiles the properties of the instance.
 ]=]
+
+local repCompile = require(script.Parent.UseCompile)
 function mt:Compile()
 	local Props = self.Props
 	if Props ~= nil then
 		local AddClean = nil
 		local ThreadUsing = self.InnerThread or self.Thread;
 		local PropsOrCleanCheck = Props.CleanDelay ~= nil or Props.OnClean ~= nil
+		
 		if (ThreadUsing._hc or ThreadUsing._isCleanAncestor) and PropsOrCleanCheck and self.InnerThread ~= nil and self.InnerThread._isCleanAncestor and ThreadUsing.ParentThread ~= nil then
+			print(22)
 			if Props.CleanFunction == nil and Props.OnClean ~= nil then
 				AddClean = true;
 				Props.CleanFunction = Props.OnClean
@@ -128,8 +139,8 @@ function mt:Compile()
 			Props.CleanDelay = nil;
 			Props.OnClean = nil;
 		else
-			
 			if PropsOrCleanCheck then
+				print(11)
 				if self.Thread ~= nil then
 					self.Thread._hc = true --hc = hasclean
 					self.Thread._isCleanAncestor = true
@@ -150,27 +161,37 @@ function mt:Compile()
 				if Props.CleanFunction ~= nil then
 					AddClean = true
 				end
-			else
 				if Props.CleanFunction ~= nil then
 					AddClean = true
 				end
+			elseif Props.CleanFunction ~= nil or Props.OnClean ~= nil then
+				print("last resort add clean")
+				if Props.CleanFunction == nil and Props.OnClean ~= nil then
+					Props.CleanFunction = Props.OnClean
+				end
+				Props.OnClean = nil;
+				Props.CleanDelay = nil;
+				AddClean = true;
 			end
 		end
 
 		PropsOrCleanCheck = nil;
 		ThreadUsing = nil;
 		if AddClean == true then
-			if self.Thread ~= nil and self.Thread._isCleanAncestor then
+			print("Add clean to ",self.Instance.Name)
+			if (self.Thread ~= nil and self.Thread._isCleanAncestor) and self.CleanDelay == nil then
 				local f = Props.CleanFunction
-				self.cf = function()
+				local connected;
+				local cf; cf = function()
 					if f == nil then
 						return
 					end
-					f(self.InnerThread or self.Thread, self.Instance)
-					removefunc(self.connected,self.cf)
+					local res1,res2 = f(self.InnerThread or self.Thread, self.Instance)
+					repCompile(res1,res2,self)
+					removefunc(connected,cf)
 					f = nil
-					self.cf = nil
-					self.connected = nil;
+					cf = nil
+					connected = nil;
 				end
 				local eq = self.Thread
 				if eq.ParentThread ~= nil then
@@ -183,8 +204,8 @@ function mt:Compile()
 					end
 					eq = current or eq;
 				end
-				eq:Add(self.cf)
-				self.connected = eq;
+				eq:Add(cf)
+				connected = eq;
 			else
 				self.CleanFunction = Props.CleanFunction
 			end
@@ -232,22 +253,13 @@ function mt:Destroy()
 			end
 		end
 	end
-
-	--< remove all clean incase they are no yields so they aren't any errors
-	if self.connected ~= nil then
-		if self.Thread ~= self.connected then
-			Utility.RemoveFromThread(self.Thread,self.cf)
-		end;
-		removefunc(self.connected, self.cf)
-		self.connected = nil;
-		self.cf = nil;
-	end
-	-->
-
+	--| clean function
 	if self.CleanFunction ~= nil then
-		self.CleanFunction(self.InnerThread or self.Thread, self.Instance)
-		self.CleanFunction = nil
+		local res1,res2 = self.CleanFunction(self.InnerThread or self.Thread, self.Instance)
+		repCompile(res1,res2,self)
 	end
+	--|> clean function
+
 	if self.OnClean ~= nil then
 		if self.InnerThread["Add"] then
 			self.InnerThread:Add(self.Instance)
@@ -255,13 +267,23 @@ function mt:Destroy()
 			table.insert(self.InnerThread, self.Instance)
 		end
 
-		self.OnClean(self.InnerThread, self.Instance)
+		--< clear connections
+		if self.InnerThread.ConnectionsHolder ~= nil then
+			for i = #self.InnerThread.ConnectionsHolder,1,-1 do
+				self.InnerThread.ConnectionsHolder[i]:Disconnect();
+				self.InnerThread.ConnectionsHolder[i] = nil;
+			end
+			self.InnerThread.ConnectionsHolder = nil;
+		end
+		--> clear connections
+		print("on clean thing")
+		local res1,res2 = self.OnClean(self.InnerThread, self.Instance)
+		repCompile(res1,res2,self)
 		if self.InnerThread ~= nil then
 			if self.InnerThread.AnimationsAmount == nil or self.InnerThread.AnimationsAmount <= 0 then
 				Clean(self.InnerThread)
 			else
 				self.InnerThread.CleanWhenDone = true
-				print("Set clean when done to true ",self.Instance.Name)
 			end
 			self.InnerThread = nil
 		end
@@ -273,6 +295,15 @@ function mt:Destroy()
 			if tof(delaytime) == "function" then
 				delaytime = delaytime(self.InnerThread,self.Instance)
 			end
+			--< clear connections
+			if self.InnerThread.ConnectionsHolder ~= nil then
+				for i = #self.InnerThread.ConnectionsHolder,1,-1 do
+					self.InnerThread.ConnectionsHolder[i]:Disconnect();
+					self.InnerThread.ConnectionsHolder[i] = nil;
+				end
+				self.InnerThread.ConnectionsHolder = nil;
+			end
+			--> clear connections
 			task.delay(delaytime, function()
 				self.Instance:Destroy()
 				self.Instance = nil
@@ -297,9 +328,9 @@ function mt:Destroy()
 	self.Thread = nil
 	setmetatable(self, nil)
 end
-
+--[[
 local scriptName = script.Name
 function mt.__tostring(self)
-	return self.Instance.Name; --scriptName
-end
+	return scriptName;
+end]]
 return mt

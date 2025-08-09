@@ -3,11 +3,11 @@ m.__index = m;
 local Utility = require(script.Parent.Utility);
 local Actions = require(script.Parent.TypeActions)
 local PropertyActions = require(script.Parent.PropertyActions)
-
+--[[
 local ValueTxt = "Value";
 function  m.__tostring()
     return ValueTxt
-end
+end]]
 
 function m.__sub(self,value)
     if value == nil then return self end;
@@ -222,7 +222,7 @@ function m:ReCalibrate(Instance: Instance?,Property: string?)
             self.ChangeListener:Disconnect();
             self.ChangeListener = nil;
         end
-        if self.IsAttribute == false then
+        if self.IsAttribute == nil then
             self.Initial = self.Instance[self.Property];
             self.ChangeListener = self.Instance:GetPropertyChangedSignal(self.Property):Connect(function()
                 if self.SignalEnabled == nil or self.SignalEnabled == true then
@@ -244,6 +244,10 @@ function m:Destroy()
     if self.Thread ~= nil then
         Utility.RemoveFromThread(self.Thread,self)
         self.Thread = nil;
+    end
+    if self.ChangeListener ~= nil then
+        self.ChangeListener:Disconnect();
+        self.ChangeListener = nil;
     end
     if self.Changed ~= nil then
         self.Changed:Destroy();

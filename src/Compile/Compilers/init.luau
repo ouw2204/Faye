@@ -12,8 +12,10 @@ local m = {
 	Unyielded = function(Entity, Index, Value, Compile)
 		local Thread = Entity.InnerThread or Entity.Thread;
 		local taskthread;
+		local Yielded = false;
 		local mainFunc = function()
 			local res1,res2 = Value.func(Thread,Entity.Instance)
+			Yielded = true;
 			if res1 ~= nil then
 				if Index ~= nil and Utility.tof(Index) ~= Utility.numbertxt then
 					Compile(Entity,{[Index] = res1})
@@ -26,11 +28,12 @@ local m = {
 				end
 			end
 			if taskthread ~= nil and Thread ~= nil then
-				Utility.RemoveFromThread(Thread,task)
+				
+				Utility.RemoveFromThread(Thread,taskthread)
 			end
 		end
 		taskthread = (Value.DelayTime ~= nil and task.delay(Value.DelayTime,mainFunc)) or task.spawn(mainFunc)
-		if Thread ~= nil then
+		if Thread ~= nil and Yielded == false then
 			if Thread._isCleanAncestor then
 				local CurrentPos = Thread
 				while CurrentPos ~= nil do

@@ -97,6 +97,9 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
 
     --| play trackers |--
     local UsedFrom
+    local UsedFirstInfo
+    local UsedFirstGoal
+
     --| Goal |--
     local InitialGoalType = Utility.tof(Anim.Goal)
     local IsInstanceValue = (InitialGoalType == Utility.instanceTxt and Anim.Goal:IsA(Utility.valueBaseTxt))
@@ -138,14 +141,13 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
             end
         end;
         --| on clean
-        local Removed = Player.Remove(id)
+        local Removed = Player.Remove(id,true)
         if Thread ~= nil and FromPlayer == true then
             
             if Thread.AnimationsAmount ~= nil and Removed then
                 Thread.AnimationsAmount = Utility.max(Thread.AnimationsAmount - 1, 0)
             end
             if (Thread.CleanWhenDone and (Thread.AnimationsAmount ~= nil and Thread.AnimationsAmount <= 0)) then
-                print("Delete ",Entity.Instance.Name)
                 Thread.AnimationsAmount = nil
                 Thread.CleanWhenDone = nil
                 Thread:Remove(Delete)
@@ -158,8 +160,6 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
                 Anim = nil;
                 Cleaner(Thread)
                 Thread = nil;
-            else
-                print("No deletion on ",Entity.Instance.Name,Thread.AnimationsAmount,Thread.Signiture,id)
             end
         end;
         --|
@@ -189,22 +189,49 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
             end
         else
             if Entity ~= nil and Entity.Instance ~= nil then
-                if NoAnim then
+                if NoAnim and Anim.From == nil and Anim.AlwaysFrom == nil and Anim.FirstGoal == nil then
                     Entity.Instance[Index] = Goal
                     Anim.StartingSet = Goal;
                 else
-                    Thread.AnimationsAmount = (Thread.AnimationsAmount or 0) + 1
-                    local Initial = nil;
-                    if Anim.From ~= nil and not UsedFrom then
-                        Initial = Anim.From;
-                        UsedFrom = true;
-                    elseif Anim.AlwaysFrom then
-                        Initial = Anim.AlwaysFrom;
+                    if Anim.FirstGoal and not UsedFirstGoal then
+                        --| first goal
+                        Goal = Anim.FirstGoal
+                        UsedFirstGoal = true;
+                        --|>
                     end
-                    Player.Remove(Anim.__animId)
-                    Anim.IsPlaying = true;
-                    Player.Add(Anim.__animId, Goal,InfoValue,Delete,Entity.Instance,Index,Anim.Workers,IsValue,PropertyType,Initial)
-                    Initial = nil;
+                    if Entity[Index] ~= Goal then
+                        Thread.AnimationsAmount = (Thread.AnimationsAmount or 0) + 1
+                        local Initial = nil;
+                        if Anim.From ~= nil and not UsedFrom then
+                            Initial = Anim.From;
+                            UsedFrom = true;
+                        elseif Anim.AlwaysFrom then
+                            Initial = Anim.AlwaysFrom;
+                        end
+                        Delete(true,true)
+                        Anim.IsPlaying = true;
+                        local TempInfo
+                        if Anim.FirstInfo ~= nil and not UsedFirstInfo then
+                            --| first info
+                            UsedFirstInfo = true;
+                            TempInfo = {Time = Anim.FirstInfo.Time or InfoValue.Time,RepeatCount = Anim.FirstInfo.RepeatCount or InfoValue.RepeatCount, Reverse = Anim.FirstInfo.Reverse or InfoValue.Reverse, 
+                                DelayTime = Anim.FirstInfo.DelayTime or InfoValue.DelayTime, 
+                            };
+                            if Anim.FirstInfo.EasingStyle ~= nil or Anim.FirstInfo.EasingDirection ~= nil then
+                                TempInfo.EasingStyle = Anim.FirstInfo.EasingStyle or InfoValue.EasingStyle
+                                TempInfo.EasingDirection = Anim.FirstInfo.EasingDirection or InfoValue.EasingDirection
+                            elseif Anim.FirstInfo.Frequency ~= nil or Anim.FirstInfo.Damping ~= nil then
+                                TempInfo.Frequency = Anim.FirstInfo.Frequency or InfoValue.Frequency
+                                TempInfo.Damping = Anim.FirstInfo.Damping or InfoValue.Damping
+                            else
+                                TempInfo.EasingStyle = InfoValue.EasingStyle; TempInfo.EasingDirection = InfoValue.EasingDirection;
+                                TempInfo.Frequency = InfoValue.Frequency; TempInfo.Damping = InfoValue.Damping
+                            end
+                            --|>
+                        end
+                        Player.Add(Anim.__animId, Goal,TempInfo or InfoValue,Delete,Entity.Instance,Index,Anim.Workers,IsValue,PropertyType,Initial)
+                        Initial = nil;
+                    end
                 end
             end
         end

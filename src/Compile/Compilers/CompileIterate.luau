@@ -15,42 +15,84 @@ local function  cleanIndividual(Holder: {any: any},Index: any)
     end
 end
 
-local function subCompile(Thread: Types.Thread, Function: (...any) -> any,Entity:  Types.FayeInstance, Holder: {[any]: any},Compile: (Entity: Types.FayeInstance, Props: {[any]: any},...any) -> (),Index: any, Value: any, FirstIndex: any)
+local function subCompile(IsNotAdvanced: boolean, Thread: Types.Thread, Function: (...any) -> any,Entity:  Types.FayeInstance, Holder: {[any]: any},Compile: (Entity: Types.FayeInstance, Props: {[any]: any},...any) -> (),Index: any, Value: any, FirstIndex: any)
     if Index == nil or Value == nil then return end
     local EquippedIndex = FirstIndex or Index
-    cleanIndividual(Holder, EquippedIndex)
-    local NewThread = Thread:Extend();
-    local I, V = Function(Index, Value, NewThread, Entity.Instance)
+    
+    local NewThread
+    if IsNotAdvanced then
+        NewThread = Holder;
+    else
+        cleanIndividual(Holder, EquippedIndex)
+        NewThread = Thread:Extend(true);
+    end
+    local res, res2 = Function(Index, Value, NewThread, Entity.Instance)
     local NewCompile
-    if V == nil then
-        NewCompile = {I}
-    elseif I ~= nil and V ~= nil then
-        NewCompile = {[I] = V}
+    if res2 == nil and res ~= nil then
+        NewCompile = (Utility.tof(res) == Utility.tabletxt and res.__type == nil and res) or {res}
+    elseif res ~= nil and res2 ~= nil then
+        NewCompile = {[res] = res2}
     end
     if NewCompile ~= nil then
-        Holder[EquippedIndex] = NewThread
+        if not IsNotAdvanced then
+            Holder[EquippedIndex] = NewThread
+        end
         Compile(Entity, NewCompile, NewThread)
     else
-        Utility.CallDestroy(NewThread)
-    end
-end
-
-local function cleanHolder(Holder: {[any]: any})
-    for i, v in pairs(Holder) do
-        if v ~= nil and v[destroytxt] then
-            Utility.CallDestroy(v)
+        if IsNotAdvanced then
+            Utility.CallDestroy(NewThread)
         end
     end
-    Utility.tc(Holder)
 end
 
 return function (Instance: Types.FayeInstance,_, Iterate: Types.Value,Compile: (Entity: Types.FayeInstance, Props: {[any]: any},...any) -> ())
     local Thread = Instance.InnerThread or Instance.Thread;
     if Thread == nil or Thread["Extend"] == nil then warn("Iteterate only works if the entity has a thread and the thread has an :Extend method") return end;
-    local Holder = {};
+    local IsNotAdvanced = not Iterate.Advanced
+    --| go to the nearest cleaning thread in the ancestry
+    if Thread._isCleanAncestor then
+        local CurrentPos = Thread
+        while CurrentPos ~= nil do
+            if CurrentPos._hc then
+                break;
+            end
+            CurrentPos = CurrentPos.ParentThread;
+        end
+        Thread = CurrentPos or Thread;
+    end
+    --|>
+
+    local Holder = (IsNotAdvanced and Thread:Extend(true)) or {};
+    local function cleanHolder(Refresh: boolean?)
+        if IsNotAdvanced then
+            print(11)
+            if Holder ~= nil then
+                Holder:Destroy();
+                Holder = nil;
+                print("destroy holder")
+            end
+            if Refresh then
+                Holder = Thread:Extend(true)
+            end
+        else
+            for _, v in pairs(Holder) do
+                if v ~= nil and v[destroytxt] then
+                    Utility.CallDestroy(v)
+                end
+            end
+            Utility.tc(Holder)
+            Holder = nil
+            if Refresh then
+                Holder = {};
+            end
+        end
+        
+    end
     local ConnectionsHolder
     local connectionslength;
+    
     local function Delete(NotFromThread: boolean?)
+        print("FIREDDDD")
         if NotFromThread then
             Utility.RemoveFromThread(Thread,Delete)
         end
@@ -58,7 +100,7 @@ return function (Instance: Types.FayeInstance,_, Iterate: Types.Value,Compile: (
             Utility.ClearAllConnections(ConnectionsHolder,connectionslength)
         end
         if Holder ~= nil then
-            cleanHolder(Holder);
+            cleanHolder();
             Holder = nil;
         end
     end
@@ -66,17 +108,17 @@ return function (Instance: Types.FayeInstance,_, Iterate: Types.Value,Compile: (
     local function mainFunc(Content: Types.Value,Position: number?)
         if Content == nil then return end;
         local ContentType = Utility.tof(Content)
-        local ContentType = ContentType
         local contentIsNumber = ContentType == numbertxt;
         local contentIsTable = ContentType == tabletxt
+        local currentnumber;
         local ContentIsVlaue = not contentIsNumber and not contentIsTable and ContentType == instancetxt and SupportedValues[Content.ClassName]
         if not contentIsNumber and not contentIsTable and not ContentIsVlaue then return end;
         Position = Position or 1
         if contentIsNumber then
-            cleanHolder(Holder);
+            cleanHolder(true);
             currentnumber = Content;
             for i = 1,Content do
-                subCompile(Thread,Iterate.Function,Instance,Holder,Compile,i,i)
+                subCompile(IsNotAdvanced,Thread,Iterate.Function,Instance,Holder,Compile,i,i)
             end
         else
             if ContentIsVlaue or (Content.__type ~= nil and ValueClasses[Content.__type]) then
@@ -85,22 +127,23 @@ return function (Instance: Types.FayeInstance,_, Iterate: Types.Value,Compile: (
                     ConnectionsHolder = {};
                 end
                 ConnectionsHolder[Position] = Content.Changed:Connect(function(__reserved, Index: any, NewValue: any?, ChangeType: number?, IsConventional: boolean?)
-                    if Index == nil or ChangeType == nil then
+                    if Index == nil or ChangeType == nil or IsNotAdvanced then
                         Index = __reserved
                     end
                     if connectionslength > Position then
-                        cleanHolder(Holder);
+                        cleanHolder(true);
                         for i = connectionslength,Position+1,-1 do
                             ConnectionsHolder[i]:Disconnect();
                             ConnectionsHolder[i] = nil;
                         end
                     end
                     connectionslength = Position;
-                    local vType = Utility.tof(Index)
-                    local vtypeisnumber = vType == numbertxt;
-                    if NewValue == nil and ChangeType == nil then
+                    
+                    if (NewValue == nil and ChangeType == nil) or IsNotAdvanced then
                         mainFunc(Index,Position + 1)
                     else
+                        local vType = Utility.tof(Index)
+                        local vtypeisnumber = vType == numbertxt;
                         --< is adds/remove
                         if vtypeisnumber and NewValue == nil and ChangeType ~= nil then
                             --< numb
@@ -118,7 +161,7 @@ return function (Instance: Types.FayeInstance,_, Iterate: Types.Value,Compile: (
                                     currentnumber += Index;
                                     for i = 1,Index do
                                         local final = i + current
-                                        subCompile(Thread,Iterate.Function,Instance,Holder,Compile, final,final,final)
+                                        subCompile(IsNotAdvanced,Thread,Iterate.Function,Instance,Holder,Compile, final,final,final)
                                     end
                                 end
                                 current = nil
@@ -131,10 +174,10 @@ return function (Instance: Types.FayeInstance,_, Iterate: Types.Value,Compile: (
                                 if Holder[EqIndex] ~= nil then
                                     cleanIndividual(Holder,EqIndex)
                                 elseif Holder[Index] ~= nil then
-                                    cleanIndividual(Holder,EqIndex)
+                                    cleanIndividual(Holder,Index)
                                 end
                             else
-                                subCompile(Thread,Iterate.Function,Instance,Holder,Compile,Index, NewValue, EqIndex)
+                                subCompile(IsNotAdvanced,Thread,Iterate.Function,Instance,Holder,Compile,Index, NewValue, EqIndex)
                             end
                             --> is something else
                         end
@@ -143,9 +186,11 @@ return function (Instance: Types.FayeInstance,_, Iterate: Types.Value,Compile: (
                 end,ConnectionsHolder)
                 mainFunc( (ContentIsVlaue and Content.Value) or Content:Get(),Position + 1)
             else
-                cleanHolder(Holder);
+                cleanHolder(true);
+                local Count = 0;
                 for i,v in pairs(Content) do
-                    subCompile(Thread,Iterate.Function,Instance,Holder,Compile,i,v,(tonumber(i) and v) or nil )
+                    Count += 1;
+                    subCompile(IsNotAdvanced,Thread,Iterate.Function,Instance,Holder,Compile,i,v,( i == Count and v) or nil )
                 end
             end
         end

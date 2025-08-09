@@ -4,11 +4,17 @@ function Recursive(Scope,Count: number?)
 	if Scope == nil then
 		return
 	end
-
 	do
 		Scope.__Destroying = true;
 		Scope.ParentThread = nil
-		Scope.ConnectionsThread = nil
+		if Scope.ConnectionsHolder ~= nil then
+			for i = #Scope.ConnectionsHolder,1,-1 do
+				Scope.ConnectionsHolder[i]:Disconnect();
+				Scope.ConnectionsHolder[i] = nil;
+			end
+			Scope.ConnectionsHolder = nil;
+		end
+		-- add connection thing
 		Scope._isCleanAncestor = nil
 		Scope.CleanWhenDone = nil
 		Scope.Cleaning = nil

@@ -34,18 +34,15 @@ end
     @return Thread
     Creates a sub-thread. Leave the NoLink to nil and the thread will be linked to the parent thread(will delete with parent), set NoLink to true for the thread to be independent.
 ]=]
-function mt:Extend(NoAttachment) : Types.Thread
-    local new: any = {Signiture = math.random(1,99999)};
+function mt:Extend(NoAttachment: boolean) : Types.Thread
+    --[[
+        You shoudn't call this function as a replacement for thread creation, it will always have some type of connection to the parent thread wether or not it has a no deletion attachment to it.
+    ]]
+    local new: any = {};
     setmetatable(new,mt);
     if NoAttachment == nil then
         new._isCleanAncestor = self._isCleanAncestor
         table.insert(self,new);
-    else
-        if self.ConnectionsThread ~= nil then
-            new.ConnectionsThread = self.ConnectionsThread
-        else
-            new.ConnectionsThread = self;
-        end
     end
     new.ParentThread = self
     return new;
@@ -58,13 +55,17 @@ end
 local removetxt = "Remove"
 function mt:Spawn(func: (...any) -> (),...)
     if func == nil then return end;
+    local Yielded = false;
     local tsk; tsk = task.spawn(function(...)
         func(...)
-        if self[removetxt] ~= nil then
+        Yielded = true;
+        if tsk ~= nil and self[removetxt] ~= nil then
             self:Remove(tsk)
         end
     end,...)
-    self:Add(tsk)
+    if Yielded == false then
+        self:Add(tsk)
+    end
 end
 --[=[
     @within Thread
@@ -136,11 +137,15 @@ end
 local tof = typeof
 function mt:Add(Entity: any,IsConnection)
     if Entity == nil then return end;
-    if IsConnection and self.ConnectionsThread ~= nil then
-
-        tins(self.ConnectionsThread,Entity)
+    if IsConnection then
+        if self.ConnectionsHolder == nil then
+            self.ConnectionsHolder = {};
+        end
+        if tof(Entity) == tabletxt and Entity.__simplesignalconnection and Entity.lists == nil then
+            Entity.lists = self.ConnectionsHolder;
+        end
+        tins(self.ConnectionsHolder,Entity)
     else
-        
         tins(self,Entity)
     end
 end
@@ -180,6 +185,11 @@ local Iterate = require(script.Iterate)
 function mt:Iterate(Table: any, Function: (Index: any,Value: any,InnerThread: Types.Thread?,Entity: Instance?) -> ())
     return Iterate(Table,Function,self)
 end
+--AdvancedIterate
+local AdvancedIterate = require(script.AdvancedIterate)
+function mt:AdvancedIterate(Table: any, Function: (Index: any,Value: any,InnerThread: Types.Thread?,Entity: Instance?) -> ())
+    return AdvancedIterate(Table,Function,self)
+end
 --Delay value
 local DelayValue = require(script.DelayValue)
 function mt:DelayValue(Value: Types.Value, Time: number) : Types.DelayValue
@@ -191,13 +201,14 @@ function mt:Delay(Props: Types.Properties,Time: number,From: Types.Properties?) 
     return Delay(Props,Time,From,self)
 end
 --Property value
-local Propertyy = require(script.Property)
+local InstancePropertySync = require(script.InstancePropertySync)
 function mt:InstancePropertySync(Instance: Instance,Property: string)
-    return Propertyy(Instance,Property,false,self);
+    return InstancePropertySync(Instance,Property,self);
 end
 --Attribute
+local InstanceAttributeSync = require(script.InstanceAttributeSync)
 function mt:InstanceAttributeSync(Instance: Instance,Property: string)
-    return Propertyy(Instance,Property,true,self);
+    return InstanceAttributeSync(Instance,Property,self);
 end
 
 --SetTo
@@ -286,13 +297,74 @@ function  mt:Schedule(Time: number?,Item: any,...)
     end
     return Item;
 end
---[[
+
 local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;
-end]]
-return function() : Types.Thread
-    local new = {}
-    setmetatable(new,mt)
-    return new :: any;
 end
+
+return {
+    new = function()
+        local new = {}
+        setmetatable(new,mt)
+        return new;
+    end;
+    Animation = Animation;
+    Create = Create;
+    Configure = Configure;
+    Value = Value;
+    Info = Info;
+    SpringInfo = Spring;
+    Do = Do;
+    State = State;
+    Iterate = Iterate;
+    InstancePropertySync = InstancePropertySync;
+    InstanceAttributeSync = InstanceAttributeSync;
+    DelayValue = DelayValue;
+    Delay = Delay;
+    SetTo = SetTo;
+    Listener = Listener;
+    Space = Space;
+    Unyielded = Unyielded;
+    Signal = Signal;
+    SignalState = SignalState;
+    MethodSignaled = MethodSignaled;
+    PlayAnimation = PlayAnimation;
+    ModifyAnimation = ModifyAnimation;
+    CloneAnimation = CloneAnimation;
+    Reactive = Reactive;
+    CloneTable = CloneTable;
+    AdvancedIterate = AdvancedIterate;
+} :: {
+    new: () -> Types.Thread;
+    
+
+
+    Create: (ClassName: string) -> (Properties: Types.Properties) -> Types.FayeInstance;
+    Configure: (Entity: any) -> (Properties: Types.Properties) -> Types.FayeInstance;
+    Value: (self: Types.Thread,Initial: any) -> Types.Value;
+    Animation: (Goal: any, Info: (Types.Info | Types.SpringInfo)?,Modifications: Types.AnimationModifications?) -> Animation;
+    Info: (Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Types.Info;
+    SpringInfo: (Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Types.SpringInfo;
+    Do: (func : (Grab: (Value: Instance | Types.Value) -> any,Entity: Instance?) -> ()) -> any;
+    State: (func : (Grab: (Value: Instance | Types.Value) -> any,Thread: Types.Thread, Entity: Instance?) -> ()) -> any;
+    Iterate: (Table: any,func: (Index: any,Value: any,InnerThread: Types.Thread,Entity: Instance) -> ()) -> ();
+    AdvancedIterate: (Table: any,func: (Index: any,Value: any,InnerThread: Types.Thread,Entity: Instance) -> ()) -> ();
+    InstancePropertySync: ( Entity: Instance, Property: string) -> Types.Value;
+    InstanceAttributeSync: ( Entity: Instance, Attribute: string) -> Types.Value;
+    DelayValue: (Value: Types.Value, Time: number) -> Types.DelayValue;
+    Delay: (Props: Types.Properties,Time: number,From: Types.Properties?) -> Types.Delay;
+    SetTo: (Value: Types.Value) -> {};
+
+    Listener: (Entity: any, Event: string & {string}, func: (string,...any) -> ()) -> ();
+    Space: (func: (...any) -> ()) -> Types.Space,
+    Unyielded: (self: Types.Thread,func: (...any)-> (),DelayTime: number?) -> Types.Spawn;
+    Signal: (self: Types.Thread,any,func: (Thread: Types.Thread, Entity: Instance, ...any) -> ()?) -> Types.Signal;
+    SignalState: (self: Types.Thread,any, func: (Thread: Types.Thread, Entity: Instance, ...any) -> ()) -> Types.Signal;
+	MethodSignaled: (Method: string, Index: string) -> ();
+	PlayAnimation: (Entity: Instance, Property: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?) -> Types.PlayableAnimation;
+	ModifyAnimation: (Animaiton: {any: any},Modifications: Types.AnimationModifications) -> {any: any};
+	CloneAnimation: (Animaiton: {any: any},Modifications: Types.AnimationModifications) -> {any: any};
+	Reactive: (func: (Grab: (Value: Instance | Types.Value) -> any) -> ()) -> (() -> ())?;
+	CloneTable: (Table: {any: any}, cloneFunction: (Index: any, Value: any) -> (any?, any?)?) -> {any: any}
+}

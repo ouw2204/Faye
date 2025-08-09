@@ -1,5 +1,5 @@
 local Types = require(script.Parent.Types)
-local Signal = require(script.Parent.Packages.Signal)
+local Signal = require(script.Parent.Packages.SimpleSignal)
 local Storage = require(script.Parent.Compile.Compilers.CompileAnimations.Player.AnimatorStorage)
 local AnimPlayer = require(script.Parent.Compile.Compilers.CompileAnimations.Player)
 local Info = require(script.Parent.Info)

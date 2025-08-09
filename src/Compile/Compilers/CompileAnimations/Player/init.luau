@@ -8,6 +8,7 @@ local Storage = require(script.AnimatorStorage);
 -- roblox services
 local RunService = game:GetService("RunService")
 local Tweenservice = game:GetService("TweenService")
+local Workspace = game:GetService("Workspace")
 
 -- anim functions
 local Lerps = require(script.Parent.Lerps)
@@ -122,7 +123,11 @@ function update(delta: number)
                     Anim.ProgBefore = NatureProg;
                 end
             else
-                m.Remove(Id)
+                if Anim.Delete ~= nil then
+                    Anim.Delete();
+                else
+                    m.Remove(Id)
+                end
             end
         else
             Storage.Ids[i] = nil;
@@ -199,21 +204,21 @@ function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, De
         local Time,EasingStyle,EasingDirection,RepeatCount,Reverse,DelayTime = 
             1,DefaultEasingStyle,DefaultEasingDirection,0,false,0
         if InfoExists == true then
-            Time = Info.Time; EasingStyle = Info.EasingStyle; EasingDirection = Info.EasingDirection; RepeatCount = Info.RepeatCount;
-            Reverse = Info.Reverse; DelayTime = Info.DelayTime
+            Time = Info.Time or Time; EasingStyle = Info.EasingStyle or EasingStyle; EasingDirection = Info.EasingDirection or EasingDirection; RepeatCount = Info.RepeatCount or RepeatCount;
+            Reverse = Info.Reverse or Reverse; DelayTime = Info.DelayTime or DelayTime
         end
         local Info = TweenInfo.new(
             Time,EasingStyle,EasingDirection,RepeatCount,Reverse,DelayTime
         )
         local Tween = Tweenservice:Create(Instance,Info,{[Property] = Goal});
         local Connection = Tween.Completed:Connect(function(playbackState)
-            if playbackState == Enum.PlaybackState.Completed then
+            if Storage.RegularTweenHolder[Id] ~= nil then
                 if IsValue then
                     Delete(true,true)
                 else
                     Delete(true)
                 end
-            end
+            end;
         end)
         if BasicAnim then return Tween,Connection end; -- basic tween
         if Storage.RegularTweenHolder == nil then
@@ -245,6 +250,7 @@ function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, De
 end
 function  m.Remove(Id: string)
    if Id == nil then return end;
+   
    if Storage.Holder ~= nil and Storage.Holder[Id] ~= nil then
     Utility.TableRemove(Storage.Ids,Id)
     if Storage.Holder[Id].AnimLog then
@@ -261,18 +267,19 @@ function  m.Remove(Id: string)
     end
     return true
    elseif Storage.RegularTweenHolder ~= nil and Storage.RegularTweenHolder[Id] ~= nil then
-        Storage.RegularTweenHolder[Id].Main:Cancel()
-        if Storage.RegularTweenHolder[Id].Others ~= nil then
-            for i = Storage.RegularTweenHolder[Id].Others.Count,1,-1 do
-                Storage.RegularTweenHolder[Id].Others[i]:Cancel()
-                Storage.RegularTweenHolder[Id].Others[i] = nil;
-            end
-            Storage.RegularTweenHolder[Id].Others.Count = nil;
-            Storage.RegularTweenHolder[Id].Others = nil;
-        end
-        Storage.RegularTweenHolder[Id].Connection:Disconnect()
-        Utility.tc(Storage.RegularTweenHolder[Id])
+        local Anim = Storage.RegularTweenHolder[Id];
         Storage.RegularTweenHolder[Id] = nil;
+        Anim.Main:Cancel()
+        if Anim.Others ~= nil then
+            for i = Anim.Others.Count,1,-1 do
+                Anim.Others[i]:Cancel()
+                Anim.Others[i] = nil;
+            end
+            Anim.Others.Count = nil;
+            Anim.Others = nil;
+        end
+        Anim.Connection:Disconnect()
+        Utility.tc(Anim)
         Storage.RegularTweenCount -= 1;
         if Storage.RegularTweenCount == 0 then
             Storage.RegularTweenHolder = nil;
