@@ -38,7 +38,7 @@ function mt:Extend(NoAttachment: boolean) : Types.Thread
     --[[
         You shoudn't call this function as a replacement for thread creation, it will always have some type of connection to the parent thread wether or not it has a no deletion attachment to it.
     ]]
-    local new: any = {};
+    local new: any = {IsActive = true};
     setmetatable(new,mt);
     if NoAttachment == nil then
         new._isCleanAncestor = self._isCleanAncestor
@@ -66,6 +66,34 @@ function mt:Spawn(func: (...any) -> (),...)
     if Yielded == false then
         self:Add(tsk)
     end
+end
+--[=[
+    @within Thread
+    @method Delay
+    Similar to Task.Delay, not to be used within a compileable table.
+]=]
+function mt:Delay(time: number, func: (...any) -> (),...)
+    if func == nil or time == nil then return end;
+    local Yielded = false;
+    local tsk; tsk = task.delay(time,function(...)
+        func(...)
+        Yielded = true;
+        if tsk ~= nil and self[removetxt] ~= nil then
+            self:Remove(tsk)
+        end
+    end,...)
+    if Yielded == false then
+        self:Add(tsk)
+    end
+end
+--[=[
+    @within Thread
+    @method Debris
+    Similar to game.debris:AddItem, not to be used within a compileable table.
+]=]
+function mt:Debris(Item: any,Lifetime: number)
+    if Item == nil or Lifetime == nil or Item[destroytxt] == nil then return end;
+    self:Delay(Lifetime,Item.Destroy,Item)
 end
 --[=[
     @within Thread
@@ -196,9 +224,9 @@ function mt:DelayValue(Value: Types.Value, Time: number) : Types.DelayValue
     return DelayValue(Value,Time,self)
 end
 --Delay
-local Delay = require(script.Delay)
-function mt:Delay(Props: Types.Properties,Time: number,From: Types.Properties?) : Types.Delay
-    return Delay(Props,Time,From,self)
+local DelayProperty = require(script.Delay)
+function mt:DelayProperty(Props: Types.Properties,Time: number,From: Types.Properties?) : Types.Delay
+    return DelayProperty(Props,Time,From,self)
 end
 --Property value
 local InstancePropertySync = require(script.InstancePropertySync)
@@ -305,7 +333,7 @@ function mt.__tostring()
 end
 return {
     new = function()
-        local new = {}
+        local new = {IsActive = true}
         setmetatable(new,mt)
         return new;
     end;
@@ -321,7 +349,7 @@ return {
     InstancePropertySync = InstancePropertySync;
     InstanceAttributeSync = InstanceAttributeSync;
     DelayValue = DelayValue;
-    Delay = Delay;
+    DelayProperty = DelayProperty;
     SetTo = SetTo;
     Listener = Listener;
     Space = Space;
@@ -353,7 +381,7 @@ return {
     InstancePropertySync: ( Entity: Instance, Property: string) -> Types.Value;
     InstanceAttributeSync: ( Entity: Instance, Attribute: string) -> Types.Value;
     DelayValue: (Value: Types.Value, Time: number) -> Types.DelayValue;
-    Delay: (Props: Types.Properties,Time: number,From: Types.Properties?) -> Types.Delay;
+    DelayProperty: (Props: Types.Properties,Time: number,From: Types.Properties?) -> Types.Delay;
     SetTo: (Value: Types.Value) -> {};
 
     Listener: (Entity: any, Event: string & {string}, func: (string,...any) -> ()) -> ();

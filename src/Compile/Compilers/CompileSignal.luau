@@ -5,10 +5,15 @@ local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
 return function (Instance: Types.FayeInstance,Index, Signal: Types.Signal)
     local Thread = Instance.InnerThread or Instance.Thread;
     local Entry = {Instance = Instance, Index = (Utility.tof(Index) ~= Utility.numbertxt and Index) or nil}
+    local EqThread
+    --local Connection;
     local function  Delete()
-
+        --[[if Connection ~= nil then
+            Connection:Disconnect();
+            Connection = nil;
+        end]]
         --| Remove from thread
-        if Thread ~= nil then
+        if EqThread ~= nil then
             Utility.RemoveFromThread(Thread,Delete)
         end
         --|>
@@ -38,14 +43,18 @@ return function (Instance: Types.FayeInstance,Index, Signal: Types.Signal)
         end
         --|>
     end
+    --[[Connection = Instance.Instance:GetPropertyChangedSignal("Parent"):Connect(function()
+        if Instance.Instance == nil or Instance.Instance.Parent == nil then
+            Delete()
+        end
+    end)]]
     if Signal.Entries == nil then
         Signal.Entries = {Count = 0};
     end
     Signal.Entries[Signal.Entries.Count + 1] = Entry
     Signal.Entries.Count += 1;
-    
+    EqThread = Thread;
     if Thread ~= nil then
-        local EqThread = Thread;
         if EqThread._isCleanAncestor then
             local CurrentPos = EqThread
             while CurrentPos ~= nil do

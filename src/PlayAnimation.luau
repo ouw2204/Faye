@@ -51,10 +51,13 @@ end
 function mt:Stop(NoClear: boolean?,CameFromPlay: boolean?)
     if self.Anim ~= nil then
         if NoClear then return end;
-        self.Anim:Cancel();
-        self.Anim = nil;
-        self.Connection:Disconnect()
-        self.Connection = nil;
+        if self.Anim.PlaybackState == Enum.PlaybackState.Playing then
+            self.Anim:Cancel();
+            self.Anim = nil;
+            self.Connection:Disconnect()
+            self.Connection = nil;
+        end;
+        
     elseif self.DeleteFunc ~= nil then
         self.DeleteFunc(nil,nil,true) -- send nils to clear the anim;
         self.DeleteFunc = nil;

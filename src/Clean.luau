@@ -4,6 +4,7 @@ function Recursive(Scope,Count: number?)
 	if Scope == nil then
 		return
 	end
+	
 	do
 		Scope.__Destroying = true;
 		Scope.ParentThread = nil
@@ -17,6 +18,7 @@ function Recursive(Scope,Count: number?)
 		-- add connection thing
 		Scope._isCleanAncestor = nil
 		Scope.CleanWhenDone = nil
+		Scope.IsActive = nil;
 		Scope.Cleaning = nil
 		Scope._hc = nil;
 		for k = Count or #Scope, 1, -1 do

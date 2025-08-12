@@ -57,8 +57,10 @@ export type DelayValue = {
     For: (self: DelayValue, Value: any, Time: number?) -> DelayValue;
     Destroy: (self: DelayValue) -> ();
 };
+export type SpecialThreadParams = {
+	Lifetime: number;
+}
 export type Delay = {
-    From: (self: Delay, any) -> Delay;
     Destroy: (self: Delay) -> ();
 }
 export type SpaceTask = {
@@ -83,9 +85,8 @@ export type PlayableAnimation = {
 	Pause: (self: PlayableAnimation) -> PlayableAnimation;
 	Resume: (self: PlayableAnimation) -> PlayableAnimation;
 }
-export type Spawn = {
-    Perform: (self: Spawn) -> ();
-    Destroy: (self: Spawn) -> ();
+export type Unyielded = {
+    Destroy: (self: Unyielded) -> ();
 }
 export type Signal = {
     Destroy: (self: Signal) -> ();
@@ -109,24 +110,26 @@ export type Thread = {
     InstancePropertySync: (self:Thread, Entity: Instance, Property: string) -> Value;
     InstanceAttributeSync: (self:Thread, Entity: Instance, Attribute: string) -> Value;
     DelayValue: (self: Thread, Value: Value, Time: number) -> DelayValue;
-    Delay: (self: Thread, Props: Properties,Time: number,From: Properties?) -> Delay;
+    DelayProperty: (self: Thread, Props: Properties,Time: number,From: Properties?) -> ();
     SetTo: (self: Thread, Value: Value) -> {};
-
+	IsActive: boolean;
     Listener: (self: Thread, Entity: any, Event: string & {string}, func: (string,...any) -> ()) -> ();
     Add: (self: Thread,Entity: any) -> ();
     Remove: (self: Thread,Entity: any) -> ();
     Space: (self: Thread, func: (...any) -> ()) -> Space,
-    Unyielded: (self: Thread,func: (...any)-> (),DelayTime: number?) -> Spawn;
+    Unyielded: (self: Thread,func: (...any)-> (),DelayTime: number?) -> Unyielded;
     Schedule: (self: Thread,Time: number?,Item: any,...any) -> any;
     Signal: (self: Thread,any,func: (Thread: Thread, Entity: Instance, ...any) -> ()?) -> Signal;
     SignalState: (self: Thread,any, func: (Thread: Thread, Entity: Instance, ...any) -> ()) -> Signal;
 	MethodSignaled: (self: Thread, Method: string, Index: string) -> ();
-	Spawn: (self: Thread, func: (...any) -> (),...any) -> Spawn;
+	Spawn: (self: Thread, func: (...any) -> (),...any) -> thread;
+	Delay: (self: Thread,time: number, func: (...any) -> (),...any) -> thread;
 	PlayAnimation: (self: Thread, Entity: Instance, Property: string,Goal: any, Info: (Info | SpringInfo)?) -> PlayableAnimation;
 	ModifyAnimation: (self: Thread, Animaiton: {any: any},Modifications: AnimationModifications) -> {any: any};
 	CloneAnimation: (self: Thread, Animaiton: {any: any},Modifications: AnimationModifications) -> {any: any};
 	Reactive: (self: Thread, func: (Grab: (Value: Instance | Value) -> any) -> ()) -> (() -> ())?;
-	CloneTable: (Table: {any: any}, cloneFunction: (Index: any, Value: any) -> (any?, any?)?) -> {any: any}
+	CloneTable: (Table: {any: any}, cloneFunction: (Index: any, Value: any) -> (any?, any?)?) -> {any: any};
+	Debris: (self: Thread, Item: any, Lifetime: number) -> ();
 }
 
 export type Properties = {

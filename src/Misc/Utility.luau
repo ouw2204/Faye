@@ -1,6 +1,6 @@
 local m = {tof = typeof,max = math.max, tr = table.remove, tf = table.find, tins = table.insert,tc = table.clear,
 
-tabletxt = "table",numbertxt = "number",instanceTxt = "Instance",valueBaseTxt = "ValueBase"}
+tabletxt = "table",numbertxt = "number",instanceTxt = "Instance",valueBaseTxt = "ValueBase",functiontxt = "function"}
 local Types = require(script.Parent.Parent.Types)
 local Clean = require(script.Parent.Parent.Clean)
 function m.RemoveFromThread(Thread: Types.Thread, Item: any)

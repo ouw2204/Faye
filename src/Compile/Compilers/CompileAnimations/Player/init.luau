@@ -212,7 +212,7 @@ function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, De
         )
         local Tween = Tweenservice:Create(Instance,Info,{[Property] = Goal});
         local Connection = Tween.Completed:Connect(function(playbackState)
-            if Storage.RegularTweenHolder[Id] ~= nil then
+            if (Storage ~= nil and Storage.RegularTweenHolder ~= nil and Storage.RegularTweenHolder[Id] ~= nil) or BasicAnim then
                 if IsValue then
                     Delete(true,true)
                 else
