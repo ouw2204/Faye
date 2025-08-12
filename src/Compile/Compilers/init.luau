@@ -148,7 +148,8 @@ local m = {
 	--<Do/State
 	State = require(script.CompileState); -- covers both Do and State
 	--> Do/State
-
+	SpecialThread = require(script.CompileSpecialThread);
+	
 	Delay = function(Entity, Index, Value, Compile)
 		local Init = Value.Init
 		local ToCompile = Value.ToCompile

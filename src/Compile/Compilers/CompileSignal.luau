@@ -13,9 +13,9 @@ return function (Instance: Types.FayeInstance,Index, Signal: Types.Signal)
             Connection = nil;
         end]]
         --| Remove from thread
-        if EqThread ~= nil then
+        --[[f EqThread ~= nil then
             Utility.RemoveFromThread(Thread,Delete)
-        end
+        end]]
         --|>
 
         --| remove from entries
@@ -53,8 +53,8 @@ return function (Instance: Types.FayeInstance,Index, Signal: Types.Signal)
     end
     Signal.Entries[Signal.Entries.Count + 1] = Entry
     Signal.Entries.Count += 1;
-    EqThread = Thread;
     if Thread ~= nil then
+        EqThread = Thread;
         if EqThread._isCleanAncestor then
             local CurrentPos = EqThread
             while CurrentPos ~= nil do

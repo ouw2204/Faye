@@ -30,8 +30,6 @@ export type UserInputType = typeof(game:GetService("UserInputService"));
 export type BasicThread = {Remove: (self: BasicThread, Entity: any) -> (); Add: (self: BasicThread, Entity: any) -> ()}
 export type Animation = {
     __animId: string;
-	From: (Value: any) -> Animation;
-	From: any?;
 }
 export type Info = {Time: number; EasingStyle: Enum.EasingStyle; EasingDirection: Enum.EasingDirection; RepeatCount: number; Reverse: boolean; DelayTime: number}
 export type SpringInfo = {Time: number; Frequency: number; Damping: number; RepeatCount: number; Reverse: boolean; DelayTime: number}
@@ -59,6 +57,7 @@ export type DelayValue = {
 };
 export type SpecialThreadParams = {
 	Lifetime: number;
+	UnYielded: boolean?
 }
 export type Delay = {
     Destroy: (self: Delay) -> ();
@@ -130,6 +129,7 @@ export type Thread = {
 	Reactive: (self: Thread, func: (Grab: (Value: Instance | Value) -> any) -> ()) -> (() -> ())?;
 	CloneTable: (Table: {any: any}, cloneFunction: (Index: any, Value: any) -> (any?, any?)?) -> {any: any};
 	Debris: (self: Thread, Item: any, Lifetime: number) -> ();
+	SpecialThread: (self:Thread, func: (InnerThread: Thread, Entity: Instance) -> (),Params: SpecialThreadParams | number) -> ();
 }
 
 export type Properties = {

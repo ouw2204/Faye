@@ -277,6 +277,10 @@ local CloneTable = require(script.CloneTable)
 function mt.CloneTable(Table: {any: any}, cloneFunction: (Index: any, Value: any) -> (any?, any?)?)
     return CloneTable(Table,cloneFunction)
 end
+local SpecialThread = require(script.SpecialThread)
+function mt:SpecialThread(func: (Thread: Types.Thread, Entity: Instance) -> (),Params: Types.SpecialThreadParams)
+    return SpecialThread(func,Params)
+end
 local tc = table.clear
 --[=[
     @within Thread
