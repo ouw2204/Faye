@@ -129,8 +129,9 @@ function mt:Compile()
 		local AddClean = nil
 		local ThreadUsing = self.InnerThread or self.Thread;
 		local PropsOrCleanCheck = Props.CleanDelay ~= nil or Props.OnClean ~= nil
-		
+		print(11, self.Instance.Name)
 		if (ThreadUsing._hc or ThreadUsing._isCleanAncestor) and PropsOrCleanCheck and self.InnerThread ~= nil and self.InnerThread._isCleanAncestor and ThreadUsing.ParentThread ~= nil then
+			print(22,self)
 			if Props.CleanFunction == nil and Props.OnClean ~= nil then
 				AddClean = true;
 				Props.CleanFunction = Props.OnClean
@@ -139,6 +140,7 @@ function mt:Compile()
 			Props.OnClean = nil;
 		else
 			if PropsOrCleanCheck then
+				print(33)
 				if self.Thread ~= nil then
 					self.Thread._hc = true --hc = hasclean
 					self.Thread._isCleanAncestor = true

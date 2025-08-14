@@ -111,7 +111,6 @@ export type Thread = {
     DelayValue: (self: Thread, Value: Value, Time: number) -> DelayValue;
     DelayProperty: (self: Thread, Props: Properties,Time: number,From: Properties?) -> ();
     SetTo: (self: Thread, Value: Value) -> {};
-	IsActive: boolean;
     Listener: (self: Thread, Entity: any, Event: string & {string}, func: (string,...any) -> ()) -> ();
     Add: (self: Thread,Entity: any) -> ();
     Remove: (self: Thread,Entity: any) -> ();
@@ -129,7 +128,7 @@ export type Thread = {
 	Reactive: (self: Thread, func: (Grab: (Value: Instance | Value) -> any) -> ()) -> (() -> ())?;
 	CloneTable: (Table: {any: any}, cloneFunction: (Index: any, Value: any) -> (any?, any?)?) -> {any: any};
 	Debris: (self: Thread, Item: any, Lifetime: number) -> ();
-	SpecialThread: (self:Thread, func: (InnerThread: Thread, Entity: Instance) -> (),Params: SpecialThreadParams | number) -> ();
+	SpecialThread: (self:Thread, func: (InnerThread: Thread, Entity: Instance) -> (),Params: (SpecialThreadParams | number) ?) -> ();
 }
 
 export type Properties = {
@@ -185,8 +184,8 @@ export type Properties = {
 	-- BasePart Events
 	
 	CleanDelay: any,
-	CleanFunction: (InnerThread: Thread, Entity: Instance) -> ()?,
-	OnClean: (InnerThread: Thread, entity: Instance) -> ()?, -- replaces clean function
+	CleanFunction: (InnerThread: Thread, Entity: Instance) -> Properties?,
+	OnClean: (InnerThread: Thread, entity: Instance) -> Properties?, -- replaces clean function
 	-- Generic Instance Properties
 	Archivable: any,
 

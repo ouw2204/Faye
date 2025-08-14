@@ -4,7 +4,6 @@ function Recursive(Scope,Count: number?)
 	if Scope == nil then
 		return
 	end
-	
 	do
 		Scope.__Destroying = true;
 		Scope.ParentThread = nil

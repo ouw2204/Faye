@@ -154,7 +154,7 @@ local m = {
 		local Init = Value.Init
 		local ToCompile = Value.ToCompile
 		if Init ~= nil then
-			if tof(Init) == "table" and Init.__type == nil then
+			if tof(Init) == Utility.tabletxt and Init.__type == nil then
 				Compile(Entity, Init)
 				tc(Init)
 			else
@@ -164,7 +164,7 @@ local m = {
 		end
 		task.delay(Value.Time, function()
 			if Entity ~= nil and Entity.Instance ~= nil then
-				if tof(ToCompile) == "table" and ToCompile.__type == nil then
+				if tof(ToCompile) == Utility.tabletxt and ToCompile.__type == nil then
 					Compile(Entity, ToCompile)
 					tc(ToCompile)
 				else
