@@ -8,7 +8,7 @@ local SupportedValues = {
     IntConstrainedValue = true;
     IntValue = true;
 }
-local function  cleanIndividual(Holder: {any: any},Index: any)
+local function cleanIndividual(Holder: {any: any},Index: any)
     if Holder[Index] ~= nil then
         Utility.CallDestroy(Holder[Index])
         Holder[Index] = nil
@@ -33,15 +33,11 @@ local function subCompile(IsNotAdvanced: boolean, Thread: Types.Thread, Function
     elseif res ~= nil and res2 ~= nil then
         NewCompile = {[res] = res2}
     end
+    if not IsNotAdvanced then
+        Holder[EquippedIndex] = NewThread
+    end
     if NewCompile ~= nil then
-        if not IsNotAdvanced then
-            Holder[EquippedIndex] = NewThread
-        end
         Compile( (IsNotAdvanced and Entity) or  {Instance = Entity.Instance, Thread = NewThread}, NewCompile, NewThread)
-    else
-        if IsNotAdvanced then
-            Utility.CallDestroy(NewThread)
-        end
     end
 end
 
@@ -84,12 +80,7 @@ return function (Instance: Types.FayeInstance,_, Iterate: Types.Value,Compile: (
     local ConnectionsHolder
     local connectionslength;
     local EqThread
-    --local Connection
     local function Delete(NotFromThread: boolean?)
-        --[[if Connection ~= nil then
-            Connection:Disconnect();
-            Connection = nil;
-        end]]
         if NotFromThread then
             Utility.RemoveFromThread(EqThread,Delete)
         end
@@ -101,11 +92,6 @@ return function (Instance: Types.FayeInstance,_, Iterate: Types.Value,Compile: (
             Holder = nil;
         end
     end
-    --[[Connection = Instance.Instance:GetPropertyChangedSignal("Parent"):Connect(function()
-        if Instance.Instance == nil or Instance.Instance.Parent == nil then
-            Delete()
-        end
-    end)]]
     --| main func
     local currentnumber;
     local function mainFunc(Content: Types.Value,Position: number?)

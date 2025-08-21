@@ -13,9 +13,10 @@ end
 local function Lerp(Start, Finish, Alpha)
 	return Start + Alpha * (Finish - Start)
 end
-
+local mc = math.clamp
 local function Color3Lerp(C0, C1)
 	return function(Alpha)
+		Alpha = mc(Alpha,0,1)
 		return C0:Lerp(C1,Alpha)
 	end
 end
@@ -269,6 +270,7 @@ local Lerps = setmetatable({
 		end
 	
 		return function(Alpha)
+			Alpha = mc(Alpha,0,1)
 			local NewKeypoints = {}
 			for i = 1, Count do
 				local Time = (Count == 1 and 1) or ((i - 1) / (Count - 1))

@@ -324,9 +324,8 @@ function mt:Destroy()
 	setmetatable(self, nil)
 end
 
---[[
 local scriptName = script.Name
-function mt.__tostring(self)
+function mt.__tostring()
 	return scriptName;
-end]]
+end
 return mt

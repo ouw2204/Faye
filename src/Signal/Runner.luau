@@ -1,6 +1,6 @@
 local Utility = require(script.Parent.Parent.Misc.Utility)
 local Compile = require(script.Parent.Parent.Compile)
-connecttxt = "Connect"
+local connecttxt = "Connect"
 return function (new: {any: any}, Connections: RBXScriptSignal | {RBXScriptSignal}, func: (...any) -> () )
     new.receiverFunc = function(...)
         if new.Entries ~= nil then

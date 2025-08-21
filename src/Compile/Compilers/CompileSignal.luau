@@ -6,18 +6,7 @@ return function (Instance: Types.FayeInstance,Index, Signal: Types.Signal)
     local Thread = Instance.InnerThread or Instance.Thread;
     local Entry = {Instance = Instance, Index = (Utility.tof(Index) ~= Utility.numbertxt and Index) or nil}
     local EqThread
-    --local Connection;
     local function  Delete()
-        --[[if Connection ~= nil then
-            Connection:Disconnect();
-            Connection = nil;
-        end]]
-        --| Remove from thread
-        --[[f EqThread ~= nil then
-            Utility.RemoveFromThread(Thread,Delete)
-        end]]
-        --|>
-
         --| remove from entries
         if Signal ~= nil and Signal.Entries ~= nil then
             local position = Utility.tf(Signal.Entries,Entry)
@@ -43,11 +32,6 @@ return function (Instance: Types.FayeInstance,Index, Signal: Types.Signal)
         end
         --|>
     end
-    --[[Connection = Instance.Instance:GetPropertyChangedSignal("Parent"):Connect(function()
-        if Instance.Instance == nil or Instance.Instance.Parent == nil then
-            Delete()
-        end
-    end)]]
     if Signal.Entries == nil then
         Signal.Entries = {Count = 0};
     end

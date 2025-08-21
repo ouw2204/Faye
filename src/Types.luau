@@ -72,7 +72,7 @@ export type SpaceTask = {
     AddParameter: (self: SpaceTask, Index: any,Value: any) -> ();
 }
 export type Space = {
-    Call: (self: Space, Task: SpaceTask) -> Space;
+    Call: (self: Space) -> Space;
     Add: (self: Space, Params: {[any]: any}, Thread: Thread?,NoUnpack: boolean?) -> SpaceTask;
     Remove: (self: Space, Task: SpaceTask) -> ();
     Connect: (self: Space, Connection: RBXScriptSignal,Id: string) -> RBXScriptConnection;
@@ -184,8 +184,8 @@ export type Properties = {
 	-- BasePart Events
 	
 	CleanDelay: any,
-	CleanFunction: (InnerThread: Thread, Entity: Instance) -> Properties?,
-	OnClean: (InnerThread: Thread, entity: Instance) -> Properties?, -- replaces clean function
+	CleanFunction: ((InnerThread: Thread, Entity: Instance) -> Properties?)?,
+	OnClean: ((InnerThread: Thread, entity: Instance) -> Properties?)?, -- replaces clean function
 	-- Generic Instance Properties
 	Archivable: any,
 

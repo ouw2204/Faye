@@ -168,7 +168,7 @@ return function(Value: Types.Value, Time: number, Thread: Types.Thread)
         if newValue ~= nil and new.Custom ~= nil and new.Custom[newValue] ~= nil then
             eqTime = new.Custom[newValue];
         end
-        if eqTime ~= nil then
+        if eqTime ~= nil and eqTime ~= 0 then
             if not new.IsActive then return end
             task.wait(eqTime)
             if not new.IsActive then return end

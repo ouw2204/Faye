@@ -19,12 +19,16 @@ function mt:Connect(Connection: any)
     return self;
 end
 function mt:Call(...)
-    self.receiverFunc(...)
+    if self.Entries == nil then
+        task.defer(self.receiverFunc,...)
+    else
+        self.receiverFunc(...)
+    end
     return self;
 end
 
 local typetxt = script.Parent.Name;
-mt.__tostring = function(self)
+mt.__tostring = function()
     return typetxt;
 end
 

@@ -71,12 +71,7 @@ return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile:
     
     --| delete
     local EqThread
-    --local Connection;
     Delete = function()
-        --[[if Connection ~= nil then
-            Connection:Disconnect();
-            Connection = nil;
-        end]]
         if EqThread ~= nil then
             Utility.RemoveFromThread(EqThread,Delete)
         end;
@@ -96,11 +91,6 @@ return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile:
         Trigger = nil;
         Delete = nil;
     end
-    --[[Connection = Instance.Instance:GetPropertyChangedSignal("Parent"):Connect(function()
-        if Instance.Instance == nil or Instance.Instance.Parent == nil then
-            Delete()
-        end
-    end)]]
     Trigger(firsttxt)
     if Thread == nil then return end;
     EqThread = Thread;
