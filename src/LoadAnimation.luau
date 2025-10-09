@@ -56,10 +56,10 @@ function mt:Skip()
     -- Clean up the animation like Stop does
     if self.Anim ~= nil then
         if self.Anim.PlaybackState == Enum.PlaybackState.Playing then
-            self.Anim:Cancel();
-            self.Anim = nil;
             self.Connection:Disconnect()
             self.Connection = nil;
+            self.Anim:Cancel();
+            self.Anim = nil;
         end;
         OverlapFixer.Remove(self.Entity,self.Property) -- remove from storage
     elseif self.DeleteFunc ~= nil then
@@ -81,10 +81,10 @@ function mt:Stop(NoClear: boolean?,CameFromPlay: boolean?)
     if self.Anim ~= nil then
         if NoClear then return end;
         if self.Anim.PlaybackState == Enum.PlaybackState.Playing then
-            self.Anim:Cancel();
-            self.Anim = nil;
             self.Connection:Disconnect()
             self.Connection = nil;
+            self.Anim:Cancel();
+            self.Anim = nil;
         end;
         OverlapFixer.Remove(self.Entity,self.Property) -- remove from storage
     elseif self.DeleteFunc ~= nil then
