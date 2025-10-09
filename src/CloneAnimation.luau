@@ -1,5 +1,5 @@
 local Types = require(script.Parent.Types)
-local Utility = require(script.Parent.Misc.Utility)
+local Utility = require(script.Parent.Misc.FayeUtility)
 return function (Animaiton: {any: any},Modifications: Types.AnimationModifications,Thread: Types.Thread?)
     if Animaiton == nil then return end;
     Animaiton = table.clone(Animaiton) -- clone the animation to not modify the original

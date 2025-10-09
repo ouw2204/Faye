@@ -1,4 +1,4 @@
-local Utility = require(script.Parent.Parent.Misc.Utility)
+local Utility = require(script.Parent.Parent.Misc.FayeUtility)
 local mt = {};
 mt.__index = mt;
 

@@ -4,7 +4,7 @@
 ]=]
 local Types = require(script.Parent.Types)
 local Signal = require(script.Parent.Packages.SimpleSignal);
-local Utility = require(script.Parent.Misc.Utility)
+local Utility = require(script.Parent.Misc.FayeUtility)
 local typetxt = script.Name;
 local mt = {
     __type = typetxt;

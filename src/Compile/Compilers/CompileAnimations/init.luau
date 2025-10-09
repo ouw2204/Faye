@@ -1,6 +1,6 @@
 local ValueClasses = require(script.Parent.Parent.Parent.Misc.ValueClasses)
 local Types = require(script.Parent.Parent.Parent.Types)
-local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
+local Utility = require(script.Parent.Parent.Parent.Misc.FayeUtility)
 
 local Player = require(script.Player)
 local Cleaner = require(script.Parent.Parent.Parent.Clean)
@@ -10,7 +10,7 @@ local Tweenservice = game:GetService("TweenService")
 -- anim helpers
 local Lerps = require(script.Lerps)
 local AnimatorStorage = require(script.Player.AnimatorStorage)
-
+local destroytxt = "Destroy"
 return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation)
    local Thread = Entity.InnerThread or Entity.Thread;
    local PropertyType = Utility.tof(Entity.Instance[Index])
@@ -44,10 +44,10 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
                 if AnimFetched.Initial ~= nil then
                     Entity.Instance[Index] = AnimFetched.Initial;
                 end
-                AnimFetched.Others[AnimFetched.Others.Count + 1] = Tweenservice:Create(Entity.Instance,AnimFetched.Info,{
+                AnimFetched.Others[AnimFetched.Others.Count + 1] = {Main = Tweenservice:Create(Entity.Instance,AnimFetched.Info,{
                     [Index] = AnimFetched.To
-                });
-                AnimFetched.Others[AnimFetched.Others.Count + 1]:Play()
+                }), Property = Index};
+                AnimFetched.Others[AnimFetched.Others.Count + 1].Main:Play()
                 AnimFetched.Others.Count += 1;
                 Anim.Workers[Anim.Workers.Count + 1] = {Entity = Entity.Instance,Property = Index,PropertyType = PropertyType;}
                 --|>
@@ -99,6 +99,7 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
     local UsedFrom
     local UsedFirstInfo
     local UsedFirstGoal
+    local UsedFirstDelayTime
 
     --| Goal |--
     local InitialGoalType = Utility.tof(Anim.Goal)
@@ -120,6 +121,7 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
             if Thread ~= nil then
                 Utility.RemoveFromThread(Thread,Delete)
             end
+            Utility.RemoveFromEntity(Entity,Delete)
             if goalConnectionsLength ~= nil and goalConnectionsLength >0 then
                 Utility.ClearAllConnections(goalConnections,goalConnectionsLength)
             end
@@ -132,17 +134,22 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
                     Anim.Workers.Count = nil;
                     Anim.Workers = nil;
                 end
-                if not (Anim.DestroyOnClean == true) then
-                    Utility.tc(Anim)
-                end
-                Anim.Loaded = nil;
-                Anim.StartingSet = nil;
+                --[[if not (Anim.DestroyOnClean == true) and Anim[destroytxt] and FromPlayer then
+                    --Utility.tc(Anim)
+                    Anim:Destroy()
+                end]]
+                if Anim.Loaded ~= nil then
+                    Anim.Loaded = nil;
+                end;
+                if Anim.StartingSet ~= nil then
+                    Anim.StartingSet = nil;
+                end;
                 Anim = nil;
             end
         end;
         --| on clean
         local Removed = Player.Remove(id,true)
-        if Thread ~= nil and FromPlayer == true then
+        if Thread ~= nil --[[and FromPlayer == true]] then
             
             if Thread.AnimationsAmount ~= nil and Removed then
                 Thread.AnimationsAmount = Utility.max(Thread.AnimationsAmount - 1, 0)
@@ -150,7 +157,13 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
             if (Thread.CleanWhenDone and (Thread.AnimationsAmount ~= nil and Thread.AnimationsAmount <= 0)) then
                 Thread.AnimationsAmount = nil
                 Thread.CleanWhenDone = nil
-                Thread:Remove(Delete)
+                
+                --<
+                if Thread ~= nil then
+                    Utility.RemoveFromThread(Thread,Delete)
+                end
+                Utility.RemoveFromEntity(Entity,Delete)
+                -->
 
                 if Anim ~= nil then
                     Anim.Loaded = nil;
@@ -211,11 +224,17 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
                         Delete(true,true)
                         Anim.IsPlaying = true;
                         local TempInfo
+                        local DelayTime = nil;
+                        if Anim.FirstDelayTime ~= nil and not UsedFirstDelayTime then
+                            UsedFirstDelayTime = true;
+                            DelayTime = Anim.FirstDelayTime
+                        end
                         if Anim.FirstInfo ~= nil and not UsedFirstInfo then
                             --| first info
                             UsedFirstInfo = true;
+                           
                             TempInfo = {Time = Anim.FirstInfo.Time or InfoValue.Time,RepeatCount = Anim.FirstInfo.RepeatCount or InfoValue.RepeatCount, Reverse = Anim.FirstInfo.Reverse or InfoValue.Reverse, 
-                                DelayTime = Anim.FirstInfo.DelayTime or InfoValue.DelayTime, 
+                                DelayTime = DelayTime or (Anim.FirstInfo ~= nil and Anim.FirstInfo.DelayTime) or InfoValue.DelayTime, 
                             };
                             if Anim.FirstInfo.EasingStyle ~= nil or Anim.FirstInfo.EasingDirection ~= nil then
                                 TempInfo.EasingStyle = Anim.FirstInfo.EasingStyle or InfoValue.EasingStyle
@@ -228,6 +247,9 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
                                 TempInfo.Frequency = InfoValue.Frequency; TempInfo.Damping = InfoValue.Damping
                             end
                             --|>
+                        elseif DelayTime ~= nil then
+                            TempInfo = table.clone(InfoValue)
+                            TempInfo.DelayTime = DelayTime
                         end
                         Player.Add(Anim.__animId, Goal,TempInfo or InfoValue,Delete,Entity.Instance,Index,Anim.Workers,IsValue,PropertyType,Initial)
                         Initial = nil;
@@ -240,7 +262,6 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
     --||
 
     --| cleanup |--
-    --Thread:Remove(Anim)
     if IsInstanceValue then
         InstanceConnection = Anim.Goal:GetPropertyChangedSignal("Parent"):Connect(function()
             if Anim == nil or Anim.Parent ==nil then
@@ -248,6 +269,8 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
             end
         end)
     end
+    Utility.AddToEntity(Entity,Delete)
     Utility.AddToThread(Thread,Delete)
+    
    end
 end

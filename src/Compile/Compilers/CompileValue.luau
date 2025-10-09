@@ -1,6 +1,6 @@
 local ValueClasses = require(script.Parent.Parent.Parent.Misc.ValueClasses)
 local Types = require(script.Parent.Parent.Parent.Types)
-local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
+local Utility = require(script.Parent.Parent.Parent.Misc.FayeUtility)
 
 local tabletxt,niltxt,numbertxt,stringtxt,instancetxt,ValueBasetxt = "table","nil","number","string","Instance","ValueBase";
 return function (Entity: Types.FayeInstance, Index: any, Value: Types.Value)
@@ -50,6 +50,7 @@ return function (Entity: Types.FayeInstance, Index: any, Value: Types.Value)
             ValueConnection:Disconnect();
             ValueConnection = nil;
         end
+        Utility.RemoveFromEntity(Entity,clean)
         if Thread ~= nil then
             Utility.RemoveFromThread(Thread,clean)
         end;
@@ -66,10 +67,9 @@ return function (Entity: Types.FayeInstance, Index: any, Value: Types.Value)
                 clean()
             end
         end)
-    else
-        Value.__cleanFunction = clean
     end
     if Thread ~= nil then
         Utility.AddToThread(Thread,clean)
     end
+    Utility.AddToEntity(Entity,clean)
 end

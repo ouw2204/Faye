@@ -19,6 +19,7 @@ return {
         ColorSequence = 2;
         NumberRange = 2; 
     };
+    Active = setmetatable({},{__mode = "k"}); -- weak
     Count = 0;
     RegularTweenCount = 0;
 }

@@ -1,12 +1,12 @@
 local Types = require(script.Parent.Parent.Parent.Types)
-local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
+local Utility = require(script.Parent.Parent.Parent.Misc.FayeUtility)
 
 
 return function (Instance: Types.FayeInstance,Index, Signal: Types.Signal)
     local Thread = Instance.InnerThread or Instance.Thread;
     local Entry = {Instance = Instance, Index = (Utility.tof(Index) ~= Utility.numbertxt and Index) or nil}
     local EqThread
-    local function  Delete()
+    local Delete; Delete = function()
         --| remove from entries
         if Signal ~= nil and Signal.Entries ~= nil then
             local position = Utility.tf(Signal.Entries,Entry)
@@ -20,6 +20,11 @@ return function (Instance: Types.FayeInstance,Index, Signal: Types.Signal)
             end
         end
         --|>
+
+        --<
+        Utility.RemoveFromEntity(Instance,Delete)
+        Utility.RemoveFromThread(EqThread,Delete)
+        -->
 
         --| Delete entry
         if Entry ~= nil then
@@ -37,6 +42,7 @@ return function (Instance: Types.FayeInstance,Index, Signal: Types.Signal)
     end
     Signal.Entries[Signal.Entries.Count + 1] = Entry
     Signal.Entries.Count += 1;
+    Utility.AddToEntity(Instance,Delete)
     if Thread ~= nil then
         EqThread = Thread;
         if EqThread._isCleanAncestor then

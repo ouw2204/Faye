@@ -3,7 +3,7 @@
     A class that sets values.
 ]=]
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
-local Utility = require(script.Parent.Misc.Utility)
+local Utility = require(script.Parent.Misc.FayeUtility)
 local types = require(script.Parent.Types)
 local typetxt = script.Name;
 return function(Value: any,Thread: types.Thread) : any

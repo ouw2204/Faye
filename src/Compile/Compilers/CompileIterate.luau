@@ -1,6 +1,6 @@
 
 local Types = require(script.Parent.Parent.Parent.Types)
-local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
+local Utility = require(script.Parent.Parent.Parent.Misc.FayeUtility)
 local instancetxt,destroytxt,tabletxt,numbertxt = "Instance","Destroy","table","number"
 local ValueClasses = require(script.Parent.Parent.Parent.Misc.ValueClasses)
 local SupportedValues = {
@@ -79,11 +79,12 @@ return function (Instance: Types.FayeInstance,_, Iterate: Types.Value,Compile: (
     end
     local ConnectionsHolder
     local connectionslength;
-    local EqThread
+    local EqThread = Thread;
     local function Delete(NotFromThread: boolean?)
-        if NotFromThread then
+        --if NotFromThread then
             Utility.RemoveFromThread(EqThread,Delete)
-        end
+            Utility.RemoveFromEntity(Instance,Delete)
+        --end
         if ConnectionsHolder ~= nil then
             Utility.ClearAllConnections(ConnectionsHolder,connectionslength)
         end
@@ -186,6 +187,7 @@ return function (Instance: Types.FayeInstance,_, Iterate: Types.Value,Compile: (
     mainFunc(Iterate.Tab)
     --|> main func end'
     --| go to the nearest cleaning thread in the ancestry
+    Utility.AddToEntity(Instance,Delete)
     if Thread._isCleanAncestor then
         local CurrentPos = Thread
         while CurrentPos ~= nil do
@@ -195,9 +197,9 @@ return function (Instance: Types.FayeInstance,_, Iterate: Types.Value,Compile: (
             CurrentPos = CurrentPos.ParentThread;
         end
         EqThread = CurrentPos or Thread;
-        if EqThread ~= nil then
-            Utility.AddToThread(EqThread,Delete)
-        end
+    end
+    if EqThread ~= nil then
+        Utility.AddToThread(EqThread,Delete)
     end
     --|>
     

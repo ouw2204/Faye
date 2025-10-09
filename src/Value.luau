@@ -1,11 +1,22 @@
 local ValueBase = require(script.Parent.Misc.ValueBase);
 local Signal = require(script.Parent.Packages.SimpleSignal);
 local Types = require(script.Parent.Types)
-local Utility = require(script.Parent.Misc.Utility)
+local Utility = require(script.Parent.Misc.FayeUtility)
 local typeTxt = script.Name;
 local Counter = 0;
+--[=[
+    @method Value
+    @within Thread
+    @param Initial any
+    @param Thread Thread?
+    @return Value
+]=]
 return function (Initial: any,Thread: Types.Thread?)
     local new = {__type = typeTxt,Id = typeTxt..Counter,Changed = Signal.new(),Initial = Initial, ValueType = Utility.tof(Initial),Thread = Thread,Value = Initial};
+
+    --| important |--
+    new.ValueTypeIsTable = new.ValueType == Utility.tabletxt
+    
     setmetatable(new,ValueBase);
     if Thread ~= nil then
         Utility.AddToThread(Thread, new);

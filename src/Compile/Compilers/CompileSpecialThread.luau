@@ -1,5 +1,5 @@
 local Types = require(script.Parent.Parent.Parent.Types)
-local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
+local Utility = require(script.Parent.Parent.Parent.Misc.FayeUtility)
 
 type SpecialThread = {
     func: (Thread: Types.Thread, Entity: Instance) -> ();
@@ -38,11 +38,12 @@ return function (Instance: Types.FayeInstance,Index, SpecialThread: SpecialThrea
     if ParentThread == nil then return end;
     local NewThread = ParentThread:Extend(true)
     local Delete; Delete = function(remove)
-        if remove then
+        --if remove then
             if EqThread ~= nil then
                 Utility.RemoveFromThread(EqThread,Delete)
             end
-        end
+            Utility.RemoveFromEntity(Instance,Delete)
+        --end
         if NewThread ~= nil then
             Utility.CallDestroy(NewThread)
             NewThread = nil;
@@ -54,6 +55,7 @@ return function (Instance: Types.FayeInstance,Index, SpecialThread: SpecialThrea
     else
         CompileFunc(Instance,NewThread,ParentThread,SpecialThread,Index,Delete,Compile)
     end;
+    Utility.AddToEntity(Instance,Delete)
     if ParentThread ~= nil then
         EqThread = ParentThread;
         if EqThread._isCleanAncestor then

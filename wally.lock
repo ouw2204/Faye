@@ -4,10 +4,10 @@ registry = "test"
 
 [[package]]
 name = "prophetouw/faye"
-version = "1.4.16"
-dependencies = [["SimpleSignal", "prophetouw/simplesignal@1.1.0"]]
+version = "1.8.6"
+dependencies = [["SimpleSignal", "prophetouw/simplesignal@1.1.7"]]
 
 [[package]]
 name = "prophetouw/simplesignal"
-version = "1.1.0"
+version = "1.1.7"
 dependencies = []

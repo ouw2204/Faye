@@ -1,5 +1,5 @@
 local Types = require(script.Parent.Types)
-local Utility = require(script.Parent.Misc.Utility)
+local Utility = require(script.Parent.Misc.FayeUtility)
 --[=[
     @class Space
     A code runner that helps manage multiple [tasks](./Task)/components to avoid excessive code/connections running at once.
@@ -81,10 +81,17 @@ end
     @within Space
     Calls all tasks in the Space.
 ]=]
-function mt:Call()
+function mt:Call(Id: any)
     if self.Cleaning then return end;
     for i = #self.Tasks,1,-1 do
-        self.Tasks[i].Call();
+        if Id ~= nil then
+            if self.Tasks[i].Id == Id then
+                self.Tasks[i].Call();
+                break
+            end
+        else
+            self.Tasks[i].Call();
+        end
     end
     return self;
 end
@@ -188,10 +195,12 @@ function mt:Destroy()
     self.Cleaning = nil;
     setmetatable(self,nil);
 end
+
 local Name = script.Name;
 function mt.__tostring()
     return Name;
 end
+
 --[=[
     @method Space
     @within Thread

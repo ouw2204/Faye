@@ -1,9 +1,10 @@
 local Types = require(script.Parent.Parent.Parent.Parent.Types)
-local Utility = require(script.Parent.Parent.Parent.Parent.Misc.Utility)
+local Utility = require(script.Parent.Parent.Parent.Parent.Misc.FayeUtility)
 local m = {}
 
 --Lists
 local Storage = require(script.AnimatorStorage);
+local OverlapFixer = require(script.OverlapFixer)
 
 -- roblox services
 local RunService = game:GetService("RunService")
@@ -22,11 +23,17 @@ local DefaultEasingDirection = Enum.EasingDirection.Out
 local easingStyleTxt,numbertxt = "EasingStyle","number"
 
 --rep functions
-function ApplyProperty(Entity: Instance,PropertyType: string,Property: string,To: any,Default: any,Pivot: number,Lerp: (Pivot: number) -> (),EndReached: boolean)
+function ApplyProperty(Entity: Instance,PropertyType: string,Property: string,To: any,Default: any,Pivot: number,Lerp: (Pivot: number) -> (),EndReached: boolean,IsBasic)
     if PropertyType == numbertxt then
         Entity[Property] = Default+ ((To-Default)*Pivot);
-    elseif Lerps[PropertyType] ~= nil then
-        Entity[Property] = Lerp(Pivot)
+    elseif Lerp ~= nil then
+        if IsBasic then
+            for _,v in Lerp do
+                Entity[v[1]] = v[2](Pivot)
+            end
+        else
+            Entity[Property] = Lerp(Pivot)
+        end
     end
 end
 function update(delta: number)
@@ -97,7 +104,7 @@ function update(delta: number)
                 end
 
                 --| apply property
-                ApplyProperty(Anim.Entity,Anim.PropertyType,Anim.Property,Anim.To,Anim.Default,Pivot,Anim.Lerp,EndReached)
+                ApplyProperty(Anim.Entity,Anim.PropertyType,Anim.Property,Anim.To,Anim.Default,Pivot,Anim.Lerp,EndReached,Anim.IsBasic)
                 if Anim.Others ~= nil then
                     for x = 1,Anim.Others.Count do
                         ApplyProperty(Anim.Others[x].Entity,Anim.Others[x].PropertyType,Anim.Others[x].Property,Anim.To,Anim.Others[x].Default,Pivot,Anim.Others[x].Lerp,EndReached)
@@ -135,25 +142,29 @@ function update(delta: number)
     end
 end
 
+local EmptyString = "";
 function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, Delete: () -> (),Instance: Instance, Property: string, Others: { {Entity: Instance,Property: string} }?,IsValue: boolean?,PropertyType: string,Initial: any?,BasicAnim: boolean?,CustomElasped: number?,CustomDirection: boolean?,CustomProgBefore: number?)
     local InfoExists = Info ~= nil;
-    if Storage.TweenserviceBanned[PropertyType] or (InfoExists and Info.Frequency ~= nil) then
+    if Property == nil or Property == EmptyString then return end;
+    local Banned = Storage.TweenserviceBanned[PropertyType]
+    if Banned or (InfoExists and Info.Frequency ~= nil) then
         --| for complex data types
         local newObject = {
-        To = Goal;
-        Elapsed = CustomElasped or 0;
-        Direction = CustomDirection or true;
-        PropertyType = PropertyType;
-        ProgBefore = CustomProgBefore or nil;
-        RepeatsLeft = (InfoExists and Info.RepeatCount) or 0;
-        Delete = Delete;
-        Reverse = (InfoExists and Info.Reverse) or nil;
-        Time = (InfoExists and Info.Time) or 1;
-        Entity = Instance;
-        IsValue = IsValue;
-        Property = Property;
-        DelayTime = (InfoExists and Info.DelayTime) or 0;
-        Multiplier = Storage.Multipliers[PropertyType]
+            To = Goal;
+            Elapsed = CustomElasped or 0;
+            Direction = CustomDirection or true;
+            PropertyType = PropertyType;
+            ProgBefore = CustomProgBefore or nil;
+            RepeatsLeft = (InfoExists and Info.RepeatCount) or 0;
+            Delete = Delete;
+            Reverse = (InfoExists and Info.Reverse) or nil;
+            Time = (InfoExists and Info.Time) or 1;
+            Entity = Instance;
+            IsValue = IsValue;
+            Property = Property;
+            DelayTime = (InfoExists and Info.DelayTime) or 0;
+            Multiplier = Storage.Multipliers[PropertyType];
+            IsBasic = BasicAnim;
         }
         if Info == nil then
             newObject.EasingStyle = DefaultEasingStyle
@@ -181,8 +192,21 @@ function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, De
             newObject.Initial = Initial;
             Instance[Property] = Initial;
         end
-        newObject.Default = newObject.Initial or newObject.Entity[newObject.Property]
-        newObject.Lerp = Lerps[newObject.PropertyType](newObject.Default,Goal)
+
+        if BasicAnim and Property ~= nil then
+            --< load animation format
+            newObject.Lerp = {};
+            local Counter = 1;
+            for i,v in pairs(Goal) do
+                newObject.Lerp[Counter] = {[1] = i, [2] = Lerps[typeof(v)](newObject.Entity[i],v)}
+                Counter += 1;
+            end
+            --> load animation format
+        else
+            newObject.Default = newObject.Initial or newObject.Entity[newObject.Property]
+            newObject.Lerp = Lerps[newObject.PropertyType](newObject.Default,Goal)
+        end
+        OverlapFixer.Add(Instance,Property,Delete)
         if Storage.Ids == nil then
             Storage.Ids = {};
         end
@@ -210,7 +234,7 @@ function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, De
         local Info = TweenInfo.new(
             Time,EasingStyle,EasingDirection,RepeatCount,Reverse,DelayTime
         )
-        local Tween = Tweenservice:Create(Instance,Info,{[Property] = Goal});
+        local Tween = Tweenservice:Create(Instance,Info, (BasicAnim and Goal) or {[Property] = Goal});
         local Connection = Tween.Completed:Connect(function(playbackState)
             if (Storage ~= nil and Storage.RegularTweenHolder ~= nil and Storage.RegularTweenHolder[Id] ~= nil) or BasicAnim then
                 if IsValue then
@@ -220,6 +244,7 @@ function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, De
                 end
             end;
         end)
+        OverlapFixer.Add(Instance,Property,Delete)
         if BasicAnim then return Tween,Connection end; -- basic tween
         if Storage.RegularTweenHolder == nil then
             Storage.RegularTweenHolder = {};
@@ -228,7 +253,7 @@ function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, De
             Instance[Property] = Initial;
         end
         Storage.RegularTweenCount += 1;
-        Storage.RegularTweenHolder[Id] = {Info = Info,To = Goal,Initial = Initial};
+        Storage.RegularTweenHolder[Id] = {Info = Info,To = Goal,Initial = Initial,Delete = Delete,IsValue = IsValue, Property = Property};
         Storage.RegularTweenHolder[Id].Main = Tween
         Storage.RegularTweenHolder[Id].Main:Play()
 
@@ -239,8 +264,8 @@ function  m.Add(Id: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?, De
                     if Initial ~= nil then
                         Others[i].Entity[Property] = Initial;
                     end
-                    Storage.RegularTweenHolder[Id].Others[i] = Tweenservice:Create(Others[i].Entity,Storage.RegularTweenHolder[Id].Info,{[Others[i].Property] = Goal})
-                    Storage.RegularTweenHolder[Id].Others[i]:Play()
+                    Storage.RegularTweenHolder[Id].Others[i] = {Main = Tweenservice:Create(Others[i].Entity,Storage.RegularTweenHolder[Id].Info,{[Others[i].Property] = Goal}), Property = Others[i].Property}
+                    Storage.RegularTweenHolder[Id].Others[i].Main:Play()
                     Storage.RegularTweenHolder[Id].Others.Count = i;
                 end
             end
@@ -252,13 +277,15 @@ function  m.Remove(Id: string)
    if Id == nil then return end;
    
    if Storage.Holder ~= nil and Storage.Holder[Id] ~= nil then
-    Utility.TableRemove(Storage.Ids,Id)
-    if Storage.Holder[Id].AnimLog then
-        Utility.tc(Storage.Holder[Id].AnimLog)
-        Storage.Holder[Id].AnimLog = nil;
-    end
-    Utility.tc(Storage.Holder[Id])
+    local Anim = Storage.Holder[Id]
     Storage.Holder[Id] = nil;
+    OverlapFixer.Remove(Anim.Entity,Anim.Property)
+    Utility.TableRemove(Storage.Ids,Id)
+    if Anim.AnimLog then
+        Utility.tc(Anim.AnimLog)
+        Anim.AnimLog = nil;
+    end
+    Utility.tc(Anim)
     Storage.Count -= 1;
     if Storage.Count == 0 and Storage.Step ~= nil then
         Storage.Holder = nil;
@@ -268,11 +295,12 @@ function  m.Remove(Id: string)
     return true
    elseif Storage.RegularTweenHolder ~= nil and Storage.RegularTweenHolder[Id] ~= nil then
         local Anim = Storage.RegularTweenHolder[Id];
+        OverlapFixer.Remove(Anim.Main.Instance,Anim.Property)
         Storage.RegularTweenHolder[Id] = nil;
         Anim.Main:Cancel()
         if Anim.Others ~= nil then
             for i = Anim.Others.Count,1,-1 do
-                Anim.Others[i]:Cancel()
+                Anim.Others[i].Main:Cancel()
                 Anim.Others[i] = nil;
             end
             Anim.Others.Count = nil;

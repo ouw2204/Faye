@@ -6,6 +6,7 @@ local Types = require(script.Parent.Parent.Types)
 local tof = typeof
 local tr = table.remove
 local tf = table.find
+local tins = table.insert
 local mt = { __type = "Instance" }
 mt.__index = mt
 
@@ -129,7 +130,7 @@ function mt:Compile()
 		local AddClean = nil
 		local ThreadUsing = self.InnerThread or self.Thread;
 		local PropsOrCleanCheck = Props.CleanDelay ~= nil or Props.OnClean ~= nil
-		if (ThreadUsing._hc or ThreadUsing._isCleanAncestor) and PropsOrCleanCheck and self.InnerThread ~= nil and self.InnerThread._isCleanAncestor and ThreadUsing.ParentThread ~= nil then
+		if (ThreadUsing ~= nil and (ThreadUsing._hc or ThreadUsing._isCleanAncestor) ) and PropsOrCleanCheck and self.InnerThread ~= nil and self.InnerThread._isCleanAncestor and ThreadUsing.ParentThread ~= nil then
 			if Props.CleanFunction == nil and Props.OnClean ~= nil then
 				AddClean = true;
 				Props.CleanFunction = Props.OnClean
@@ -177,11 +178,16 @@ function mt:Compile()
 			if (self.Thread ~= nil and self.Thread._isCleanAncestor) and self.CleanDelay == nil then
 				local f = Props.CleanFunction
 				local connected;
+				local InnerThread = self.InnerThread or self.Thread;
+				local Instance = self.Instance;
 				local cf; cf = function()
 					if f == nil then
 						return
 					end
-					local res1,res2 = f(self.InnerThread or self.Thread, self.Instance)
+					if self.Cache ~= nil then
+						self:ClearCache()
+					end
+					local res1,res2 = f(InnerThread, Instance)
 					repCompile(res1,res2,self)
 					removefunc(connected,cf)
 					f = nil
@@ -238,6 +244,59 @@ end
     Destroys the instance.
 ]=]
 local functiontxt = "function"
+local tabletxt = "table"
+
+local CleanPortion = require(script.Parent.CleanPortion)
+--|<
+function mt:ClearCache()
+	if self.Cache == nil then return end;
+	if self.Cache.Priority ~= nil then
+		CleanPortion(self.Cache.Priority)
+		self.Cache.Priority = nil;
+	end
+	CleanPortion(self.Cache)
+	self.Cache = nil;
+end
+function mt:Connect(Connection: RBXScriptSignal, Function: (...any) -> ())
+	return self:Add(Connection:Connect(Function),true)
+end
+function mt:Add(Item: any,IsPriority: boolean?)
+	if self.Cache == nil then
+		self.Cache = {};
+	end
+	if IsPriority then
+		if self.Cache.Priority == nil then
+			self.Cache.Priority = {};
+		end
+		if tof(Item) == tabletxt and Item.__simplesignalconnection and Item.lists == nil then
+			Item.lists = self.Cache.Priority;
+		end
+		tins(self.Cache.Priority,Item)
+	else
+		tins(self.Cache,Item)
+	end
+	
+	return Item;
+end
+
+function mt:Remove(Item: any)
+	if self.Cache ~= nil then
+		local Pos = tf(self.Cache,Item)
+		if Pos ~= nil then
+			tr(self.Cache,Pos)
+		else
+			if self.Cache.Priority ~= nil then
+				Pos = tf(self.Cache.Priority,Item)
+				if Pos ~= nil then
+					tr(self.Cache.Priority,Item)
+				end
+			end
+		end
+	end
+end
+--|>
+
+
 function mt:Destroy()
 	if self.Thread ~= nil then
 		if self.Thread["Remove"] then
@@ -249,6 +308,12 @@ function mt:Destroy()
 			end
 		end
 	end
+	--< clear cache
+	if self.Cache ~= nil then
+		self:ClearCache();
+	end
+	-->
+
 	--| clean function
 	if self.CleanFunction ~= nil then
 		local res1,res2 = self.CleanFunction(self.InnerThread or self.Thread, self.Instance)
@@ -256,22 +321,13 @@ function mt:Destroy()
 	end
 	--|> clean function
 
+	
 	if self.OnClean ~= nil then
 		if self.InnerThread["Add"] then
 			self.InnerThread:Add(self.Instance)
 		else
 			table.insert(self.InnerThread, self.Instance)
 		end
-
-		--< clear connections
-		if self.InnerThread.ConnectionsHolder ~= nil then
-			for i = #self.InnerThread.ConnectionsHolder,1,-1 do
-				self.InnerThread.ConnectionsHolder[i]:Disconnect();
-				self.InnerThread.ConnectionsHolder[i] = nil;
-			end
-			self.InnerThread.ConnectionsHolder = nil;
-		end
-		--> clear connections
 		local res1,res2 = self.OnClean(self.InnerThread, self.Instance)
 		repCompile(res1,res2,self)
 		if self.InnerThread ~= nil then
@@ -290,15 +346,7 @@ function mt:Destroy()
 			if tof(delaytime) == functiontxt then
 				delaytime = delaytime(self.InnerThread,self.Instance)
 			end
-			--< clear connections
-			if self.InnerThread.ConnectionsHolder ~= nil then
-				for i = #self.InnerThread.ConnectionsHolder,1,-1 do
-					self.InnerThread.ConnectionsHolder[i]:Disconnect();
-					self.InnerThread.ConnectionsHolder[i] = nil;
-				end
-				self.InnerThread.ConnectionsHolder = nil;
-			end
-			--> clear connections
+
 			task.delay(delaytime, function()
 				self.Instance:Destroy()
 				self.Instance = nil

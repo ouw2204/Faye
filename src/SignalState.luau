@@ -1,7 +1,7 @@
 local Signal = script.Parent.Signal
 local Types = require(script.Parent.Types)
 local typetxt = 'Signal';
-local Utility = require(script.Parent.Misc.Utility)
+local Utility = require(script.Parent.Misc.FayeUtility)
 local Runner = require(Signal.Runner)
 local mt = require(Signal.SignalMetatable)
 

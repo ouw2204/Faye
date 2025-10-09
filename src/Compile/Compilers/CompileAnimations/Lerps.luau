@@ -1,7 +1,7 @@
 local ipairs = ipairs
-local c3new,nrnew,nskp,ppn,rnew,udmnew,rectnew,r3new,nsnew,cskp,csnew,mm = Color3.new, NumberRange.new, NumberSequenceKeypoint.new,
+local c3new,nrnew,nskp,ppn,rnew,udmnew,rectnew,r3new,nsnew,cskp,csnew = Color3.new, NumberRange.new, NumberSequenceKeypoint.new,
 	PhysicalProperties.new,Ray.new,UDim.new,Rect.new,Region3.new,
-		NumberSequence.new,ColorSequenceKeypoint.new,ColorSequence.new,math.max
+		NumberSequence.new,ColorSequenceKeypoint.new,ColorSequence.new
 local BLACK_COLOR3 = c3new()
 -- Generic Roblox DataType lerp function.
 local function RobloxLerp(V0, V1)
@@ -20,7 +20,7 @@ local function Color3Lerp(C0, C1)
 		return C0:Lerp(C1,Alpha)
 	end
 end
-local mc = math.clamp
+
 function GetNumberSequenceValueAtTime(time, keypoints,Count)
 	time = mc(time, 0, 1)
 
@@ -203,84 +203,98 @@ local Lerps = setmetatable({
 		end
 	end;
 
-	NumberSequence = function(V0, V1)
-		local StartKeypoints = V0.Keypoints;
-		local EndKeypoints = V1.Keypoints;
-		local StartCount = #StartKeypoints;
-		local EndCount = #EndKeypoints;
-		local Count = (StartCount == EndCount and StartCount) or mm(StartCount,4)
-		local Start = {}
-		local End = {};
-		for i = 1,Count do
-			if StartCount == EndCount then
-				Start[i] = StartKeypoints[i];
-				End[i] = EndKeypoints[i];
-			else
-				local Time = (Count == 1 and 1) or ((i-1)/(Count-1))
-				if StartCount == Count then
-					Start[i] = StartKeypoints[i]
-				else
-					local Value,Envelope = GetNumberSequenceValueAtTime(Time,StartKeypoints,StartCount)
-					Start[i] = nskp(Time,Value,Envelope)
-				end
-				if EndCount == Count then
-					End[i] = EndKeypoints[i]
-				else
-					local Value,Envelope = GetNumberSequenceValueAtTime(Time,EndKeypoints,EndCount)
-					End[i] = nskp(Time,Value,Envelope)
-				end
-			end
- 		end
-		
+	NumberSequence = function(V0: NumberSequence, V1: NumberSequence)
+		local K0, K1 = V0.Keypoints, V1.Keypoints
+		local K0Count, K1Count = #K0, #K1
+
+		-- Collect all unique times from both sequences
+		local TimesSet = {}
+		for i = 1, K0Count do TimesSet[K0[i].Time] = true end
+		for i = 1, K1Count do TimesSet[K1[i].Time] = true end
+
+		-- Convert to sorted array
+		local Times = {}
+		for t in pairs(TimesSet) do
+			table.insert(Times, t)
+		end
+		table.sort(Times)
+
+		-- Precompute base values and differences
+		local Base, Diff = {}, {}
+		for i, t in ipairs(Times) do
+			local v0, e0 = GetNumberSequenceValueAtTime(t, K0, K0Count)
+			local v1, e1 = GetNumberSequenceValueAtTime(t, K1, K1Count)
+
+			Base[i] = {Time = t, Value = v0, Envelope = e0}
+			Diff[i] = {Value = v1 - v0, Envelope = e1 - e0}
+		end
+
+		-- Return interpolator
 		return function(Alpha)
-			local NewKeypoints = {}
-			for i = 1,Count do
-				local Time = (Count == 1 and 1) or ((i-1)/(Count-1))
-				NewKeypoints[i] = nskp(Time,Lerp(Start[i].Value,End[i].Value,Alpha),Lerp(Start[i].Envelope,End[i].Envelope,Alpha))
+			if Alpha <= 0 then return V0 end
+			if Alpha >= 1 then return V1 end
+
+			local New = {}
+			for i = 1, #Times do
+				local b, d = Base[i], Diff[i]
+				New[i] = nskp(
+					b.Time,
+					b.Value + d.Value * Alpha,
+					b.Envelope + d.Envelope * Alpha
+				)
 			end
-			return nsnew(NewKeypoints)
+			return nsnew(New)
 		end
 	end;
 
-	ColorSequence = function(V0, V1)
-		local StartKeypoints = V0.Keypoints
-		local EndKeypoints = V1.Keypoints
-		local StartCount = #StartKeypoints
-		local EndCount = #EndKeypoints
-		local Count = (StartCount == EndCount and StartCount) or mm(StartCount, 4)
-	
-		local Start = {}
-		local End = {}
-	
-		for i = 1, Count do
-			local Time = (Count == 1 and 1) or ((i - 1) / (Count - 1))
-			if StartCount == Count then
-				Start[i] = StartKeypoints[i]
-			else
-				local Value = GetColorSequenceValueAtTime(Time, StartKeypoints)
-				Start[i] = cskp(Time, Value)
-			end
-	
-			if EndCount == Count then
-				End[i] = EndKeypoints[i]
-			else
-				local Value = GetColorSequenceValueAtTime(Time, EndKeypoints)
-				End[i] = cskp(Time, Value)
-			end
+
+	ColorSequence = function(V0: ColorSequence, V1: ColorSequence)
+		local K0, K1 = V0.Keypoints, V1.Keypoints
+		local K0Count, K1Count = #K0, #K1
+
+		-- Collect all unique times from both sequences
+		local TimesSet = {}
+		for i = 1, K0Count do TimesSet[K0[i].Time] = true end
+		for i = 1, K1Count do TimesSet[K1[i].Time] = true end
+
+		-- Convert to sorted array
+		local Times = {}
+		for t in pairs(TimesSet) do
+			table.insert(Times, t)
 		end
-	
+		table.sort(Times)
+
+		-- Precompute base values and differences (per channel)
+		local Base, Diff = {}, {}
+		for i, t in ipairs(Times) do
+			local c0 = GetColorSequenceValueAtTime(t, K0)
+			local c1 = GetColorSequenceValueAtTime(t, K1)
+
+			Base[i] = {Time = t, R = c0.R, G = c0.G, B = c0.B}
+			Diff[i] = {R = c1.R - c0.R, G = c1.G - c0.G, B = c1.B - c0.B}
+		end
+
+		-- Return interpolator
 		return function(Alpha)
-			Alpha = mc(Alpha,0,1)
-			local NewKeypoints = {}
-			for i = 1, Count do
-				local Time = (Count == 1 and 1) or ((i - 1) / (Count - 1))
-				local StartColor = Start[i].Value
-				local EndColor = End[i].Value
-				NewKeypoints[i] = cskp(Time, StartColor:Lerp(EndColor, Alpha))
+			if Alpha <= 0 then return V0 end
+			if Alpha >= 1 then return V1 end
+
+			local New = {}
+			for i = 1, #Times do
+				local b, d = Base[i], Diff[i]
+				New[i] = cskp(
+					b.Time,
+					c3new(
+						b.R + d.R * Alpha,
+						b.G + d.G * Alpha,
+						b.B + d.B * Alpha
+					)
+				)
 			end
-			return csnew(NewKeypoints)
+			return csnew(New)
 		end
-	end;	
+	end;
+
 }, {
 	__index = function(_, Index)
 		error("No lerp function is defined for type " .. tostring(Index) .. ".", 4)

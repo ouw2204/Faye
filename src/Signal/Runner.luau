@@ -1,4 +1,4 @@
-local Utility = require(script.Parent.Parent.Misc.Utility)
+local Utility = require(script.Parent.Parent.Misc.FayeUtility)
 local Compile = require(script.Parent.Parent.Compile)
 local connecttxt = "Connect"
 return function (new: {any: any}, Connections: RBXScriptSignal | {RBXScriptSignal}, func: (...any) -> () )

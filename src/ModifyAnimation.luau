@@ -6,5 +6,5 @@ return function (Animaiton: {any: any},Modifications: Types.AnimationModificatio
     Animaiton.AlwaysFrom = Modifications.AlwaysFrom;
     Animaiton.FirstGoal = Modifications.FirstGoal;
     Animaiton.FirstInfo = Modifications.FirstInfo;
-    Animaiton.FirstGoal = Modifications.FirstGoal;
+    Animaiton.FirstDelayTime = Modifications.FirstDelayTime;
 end

@@ -1,7 +1,7 @@
 local OtherTypes = require(script.Parent.Types)
 
 --[=[
-    @method SpringInfo
+    @function SpringInfo
     @within Thread
     @param Time number?
     @param Frequency number?

@@ -15,7 +15,7 @@ local mt = require(script.Parent.Misc.FayeInstance)
     @return (props: PropertyTypes.Property) -> Create
     [Creates a new instance object.](/docs/Instancing/Create)
 ]=]
-return function(ClassName: string, Thread: { Add: (self: {}, Entity: any) -> () }?)
+return function(ClassName: string, Thread: { Add: (self: {}, Entity: any) -> () }?) : Types.FayeInstance
 	return function(props: Types.Properties)
 		local Object = Instance.new(ClassName)
 		if Defaults[ClassName] ~= nil then
@@ -52,7 +52,7 @@ return function(ClassName: string, Thread: { Add: (self: {}, Entity: any) -> () 
 			end
 			if Thread ~= nil then
 				if Thread["Add"] then
-					Thread:Add(Wrapper)
+					Thread:Add(Wrapper,true)
 				else
 					tins(Thread, Wrapper)
 				end

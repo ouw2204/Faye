@@ -1,6 +1,6 @@
 local m = {};
 m.__index = m;
-local Utility = require(script.Parent.Utility);
+local Utility = require(script.Parent.FayeUtility);
 local Actions = require(script.Parent.TypeActions)
 local PropertyActions = require(script.Parent.PropertyActions)
 --[[
@@ -176,7 +176,7 @@ function m:Get()
     end
 end
 
-function m:Set(newValue: any)
+function m:Set(newValue: any, signalIsBasic: boolean?)
     if self.IsProperty then
         --| Prop/Attribute
         if self.Instance ~= nil and self.Property ~= nil then
@@ -199,7 +199,11 @@ function m:Set(newValue: any)
         self.ValueType = Utility.tof(newValue)
         self.ValueTypeIsTable = self.ValueType == Utility.tabletxt
         if self.SignalEnabled == true or self.SignalEnabled == nil then
-            self.Changed:Fire(newValue)
+            if signalIsBasic then
+                self.Changed:BasicFire(newValue)
+            else
+                self.Changed:Fire(newValue)
+            end
         end
         return newValue;
     end

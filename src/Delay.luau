@@ -1,5 +1,5 @@
 local Types = require(script.Parent.Types)
-local Utility = require(script.Parent.Misc.Utility)
+local Utility = require(script.Parent.Misc.FayeUtility)
 --[=[
     @class Delay
     A class that represents a delay with properties and threading.

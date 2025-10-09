@@ -1,4 +1,4 @@
-local Utility = require(script.Parent.Misc.Utility)
+local Utility = require(script.Parent.Misc.FayeUtility)
 local Types = require(script.Parent.Types)
 
 local typetxt = script.Name;

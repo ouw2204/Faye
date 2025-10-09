@@ -2,7 +2,7 @@ local tins, tf, tr = table.insert, table.find, table.remove
 local tof = typeof
 local tc = table.clear
 local repeatedCompile = require(script.repeatedCompile)
-local Utility = require(script.Parent.Parent.Misc.Utility)
+local Utility = require(script.Parent.Parent.Misc.FayeUtility)
 local m = {
 	SetTo = function(Entity,_, Value)
 		if Value.Value ~= nil and Value.Value["Set"] ~= nil then
@@ -77,7 +77,7 @@ local m = {
 	end,
 	OnChanged = function(Entity, Index, Value, Compile, Init)
 		local Instance = Entity.Instance
-		local Thread = Entity.InnerThread or Entity.Thread
+		local Thread = Entity.InnerThread or Entity.Thread;
 		if Init == true then
 			local Ret,Ret2 = Value(Instance, Instance[Index])
 			if Ret ~= nil then
@@ -85,61 +85,35 @@ local m = {
 				Ret = nil
 			end
 		end
-		Thread:Connect(Instance:GetPropertyChangedSignal(Index), function()
+		local Signal = Instance:GetPropertyChangedSignal(Index)
+		local func = function()
+			if not ((Thread.ParentThread == nil and Thread.IsActive) or Thread.ParentThread.IsActive) then return end;
 			local Ret,Ret2 = Value(Instance, Instance[Index])
 			if Ret ~= nil then
 				repeatedCompile(Index, --[[Thread, ]]Ret, Ret2, Compile, Entity)
 				Ret = nil
 			end
-		end)
+		end
+		if not Utility.ConnectToEntity(Entity,Signal, func) then
+			Utility.Connect(Signal,func,Thread)
+		end
 	end,
 	MethodSignaled = require(script.MethodSignaled);
 	EventCompiler = function(Entity, Index, Value, Compile)
-		local Instance = Entity.Instance
-		local Thread = Entity.InnerThread or Entity.Thread -- fetching innerthread or thread with priority
-		if Thread ~= nil then -- thread exist
-			if Thread["Connect"] ~= nil then
-				Thread:Connect(Instance[Index], function(...)
-					local Ret,Ret2 = Value(Instance, ...)
-					if Ret ~= nil then
-						repeatedCompile(Index, --[[Thread, ]]Ret, Ret2, Compile, Entity)
-						Ret = nil
-					end
-				end)
-			elseif Thread["Add"] ~= nil then -- is a specialized cleaner
-				Thread:Add(
-					Instance[Index]:Connect(function(...)
-						local Ret,Ret2 = Value(Instance, ...)
-						if Ret ~= nil then
-							repeatedCompile(Index, --[[Thread, ]]Ret, Ret2, Compile, Entity)
-							Ret = nil
-						end
-					end),
-					true
-				)
-			else
-				tins(
-					Thread,
-					Instance[Index]:Connect(function(...)
-						local Ret,Ret2 = Value(Instance, ...)
-						if Ret ~= nil then
-							repeatedCompile(Index, --[[Thread, ]]Ret, Ret2, Compile, Entity)
-							Ret = nil
-						end
-					end)
-				)
+		local Thread = Entity.InnerThread or Entity.Thread;
+		local Instance = Entity.Instance;
+		local Signal = Instance[Index]
+		local func = function(...)
+			if not ((Thread.ParentThread == nil and Thread.IsActive) or Thread.ParentThread.IsActive) then return end;
+			local Ret,Ret2 = Value(Instance, ...)
+			if Ret ~= nil then
+				repeatedCompile(Index, --[[Thread, ]]Ret, Ret2, Compile, Entity)
+				Ret = nil
 			end
-		else -- no threads
-			Instance[Index]:Connect(function(...)
-				local Ret,Ret2 = Value(Instance, ...)
-				if Ret ~= nil then
-					repeatedCompile(Index, --[[Thread, ]]Ret,Ret2, Compile, Entity)
-					Ret = nil
-				end
-			end)
 		end
-
-		--Thread = nil;
+		if not Utility.ConnectToEntity(Entity,Signal, func) then 
+			Utility.Connect(Signal,func,Thread)
+		end;
 	end,
 	Signal = require(script.CompileSignal),
 

@@ -1,5 +1,5 @@
 local Types = require(script.Parent.Parent.Parent.Types)
-local Utility = require(script.Parent.Parent.Parent.Misc.Utility)
+local Utility = require(script.Parent.Parent.Parent.Misc.FayeUtility)
 
 local firsttxt = "is_first123"
 return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile: (Entity: Types.FayeInstance, Props: {[any]: any},...any) -> ())
@@ -75,6 +75,7 @@ return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile:
         if EqThread ~= nil then
             Utility.RemoveFromThread(EqThread,Delete)
         end;
+        Utility.RemoveFromEntity(Instance,Delete)
         if InnerThread ~= nil then
             Utility.CallDestroy(InnerThread)
             InnerThread = nil;
@@ -92,6 +93,7 @@ return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile:
         Delete = nil;
     end
     Trigger(firsttxt)
+    Utility.AddToEntity(Instance,Delete)
     if Thread == nil then return end;
     EqThread = Thread;
     if EqThread._isCleanAncestor then

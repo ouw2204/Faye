@@ -103,7 +103,9 @@ end
 local Clean = require(script.Clean)
 function mt:Destroy() : ()
     if self.ParentThread ~= nil then
-        self.ParentThread:Remove(self)
+        if self.ParentThread[removetxt] ~= nil then
+            self.ParentThread:Remove(self)
+        end;
         self.ParentThread = nil;
     end
     Clean(self)
@@ -154,7 +156,7 @@ end
 ]=]
 --connect
 function mt:Connect(Connection: RBXScriptSignal,Function: () -> ())
-    self:Add(Connection:Connect(Function),true)
+    return self:Add(Connection:Connect(Function),true)
 end
 --[=[
     @within Thread
@@ -163,19 +165,21 @@ end
     The entity to add to the thread
 ]=]
 local tof = typeof
-function mt:Add(Entity: any,IsConnection)
+function mt:Add(Entity: any,IsPriority: boolean?)
     if Entity == nil then return end;
-    if IsConnection then
-        if self.ConnectionsHolder == nil then
-            self.ConnectionsHolder = {};
+    if IsPriority then
+        if self.Priority == nil then
+            self.Priority = {};
         end
         if tof(Entity) == tabletxt and Entity.__simplesignalconnection and Entity.lists == nil then
-            Entity.lists = self.ConnectionsHolder;
+            Entity.lists = self.Priority;
         end
-        tins(self.ConnectionsHolder,Entity)
+        tins(self.Priority,Entity)
     else
         tins(self,Entity)
     end
+    
+    return Entity;
 end
 --[=[
     @within Thread
@@ -183,12 +187,17 @@ end
     @param Entity any
     The entity to remove from the thread, meaning when the thread is cleaned it won't be cleaned with it.
 ]=]
-function mt:Remove(Entity: any)
+function mt:Remove(Entity: any,IsPriority: boolean?)
     if Entity == nil then return end;
     local find = tf(self,Entity)
     if find ~= nil then
         tr(self,find)
         return true;
+    elseif self.Priority ~= nil then
+        find = tf(self.Priority,Entity)
+        if find ~= nil then
+            tr(self.Priority,find)
+        end
     end
     return
 end
@@ -265,9 +274,9 @@ local MethodSignaled = require(script.MethodSignaled)
 function mt:MethodSignaled(Method: string, Index: string)
     return MethodSignaled(Method,Index, self);
 end
-local PlayAnimation = require(script.PlayAnimation)
-function mt:PlayAnimation(Entity: Instance, Property: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?)
-    return PlayAnimation(Entity, Property,Goal, Info, self)
+local LoadAnimation = require(script.LoadAnimation)
+function mt:LoadAnimation(Entity: Instance,Goal: any, Info: (Types.Info | Types.SpringInfo)?)
+    return LoadAnimation(Entity, Goal, Info, self)
 end
 local Reactive = require(script.Reactive)
 function mt:Reactive(func: (Grab: (Value: Instance | Types.Value) -> any) -> ())
@@ -361,7 +370,7 @@ return {
     Signal = Signal;
     SignalState = SignalState;
     MethodSignaled = MethodSignaled;
-    PlayAnimation = PlayAnimation;
+    LoadAnimation = LoadAnimation;
     ModifyAnimation = ModifyAnimation;
     CloneAnimation = CloneAnimation;
     Reactive = Reactive;
@@ -374,7 +383,7 @@ return {
 
     Create: (ClassName: string) -> (Properties: Types.Properties) -> Types.FayeInstance;
     Configure: (Entity: any) -> (Properties: Types.Properties) -> Types.FayeInstance;
-    Value: (self: Types.Thread,Initial: any) -> Types.Value;
+    Value: (Initial: any) -> Types.Value;
     Animation: (Goal: any, Info: (Types.Info | Types.SpringInfo)?,Modifications: Types.AnimationModifications?) -> Animation;
     Info: (Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Types.Info;
     SpringInfo: (Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Types.SpringInfo;
@@ -390,11 +399,11 @@ return {
 
     Listener: (Entity: any, Event: string & {string}, func: (string,...any) -> ()) -> ();
     Space: (func: (...any) -> ()) -> Types.Space,
-    Unyielded: (self: Types.Thread,func: (...any)-> (),DelayTime: number?) -> Types.Spawn;
-    Signal: (self: Types.Thread,any,func: (Thread: Types.Thread, Entity: Instance, ...any) -> ()?) -> Types.Signal;
-    SignalState: (self: Types.Thread,any, func: (Thread: Types.Thread, Entity: Instance, ...any) -> ()) -> Types.Signal;
+    Unyielded: (func: (...any)-> (),DelayTime: number?) -> Types.Unyielded;
+    Signal: (func: (Thread: Types.Thread, Entity: Instance, ...any) -> ()?) -> Types.Signal;
+    SignalState: (any, func: (Thread: Types.Thread, Entity: Instance, ...any) -> ()) -> Types.Signal;
 	MethodSignaled: (Method: string, Index: string) -> ();
-	PlayAnimation: (Entity: Instance, Property: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?) -> Types.PlayableAnimation;
+	LoadAnimation: (Entity: Instance, Property: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?) -> Types.PlayableAnimation;
 	ModifyAnimation: (Animaiton: {any: any},Modifications: Types.AnimationModifications) -> {any: any};
 	CloneAnimation: (Animaiton: {any: any},Modifications: Types.AnimationModifications) -> {any: any};
 	Reactive: (func: (Grab: (Value: Instance | Types.Value) -> any) -> ()) -> (() -> ())?;

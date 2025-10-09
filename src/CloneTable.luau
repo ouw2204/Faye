@@ -1,4 +1,4 @@
-local Utility = require(script.Parent.Misc.Utility)
+local Utility = require(script.Parent.Misc.FayeUtility)
 return function (Table: {any: any}, cloneFunction: (Index: any, Value: any) -> (any?, any?)?)
     if Table == nil or Utility.tof(Table) ~= Utility.tabletxt then return end;
     if cloneFunction ~= nil then

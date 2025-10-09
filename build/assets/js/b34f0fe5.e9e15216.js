@@ -1,0 +1,1 @@
+"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[44],{2604:e=>{e.exports=JSON.parse('{"functions":[],"properties":[],"types":[],"name":"Configure","desc":"[Allows configuration on an existing physical or none physical component.](/docs/Instancing/Create) Inherits method from [Create](/api/Create).","source":{"line":5,"path":"src/Configure.luau"}}')}}]);

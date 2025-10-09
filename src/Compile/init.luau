@@ -7,9 +7,23 @@ local ValueClasses = require(script.Parent.Misc.ValueClasses)
 local Compilers = require(script.Compilers)
 local tablestr,numberstr,functionstr,RBXScriptSignalstr = "table","number","function","RBXScriptSignal"
 local OnChangedInitstr,OnChangedstr,Valuestr,Instancestr,Addstr,valuebasestr = "OnChangedInit","OnChanged","Value","Instance","Add","ValueBase"
+local Aftertxt,BeforeTxt = "After","Before"
+local UseCompile = require(script.Parent.Misc.UseCompilePassRecursiveness)
 local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any}, Props: any,InstanceThread: any)
     -- Main loop
+    if Props[BeforeTxt] then
+        local Beforetype = to(Props.Before)
+        if Beforetype == functionstr then
+            local r1,r2 = Props.Before(Entity.Instance)
+            if r1 ~= nil then
+                UseCompile(Recursive, r1,r2,Entity,Entity.InnerThread or Entity.Thread)
+            end
+        elseif Beforetype == tablestr then
+            Recursive(Entity, Props.Before,InstanceThread)
+        end
+    end
     for i, v in pairs(Props) do
+        if i == Aftertxt or i == BeforeTxt then continue end;
         local tov = to(v)
         local toi = --[[tov == "table" and v.__type and to(v.__type) or]] to(i)
         local compilerFunc = (toi ~= tablestr and Compilers[i]) or nil
@@ -45,9 +59,9 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
             Compilers[i.__type](Entity, i, v, Recursive)
         else
             if tov == functionstr and toi == numberstr then
-                local ret = v(Entity.Instance)
+                local ret,ret2 = v(Entity.Instance)
                 if ret then
-                    Recursive(Entity, (to(ret) == tablestr and ret.__type == nil and ret) or {ret})
+                    UseCompile(Recursive, ret,ret2,Entity,Entity.InnerThread or Entity.Thread)
                 end
             else
                 local onChangedIndex = sf(i, OnChangedstr)
@@ -71,6 +85,17 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
                     
                 end
             end
+        end
+    end
+    if Props[Aftertxt] then
+        local aftertype = to(Props.After)
+        if aftertype == functionstr then
+            local r1,r2 = Props.After(Entity.Instance)
+            if r1 ~= nil then
+                UseCompile(Recursive,r1,r2,Entity,Entity.InnerThread or Entity.Thread)
+            end
+        elseif aftertype == tablestr then
+            Recursive(Entity, Props.After,InstanceThread)
         end
     end
     --tc(Props)
