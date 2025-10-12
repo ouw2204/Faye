@@ -3,11 +3,11 @@ m.__index = m;
 local Utility = require(script.Parent.FayeUtility);
 local Actions = require(script.Parent.TypeActions)
 local PropertyActions = require(script.Parent.PropertyActions)
---[[
+
 local ValueTxt = "Value";
 function  m.__tostring()
     return ValueTxt
-end]]
+end
 
 function m.__sub(self,value)
     if value == nil then return self end;

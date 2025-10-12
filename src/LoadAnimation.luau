@@ -50,7 +50,7 @@ function mt:Play(Elapsed: number?,Direction: boolean?,ProgBefore: number?)
 end
 function mt:Skip()
     -- Set the property to the goal value immediately
-    for i,v in pairs(self.Goal) do
+    for i,v in pairs(self.To) do
         self.Entity[i] = v;
     end
     -- Clean up the animation like Stop does

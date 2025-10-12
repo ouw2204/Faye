@@ -9,7 +9,7 @@ local m = {
 			Value.Value:Set(Entity)
 		end
 	end,
-	Unyielded = function(Entity, Index, Value, Compile)
+	YieldSafe = function(Entity, Index, Value, Compile)
 		local Thread = Entity.InnerThread or Entity.Thread;
 		local taskthread;
 		local Yielded = false;

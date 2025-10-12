@@ -69,7 +69,7 @@ export type DelayValue = {
 };
 export type SpecialThreadParams = {
 	Lifetime: number;
-	UnYielded: boolean?
+	YieldSafe: boolean?
 }
 export type Delay = {
     Destroy: (self: Delay) -> ();
@@ -98,8 +98,8 @@ export type PlayableAnimation = {
 	Skip: (self: PlayableAnimation) -> PlayableAnimation;
 	Destroy: (self: PlayableAnimation) -> ();
 }
-export type Unyielded = {
-    Destroy: (self: Unyielded) -> ();
+export type YieldSafe = {
+    Destroy: (self: YieldSafe) -> ();
 }
 export type Signal = {
     Destroy: (self: Signal) -> ();
@@ -130,7 +130,7 @@ export type Thread = {
     Add: (self: Thread,Entity: any) -> ();
     Remove: (self: Thread,Entity: any) -> ();
     Space: (self: Thread, func: (...any) -> ()) -> Space,
-    Unyielded: (self: Thread,func: (...any)-> (),DelayTime: number?) -> Unyielded;
+    YieldSafe: (self: Thread,func: (...any)-> (),DelayTime: number?) -> YieldSafe;
     Schedule: (self: Thread,Time: number?,Item: any,...any) -> any;
     Signal: (self: Thread,any,func: (Thread: Thread, Entity: Instance, ...any) -> ()?) -> Signal;
     SignalState: (self: Thread,any, func: (Thread: Thread, Entity: Instance, ...any) -> ()) -> Signal;

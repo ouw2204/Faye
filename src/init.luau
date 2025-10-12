@@ -207,9 +207,9 @@ function mt:Do(Function: (Grab: any, Entity: Instance) -> ())
     return Do(Function,self)
 end
 --Do
-local Unyielded = require(script.Unyielded)
-function mt:Unyielded(func: (...any) -> (),DelayTime: number?)
-    return Unyielded(func,DelayTime,self)
+local YieldSafe = require(script.YieldSafe)
+function mt:YieldSafe(func: (...any) -> (),DelayTime: number?)
+    return YieldSafe(func,DelayTime,self)
 end
 
 --State
@@ -366,7 +366,7 @@ return {
     SetTo = SetTo;
     Listener = Listener;
     Space = Space;
-    Unyielded = Unyielded;
+    YieldSafe = YieldSafe;
     Signal = Signal;
     SignalState = SignalState;
     MethodSignaled = MethodSignaled;
@@ -399,7 +399,7 @@ return {
 
     Listener: (Entity: any, Event: string & {string}, func: (string,...any) -> ()) -> ();
     Space: (func: (...any) -> ()) -> Types.Space,
-    Unyielded: (func: (...any)-> (),DelayTime: number?) -> Types.Unyielded;
+    YieldSafe: (func: (...any)-> (),DelayTime: number?) -> Types.YieldSafe;
     Signal: (func: (Thread: Types.Thread, Entity: Instance, ...any) -> ()?) -> Types.Signal;
     SignalState: (any, func: (Thread: Types.Thread, Entity: Instance, ...any) -> ()) -> Types.Signal;
 	MethodSignaled: (Method: string, Index: string) -> ();

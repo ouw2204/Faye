@@ -50,7 +50,7 @@ return function (Instance: Types.FayeInstance,Index, SpecialThread: SpecialThrea
         end
 
     end
-    if Utility.tof(SpecialThread.Params) == Utility.tabletxt and SpecialThread.Params.UnYielded then
+    if Utility.tof(SpecialThread.Params) == Utility.tabletxt and SpecialThread.Params.YieldSafe then
         ParentThread:Spawn(CompileFunc,Instance,NewThread,ParentThread,SpecialThread,Index,Delete,Compile,true)
     else
         CompileFunc(Instance,NewThread,ParentThread,SpecialThread,Index,Delete,Compile)
