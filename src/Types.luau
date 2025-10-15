@@ -1,6 +1,6 @@
 export type Value = {
     Set: (self: Value, Value: any,signalIsBasic: boolean?) -> ();
-    Get: (self: Value) -> ();
+    Get: (self: Value) -> any;
     Add: (self: Value, Value: any,...any) -> ();
     Remove: (self: Value,Value: any) -> ();
     Initial: any;
