@@ -50,11 +50,11 @@ export type Connection = {
     Destroy: (self: Connection) -> ();
 }
 export type AnimationModifications = {
-	FirstGoal: any?;
+	FirstGoal: any;
 	FirstDelayTime: number?;
 	FirstInfo: (Info | SpringInfo)?;
-	From: any?;
-	AlwaysFrom: any?;
+	From: any;
+	AlwaysFrom: any;
 }
 
 export type DelayValue = {
@@ -134,14 +134,14 @@ export type Thread = {
     Schedule: (self: Thread,Time: number?,Item: any,...any) -> any;
     Signal: (self: Thread,any,func: (Thread: Thread, Entity: Instance, ...any) -> ()?) -> Signal;
     SignalState: (self: Thread,any, func: (Thread: Thread, Entity: Instance, ...any) -> ()) -> Signal;
-	MethodSignaled: (self: Thread, Method: string, Index: string) -> ();
+	MethodSignaled: (self: Thread, Method: string, Index: string,RunOnInitialization: boolean?) -> ();
 	Spawn: (self: Thread, func: (...any) -> (),...any) -> thread;
 	Delay: (self: Thread,time: number, func: (...any) -> (),...any) -> thread;
 	LoadAnimation: (self: Thread, Entity: Instance,Goal: Properties, Info: (Info | SpringInfo)?) -> PlayableAnimation;
 	ModifyAnimation: (self: Thread, Animaiton: {any: any},Modifications: AnimationModifications) -> {any: any};
 	CloneAnimation: (self: Thread, Animaiton: {any: any},Modifications: AnimationModifications) -> {any: any};
 	Reactive: (self: Thread, func: (Grab: (Value: Instance | Value) -> any) -> ()) -> (() -> ())?;
-	CloneTable: (Table: {any: any}, cloneFunction: (Index: any, Value: any) -> (any?, any?)?) -> {any: any};
+	CloneTable: (Table: {any: any}, cloneFunction: (Index: any, Value: any) -> (any, any)?) -> {any: any};
 	Debris: (self: Thread, Item: any, Lifetime: number) -> ();
 	SpecialThread: (self:Thread, func: (InnerThread: Thread, Entity: Instance) -> (),Params: (SpecialThreadParams | number) ?) -> ();
 }
@@ -214,13 +214,14 @@ TextWrap: any,
 	-- >
 	
 
-	CursorPosition: any?;
-	MultiLine: any?;
-	PlaceholderColor3: any?;
-	Focused: any?, -- Fired when the TextBox gains focus
-	FocusLost: any?, -- Fired when the TextBox loses focus
-	ReturnPressedFromOnScreenKeyboard: any?, -- Mobile only
-
+	CursorPosition: any;
+	MultiLine: any;
+	PlaceholderColor3: any;
+	Focused: any, -- Fired when the TextBox gains focus
+	FocusLost: any, -- Fired when the TextBox loses focus
+	ReturnPressedFromOnScreenKeyboard: any, -- Mobile only
+	Interactable: any,
+	TextEditable: any,
 	--< UI Flex Item
 	FlexMode: any,
 	GrowRatio: any,

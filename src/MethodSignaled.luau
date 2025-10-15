@@ -8,7 +8,7 @@ local Types = require(script.Parent.Types)
     Attribute changed listener
 ]=]
 local typetxt = script.Name;
-return function (Method: string,Index: string, Thread: Types.Thread?)
+return function (Method: string,Index: string, RunOnInitialization: boolean?, Thread: Types.Thread?)
     if Method == nil or Index == nil then return end;
-    return {Method = Method,Index = Index,Thread = Thread, __type = typetxt};
+    return {Method = Method,Index = Index,RunOnInitialization = RunOnInitialization,Thread = Thread, __type = typetxt};
 end

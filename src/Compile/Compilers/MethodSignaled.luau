@@ -14,6 +14,9 @@ return function (Entity: Types.FayeInstance, Index: any, Value: Types.Value,Comp
             Ret = nil
         end
     end
+    if Index.RunOnInitialization ~= nil then
+        func()
+    end
     if not Entity:Connect(Signal, func) then
         Utility.Connect(Signal,func,Thread)
     end

@@ -271,8 +271,8 @@ function mt:SignalState(Connections: RBXScriptSignal | {RBXScriptSignal},func: (
     return SignalState(Connections, func,self);
 end
 local MethodSignaled = require(script.MethodSignaled)
-function mt:MethodSignaled(Method: string, Index: string)
-    return MethodSignaled(Method,Index, self);
+function mt:MethodSignaled(Method: string, Index: string,RunOnInitialization: boolean?)
+    return MethodSignaled(Method,Index,RunOnInitialization, self);
 end
 local LoadAnimation = require(script.LoadAnimation)
 function mt:LoadAnimation(Entity: Instance,Goal: any, Info: (Types.Info | Types.SpringInfo)?)
@@ -402,7 +402,7 @@ return {
     YieldSafe: (func: (...any)-> (),DelayTime: number?) -> Types.YieldSafe;
     Signal: (func: (Thread: Types.Thread, Entity: Instance, ...any) -> ()?) -> Types.Signal;
     SignalState: (any, func: (Thread: Types.Thread, Entity: Instance, ...any) -> ()) -> Types.Signal;
-	MethodSignaled: (Method: string, Index: string) -> ();
+	MethodSignaled: (Method: string, Index: string,RunOnInitialization: boolean?) -> ();
 	LoadAnimation: (Entity: Instance, Property: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?) -> Types.PlayableAnimation;
 	ModifyAnimation: (Animaiton: {any: any},Modifications: Types.AnimationModifications) -> {any: any};
 	CloneAnimation: (Animaiton: {any: any},Modifications: Types.AnimationModifications) -> {any: any};
