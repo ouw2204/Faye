@@ -228,7 +228,7 @@ TextWrap: any,
 	ShrinkRatio: any,
 	ItemAlignment: any,
 	-->
-
+ResetOnSpawn: any;
 	--Viewport frame
 	Ambient: any,
 	LightColor: any,
