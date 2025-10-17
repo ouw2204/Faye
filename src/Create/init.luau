@@ -15,6 +15,8 @@ local mt = require(script.Parent.Misc.FayeInstance)
     @return (props: PropertyTypes.Property) -> Create
     [Creates a new instance object.](/docs/Instancing/Create)
 ]=]
+local functiontxt,tabletxt,cleandelaytxt,parenttxt,numbertxt =
+	"function", "table", "CleanDelay", "Parent", "number"
 return function(ClassName: string, Thread: { Add: (self: {}, Entity: any) -> () }?) : Types.FayeInstance
 	return function(props: Types.Properties)
 		local Object = Instance.new(ClassName)
@@ -31,7 +33,7 @@ return function(ClassName: string, Thread: { Add: (self: {}, Entity: any) -> () 
 		end
 		for i, v in pairs(props) do
 			local tov = tof(v)
-			if tov ~= "function" and tov ~= "table" and i ~= "CleanDelay" and tov ~= "Instance" then
+			if tov ~= functiontxt and tov ~= tabletxt and i ~= cleandelaytxt and i ~= parenttxt and tof(i) ~= numbertxt then
 				Object[i] = v
 				props[i] = nil
 			else
