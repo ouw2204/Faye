@@ -35,6 +35,9 @@ end
 function mt:Skip()
     if self.__animId == nil then return end;
     local fetch = (Storage.RegularTweenHolder ~= nil and Storage.RegularTweenHolder[self.__animId]) or (Storage.Holder ~= nil and Storage.Holder[self.__animId]) or nil
+    if fetch == nil then
+        return;
+    end
     local Goal,Entity,Property = fetch.To,fetch.Entity,fetch.Property;
     
     if Goal ~= nil then
