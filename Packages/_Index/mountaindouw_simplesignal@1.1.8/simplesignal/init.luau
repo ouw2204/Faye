@@ -103,16 +103,14 @@ function mt:BasicFire(...)
 end
 --queus and waits for connections
 function mt:SafeFire(...)
-    task.defer(function(...)
-        if #self >0 then
-            self:BasicFire(...)
-        else
-            if self.Queu == nil then
-                self.Queu = {}
-            end
-            table.insert(self.Queu,{...})
+    if #self > 0 then
+        task.defer(self.BasicFire, self, ...)
+    else
+        if self.Queu == nil then
+            self.Queu = {}
         end
-    end,...)
+        table.insert(self.Queu, { ... })
+    end
 end
 
 function mt:Wait(timeout: number)

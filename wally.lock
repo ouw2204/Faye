@@ -3,11 +3,11 @@
 registry = "test"
 
 [[package]]
-name = "prophetouw/faye"
-version = "1.8.6"
-dependencies = [["SimpleSignal", "prophetouw/simplesignal@1.1.7"]]
+name = "mountaindouw/faye"
+version = "1.9.8"
+dependencies = [["SimpleSignal", "mountaindouw/simplesignal@1.1.8"]]
 
 [[package]]
-name = "prophetouw/simplesignal"
-version = "1.1.7"
+name = "mountaindouw/simplesignal"
+version = "1.1.8"
 dependencies = []
