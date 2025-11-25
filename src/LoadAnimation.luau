@@ -146,7 +146,7 @@ return function(Entity: Instance,Goal: Types.Properties,Info: (Types.Info | Type
     for i,_ in pairs(Goal) do
         Property ..= i;
     end
-    local Animation = {Entity = Entity,To = Goal, Property = Property, Info = Info,__id = prefix..IdCount, Thread = Thread};
+    local Animation = {Entity = Entity,To = Goal,IsActive = true, Property = Property, Info = Info,__id = prefix..IdCount, Thread = Thread};
     
     setmetatable(Animation, mt)
     IdCount += 1;

@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[751],{7981:s=>{s.exports=JSON.parse('{"functions":[],"properties":[],"types":[],"name":"SetTo","desc":"A class that sets values.","source":{"line":5,"path":"src/SetTo.luau"}}')}}]);

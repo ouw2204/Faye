@@ -3,7 +3,7 @@ m.__index = m;
 local Utility = require(script.Parent.FayeUtility);
 local Actions = require(script.Parent.TypeActions)
 local PropertyActions = require(script.Parent.PropertyActions)
-
+local ValueClasses = require(script.Parent.ValueClasses)
 local ValueTxt = "Value";
 function  m.__tostring()
     return ValueTxt
@@ -169,8 +169,12 @@ function m:Get()
         end
     else
         --| Regular Value
-        if self.ValueTypeIsTable and self.Value ~= nil and self.Value.__type == Utility.instanceTxt then
-            return self.Value.Instance
+        if self.ValueTypeIsTable and self.Value ~= nil then
+            if self.Value.__type == Utility.instanceTxt then
+                return self.Value.Instance
+            elseif ValueClasses[self.Value.__type] then
+                return self.Value:Get();
+            end
         end
         return self.Value
     end

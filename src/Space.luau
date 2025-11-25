@@ -200,6 +200,10 @@ local Name = script.Name;
 function mt.__tostring()
     return Name;
 end
+local tasktxt = "Space Task";
+function parammt.__tostring()
+    return tasktxt
+end
 
 --[=[
     @method Space
@@ -218,7 +222,7 @@ return function(func: (...any) -> (),Thread: Types.Thread)
     };
     m.ReceiverFunction = function()
         if m.Cleaning then return end;
-        for _,v in pairs(m.Tasks) do
+        for _,v in ipairs(m.Tasks) do
             v.Call();
         end
     end

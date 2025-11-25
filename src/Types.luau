@@ -97,6 +97,7 @@ export type PlayableAnimation = {
 	Resume: (self: PlayableAnimation) -> PlayableAnimation;
 	Skip: (self: PlayableAnimation) -> PlayableAnimation;
 	Destroy: (self: PlayableAnimation) -> ();
+	IsActive: boolean?;
 }
 export type YieldSafe = {
     Destroy: (self: YieldSafe) -> ();
@@ -117,7 +118,7 @@ export type Thread = {
     Info: (Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Info;
     SpringInfo: (Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> SpringInfo;
     Connect: (self: Thread, Cofnnection: RBXScriptSignal, func: (...any) -> ()) -> (),
-    Do: (self: Thread, func : (Grab: (Value: Instance | Value) -> any,Entity: Instance?) -> ()) -> any;
+    Do: (self: Thread, func : (Grab: (Value: Instance | Value) -> any,Thread: Thread, Entity: Instance?) -> ()) -> any;
     State: (self: Thread, func : (Grab: (Value: Instance | Value) -> any,Thread: Thread, Entity: Instance?) -> ()) -> any;
     Iterate: (self: Thread, Table: any,func: (Index: any,Value: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
 	AdvancedIterate: (self: Thread, Table: any,func: (Index: any,Value: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
@@ -151,8 +152,13 @@ export type Properties = {
 	Before: (Properties | (Entity: Instance) -> any)?;
 	GroupColor3: any, -- Color3 value that tints all descendant GuiObjects
 	GroupTransparency: any, -- Number (0-1) that sets transparency for all descendants
+	AutoLocalize: any,
+
 	
+	HorizontalFlex: any,
+	VerticalFlex: any,
 	Video: any,
+	LayoutOrder: any,
 	ClearTextOnFocus: any,
 	Rotation: any,
 	Wraps: any,
