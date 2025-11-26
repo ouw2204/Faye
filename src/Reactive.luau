@@ -1,6 +1,12 @@
 local Utility = require(script.Parent.Misc.FayeUtility)
 local Types = script.Parent.Types;
-
+--[=[
+    @method Reactive
+    @within Thread
+    @param func (Grab: (Value: Instance | Types.Value) -> any) -> ()
+    @param Thread Thread?
+    @return Reactive
+]=]
 local firsttxt = "is_first123"
 return function (func: (Grab: (Value: Instance | Types.Value) -> any) -> (),Thread: Types.Thread?)
     

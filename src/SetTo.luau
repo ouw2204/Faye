@@ -1,12 +1,15 @@
 --[=[
-    @class SetTo
-    A class that sets values.
+    @method SetTo
+    @within Thread
+    @param Value any
+    @param Thread Thread?
+    @return SetTo
 ]=]
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
 local Utility = require(script.Parent.Misc.FayeUtility)
 local types = require(script.Parent.Types)
 local typetxt = script.Name;
-return function(Value: any,Thread: types.Thread) : any
+return function(Value: any,Thread: types.Thread?) : any
     if Value == nil or Utility.tof(Value) ~= "table" or Value.__type == nil or ValueClasses[Value.__type] == nil then warn(`Pass a valid value object - {debug.traceback()}`); return end;
     local new = {
         Value = Value;

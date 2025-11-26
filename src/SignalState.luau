@@ -5,6 +5,15 @@ local Utility = require(script.Parent.Misc.FayeUtility)
 local Runner = require(Signal.Runner)
 local mt = require(Signal.SignalMetatable)
 
+--[=[
+    @method SignalState
+    @within Thread
+    @param Connections RBXScriptSignal | {RBXScriptSignal}
+    @param func (...any) -> ()?
+    @param Thread Thread?
+    @return SignalState
+]=]
+
 return function(Connections: RBXScriptSignal | {RBXScriptSignal},func: (...any) -> ()?, Thread: Types.Thread?)
     if func == nil then return end;
     local new = {__type = typetxt,IsState = true};

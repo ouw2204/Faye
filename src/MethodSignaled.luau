@@ -4,8 +4,9 @@ local Types = require(script.Parent.Types)
     @within Thread
     @param Method string
     @param Index string
+    @param RunOnInitialization boolean?
     @param Thread Thread?
-    Attribute changed listener
+    Listener for methods, example: 'GetPropertyChangedSignal', 'GetAttributeChangedSignal', etc.
 ]=]
 local typetxt = script.Name;
 return function (Method: string,Index: string, RunOnInitialization: boolean?, Thread: Types.Thread?)
