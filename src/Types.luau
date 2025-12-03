@@ -138,7 +138,7 @@ export type Thread = {
 	MethodSignaled: (self: Thread, Method: string, Index: string,RunOnInitialization: boolean?) -> ();
 	Spawn: (self: Thread, func: (...any) -> (),...any) -> thread;
 	Delay: (self: Thread,time: number, func: (...any) -> (),...any) -> thread;
-	LoadAnimation: (self: Thread, Entity: Instance,Goal: Properties, Info: (Info | SpringInfo)?) -> PlayableAnimation;
+	LoadAnimation: (self: Thread, Entity: Instance,Goals: Properties, Info: (Info | SpringInfo)?) -> PlayableAnimation;
 	ModifyAnimation: (self: Thread, Animaiton: {any: any},Modifications: AnimationModifications) -> {any: any};
 	CloneAnimation: (self: Thread, Animaiton: {any: any},Modifications: AnimationModifications) -> {any: any};
 	Reactive: (self: Thread, func: (Grab: (Value: Instance | Value) -> any) -> ()) -> (() -> ())?;
@@ -154,7 +154,9 @@ export type Properties = {
 	GroupTransparency: any, -- Number (0-1) that sets transparency for all descendants
 	AutoLocalize: any,
 
-	
+	SizeOffset: any,
+	RootLocalizationTable: any,
+	ZIndexBehavior: any,
 	HorizontalFlex: any,
 	VerticalFlex: any,
 	Video: any,

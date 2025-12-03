@@ -11,7 +11,6 @@ local Utility = require(script.Parent.Misc.FayeUtility)
     @within Thread
     @param Time number
     @param Props Types.Properties
-    @param Thread Types.Thread
     @return Delay
     Creates a new delay object.
 ]=]

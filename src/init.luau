@@ -275,8 +275,8 @@ function mt:MethodSignaled(Method: string, Index: string,RunOnInitialization: bo
     return MethodSignaled(Method,Index,RunOnInitialization, self);
 end
 local LoadAnimation = require(script.LoadAnimation)
-function mt:LoadAnimation(Entity: Instance,Goal: any, Info: (Types.Info | Types.SpringInfo)?)
-    return LoadAnimation(Entity, Goal, Info, self)
+function mt:LoadAnimation(Entity: Instance,Goals: any, Info: (Types.Info | Types.SpringInfo)?)
+    return LoadAnimation(Entity, Goals, Info, self)
 end
 local Reactive = require(script.Reactive)
 function mt:Reactive(func: (Grab: (Value: Instance | Types.Value) -> any) -> ())
@@ -403,7 +403,7 @@ return {
     Signal: (func: (Thread: Types.Thread, Entity: Instance, ...any) -> ()?) -> Types.Signal;
     SignalState: (any, func: (Thread: Types.Thread, Entity: Instance, ...any) -> ()) -> Types.Signal;
 	MethodSignaled: (Method: string, Index: string,RunOnInitialization: boolean?) -> ();
-	LoadAnimation: (Entity: Instance, Property: string,Goal: any, Info: (Types.Info | Types.SpringInfo)?) -> Types.PlayableAnimation;
+	LoadAnimation: (Entity: Instance, Property: string,Goals: any, Info: (Types.Info | Types.SpringInfo)?) -> Types.PlayableAnimation;
 	ModifyAnimation: (Animaiton: {any: any},Modifications: Types.AnimationModifications) -> {any: any};
 	CloneAnimation: (Animaiton: {any: any},Modifications: Types.AnimationModifications) -> {any: any};
 	Reactive: (func: (Grab: (Value: Instance | Types.Value) -> any) -> ()) -> (() -> ())?;

@@ -9,7 +9,10 @@ local tf = table.find
 local tins = table.insert
 local mt = { __type = "Instance" }
 mt.__index = mt
-
+--[=[
+    @class FayeInstance
+    A faye instance class.
+]=]
 local tc = table.clear
 function removefunc(t: Types.Thread, v: any)
 	if t == nil or v == nil then
@@ -27,7 +30,7 @@ function removefunc(t: Types.Thread, v: any)
 end
 --[=[
     @method SetAttribute
-    @within Create
+    @within FayeInstance
     @param Attribute string
     @param Value any
     @return Create
@@ -41,7 +44,7 @@ function mt:SetAttribute(Attribute: string, Value: any)
 end
 --[=[
     @method GetAttribute
-    @within Create
+    @within FayeInstance
     @param Attribute string
     @return Value
     Similar to the GetAttribute method for roblox instances
@@ -53,7 +56,7 @@ function mt:GetAttribute(Attribute: string)
 end
 --[=[
     @method GetAttributes
-    @within Create
+    @within FayeInstance
     Similar to the GetAttributes method for roblox instances
 ]=]
 function mt:GetAttributes(Attribute: string)
@@ -64,7 +67,7 @@ end
 
 --[=[
     @method AddTag
-    @within Create
+    @within FayeInstance
     @param Tag string
     Similar to the AddTag method for roblox instances
 ]=]
@@ -76,7 +79,7 @@ function mt:AddTag(Tag: string)
 end
 --[=[
     @method RemoveTag
-    @within Create
+    @within FayeInstance
     @param Tag string
     Similar to the RemoveTag method for roblox instances
 ]=]
@@ -88,7 +91,7 @@ function mt:RemoveTag(Tag: string)
 end
 --[=[
     @method HasTag
-    @within Create
+    @within FayeInstance
     @param Tag string
     Similar to the HasTag method for roblox instances
 ]=]
@@ -99,7 +102,7 @@ function mt:HasTag(Tag: string)
 end
 --[=[
     @method GetTags
-    @within Create
+    @within FayeInstance
     Similar to the GetTags method for roblox instances
 ]=]
 function mt:GetTags()
@@ -109,7 +112,7 @@ function mt:GetTags()
 end
 --[=[
     @method Clone
-    @within Create
+    @within FayeInstance
     Clone the roblox object(Not faye Instance)
 ]=]
 function mt:Clone()
@@ -119,7 +122,7 @@ function mt:Clone()
 end
 --[=[
     @method Compile
-    @within Create
+    @within FayeInstance
     Compiles the properties of the instance.
 ]=]
 
@@ -240,7 +243,7 @@ end
 
 --[=[
     @method Destroy
-    @within Create
+    @within FayeInstance
     Destroys the instance.
 ]=]
 local functiontxt = "function"

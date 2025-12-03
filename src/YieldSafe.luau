@@ -8,8 +8,8 @@ local typetxt = script.Name;
     @within Thread
     @param func () -> ()
     @param DelayTime number?
-    @param Thread Thread?
     @return YieldSafe
+    Creates a YieldSafe object that can be used to run functions with yields safely.
 ]=]
 
 return function (func: () -> (),DelayTime: number?,Thread: Types.Thread)

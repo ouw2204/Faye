@@ -1,6 +1,13 @@
 local Types = require(script.Parent.Types)
 local typetxt = script.Name;
-
+--[=[
+    @method Iterate
+    @within Thread
+    @param Tab any
+    @param Func (Index: any, Value: any, InnerThread: Thread?, Entity: Instance?) -> ()
+    @return Iterate
+    Creates a reactive iterator, when the value changes it refreshes the entire thing.
+]=]
 return function(Tab: any,Func: (Index: any,Value: any,InnerThread: Types.Thread?,Entity: Instance?) -> (),Thread: Types.Thread)
     local Iterate = {
         Tab = Tab,

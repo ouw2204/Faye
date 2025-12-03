@@ -4,8 +4,8 @@ local Types = script.Parent.Types;
     @method Reactive
     @within Thread
     @param func (Grab: (Value: Instance | Types.Value) -> any) -> ()
-    @param Thread Thread?
     @return Reactive
+    Creates a reactive function that re-runs whenever any of the grabbed values change.
 ]=]
 local firsttxt = "is_first123"
 return function (func: (Grab: (Value: Instance | Types.Value) -> any) -> (),Thread: Types.Thread?)

@@ -6,7 +6,25 @@ local Modify = require(script.Parent.ModifyAnimation);
 local mt = {}
 mt.__index = mt;
 local Storage = require(script.Parent.Compile.Compilers.CompileAnimations.Player.AnimatorStorage)
+--[=[
+    @class Animation
+    Represents an animation object that can be played on an entity.
+]=]
+--[=[
+    @method Animation
+    @within Thread
+    @param Goal any -- The target value or state for the animation
+    @param Info Types.Info | Types.SpringInfo? -- (Optional) The animation info
+    @param Modifications Types.AnimationModifications? -- (Optional) Modifications to apply to the animation
+    @return Animation
+    Creates an animation object with the specified goal, info, and optional modifications.
+]=]
 
+--[=[
+    @function Destroy
+    @within Animation
+    Cleans up the animation object and removes it from any associated threads.
+]=]
 function mt:Destroy()
     if self.__animId then
         local fetch = (Storage.RegularTweenHolder ~= nil and Storage.RegularTweenHolder[self.__animId]) or (Storage.Holder ~= nil and Storage.Holder[self.__animId]) or nil
@@ -20,6 +38,11 @@ function mt:Destroy()
     Utility.tc(self)
     setmetatable(self,nil);
 end
+--[=[
+    @function Stop
+    @within Animation
+    Stops the animation if it is currently playing.
+]=]
 function mt:Stop()
     if self.__animId == nil then return end;
     local fetch = (Storage.RegularTweenHolder ~= nil and Storage.RegularTweenHolder[self.__animId]) or (Storage.Holder ~= nil and Storage.Holder[self.__animId]) or nil
@@ -32,6 +55,11 @@ function mt:Stop()
         end
     end
 end
+--[=[
+    @function Skip
+    @within Animation
+    Immediately applies the animation's goal state to the target entity.
+]=]
 function mt:Skip()
     if self.__animId == nil then return end;
     local fetch = (Storage.RegularTweenHolder ~= nil and Storage.RegularTweenHolder[self.__animId]) or (Storage.Holder ~= nil and Storage.Holder[self.__animId]) or nil

@@ -99,7 +99,6 @@ end
     @method Add
     @within Space
     @param Params {[any]: any}
-    @param Thread Thread?
     Adds/Creates a task to the Space. The task will be called when the Space is called.
 ]=]
 function mt:Add(Params: {[any]: any},Thread: Types.Thread,NoUnpack: boolean?)
@@ -209,7 +208,6 @@ end
     @method Space
     @within Thread
     @param func function
-    @param Thread Thread?
     Creates a new Space object. The space will call the function when the space is called.
 ]=]
 return function(func: (...any) -> (),Thread: Types.Thread)

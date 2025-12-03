@@ -2,8 +2,8 @@
     @method SetTo
     @within Thread
     @param Value any
-    @param Thread Thread?
     @return SetTo
+    Wraps a value into a SetTo value object that can be used in props tables.
 ]=]
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
 local Utility = require(script.Parent.Misc.FayeUtility)

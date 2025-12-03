@@ -7,9 +7,26 @@ local prefix = "PlayedAnimation_"
 local IdCount = 0;
 local DefaultInfo = Info()
 local Utility = require(script.Parent.Misc.FayeUtility)
-
+--[=[
+    @method LoadAnimation
+    @within Thread
+    @param Entity Instance -- The instance to animate
+    @param Goal Types.Properties -- The goal properties to animate to
+    @param Info Types.Info? -- (Optional) The animation info
+    return PlayableAnimation -- The playable animation object
+]=]
 local mt = {};
 mt.__index = mt
+--[=[
+    @class LoadAnimation
+    Quick animation loader that creates and plays an animation on an entity.
+]=]
+
+--[=[
+    @method Play
+    @within LoadAnimation
+    Plays the animation.
+]=]
 function mt:Play(Elapsed: number?,Direction: boolean?,ProgBefore: number?)
     self:Stop(nil,true); -- stop any previous animation
     local DeleteFunc =  function(_,_,FromStop: boolean)
@@ -48,6 +65,11 @@ function mt:Play(Elapsed: number?,Direction: boolean?,ProgBefore: number?)
     end
     return self;
 end
+--[=[
+    @method Skip
+    @within LoadAnimation
+    Skips the animation to the end state immediately.
+]=]
 function mt:Skip()
     -- Set the property to the goal value immediately
     for i,v in pairs(self.To) do
@@ -79,6 +101,11 @@ function mt:Skip()
     
     return self;
 end
+--[=[
+    @method Stop
+    @within LoadAnimation
+    Stops the animation.
+]=]
 function mt:Stop(NoClear: boolean?,CameFromPlay: boolean?)
     if self.Anim ~= nil then
         if NoClear then return end;
@@ -103,6 +130,11 @@ function mt:Stop(NoClear: boolean?,CameFromPlay: boolean?)
         self:Destroy(true) -- destroy the animation
     end
 end
+--[=[
+    @method Pause
+    @within LoadAnimation
+    Pauses the animation.
+]=]
 function mt:Pause()
     if self.Anim ~= nil then
         self.Anim:Pause();
@@ -116,6 +148,11 @@ function mt:Pause()
     end
     return self;
 end
+--[=[
+    @method Resume
+    @within LoadAnimation
+    Resumes the animation from where it was paused.
+]=]
 function mt:Resume()
     if self.Anim ~= nil then
         self.Anim:Play();
@@ -124,6 +161,11 @@ function mt:Resume()
     end
     return self;
 end
+--[=[
+    @method Destroy
+    @within LoadAnimation
+    Destroys the animation object and cleans up resources.
+]=]
 function mt:Destroy(CameFromStop: boolean?)
     if CameFromStop == nil then -- if this is not called from the stop function
         self:Stop();
@@ -135,18 +177,18 @@ function mt:Destroy(CameFromStop: boolean?)
     setmetatable(self,nil)
 end
 
-return function(Entity: Instance,Goal: Types.Properties,Info: (Types.Info | Types.SpringInfo)?, Thread: Types.Thread): Types.PlayableAnimation
-    if Entity == nil or Goal == nil  or Utility.tof(Goal) ~= Utility.tabletxt then warn("Was unable to create animation, check the parameters and retry!") return end;
+return function(Entity: Instance,Goals: Types.Properties,Info: (Types.Info | Types.SpringInfo)?, Thread: Types.Thread): Types.PlayableAnimation
+    if Entity == nil or Goals == nil  or Utility.tof(Goals) ~= Utility.tabletxt then warn("Was unable to create animation, check the parameters and retry!") return end;
     if Info == nil then Info = DefaultInfo end;
     if Entity.ClassName == nil then
         Entity = Entity.Instance;
         if Entity.ClassName == nil then warn("Entity must be a roblox instance or faye instance"); return end;
     end
     local Property = "";
-    for i,_ in pairs(Goal) do
+    for i,_ in pairs(Goals) do
         Property ..= i;
     end
-    local Animation = {Entity = Entity,To = Goal,IsActive = true, Property = Property, Info = Info,__id = prefix..IdCount, Thread = Thread};
+    local Animation = {Entity = Entity,To = Goals,IsActive = true, Property = Property, Info = Info,__id = prefix..IdCount, Thread = Thread};
     
     setmetatable(Animation, mt)
     IdCount += 1;

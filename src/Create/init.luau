@@ -1,7 +1,3 @@
---[=[
-    @class Create
-    A class that handles the creation of instances.
-]=]
 local Types = require(script.Parent.Types)
 local Defaults = require(script.Defaults)
 local tins = table.insert
@@ -11,7 +7,6 @@ local mt = require(script.Parent.Misc.FayeInstance)
     @method Create
     @within Thread
     @param ClassName string
-    @param Thread {Add: (self: {},Entity: any) -> ()}?
     @return (props: PropertyTypes.Property) -> Create
     [Creates a new instance object.](/docs/Instancing/Create)
 ]=]

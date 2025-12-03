@@ -1,0 +1,97 @@
+---
+sidebar_position: 5
+---
+There are two ways to play animations in Faye
+### Reactive Animations
+Before creating reactive animations, you need to know about the Info tables and the Modification tables
+##### Info
+```lua
+local Info = require(Faye.Info)
+local SpringInfo = require(Faye.SpringInfo)
+
+local AnimInfo = Info( -- or Thread.Info or Faye.Info
+    Time: number?,
+    EasingStyle: Enum.EasingStyle?,
+    EasingDirection: Enum.EasingDirection?,
+    RepeatCount: number?,
+    Reverse: boolean?,
+    DelayTime: number?
+)
+local AnimSpringInfo = SpringInfo( -- or Thread.SpringInfo or Faye.Info
+    Time: number?,
+    Frequency: number?, -- frequency
+    Damping: number?, --loss of energy
+    RepeatCount: number?,
+    Reverse: boolean?,
+    DelayTime: number?
+)
+```
+These are similar to to TweenService's TweenInfo, with an Addition of **SpringInfo**, If you want to Use Springs instead of the plain roblox easings you substitute the Info with a SpringInfo when creating an animation, its that easy.
+:::note
+If you leave any empty fields, it will automatically fill it with default values. You can also use a table for the info, these 'Info' and 'SpringInfo' functions just help you structure it with suggestions
+:::
+##### Modification Tables
+```lua
+local Modifications = {
+	FirstGoal: any; -- The goal for the first play
+	FirstDelayTime: number?; -- the DelayTime for the first play
+	FirstInfo: (Info | SpringInfo)?; -- the Info for the first play
+	From: any; -- makes it so the animation starts from this once
+	AlwaysFrom: any; --makes it so the animation always start from this
+}
+```
+These are self explanatory and allow you to have special modifications for your animations
+#### Animation Creation
+The first parameter is the goal, the second the Info, and the third the modification table, the only mandatory parameter is the goal, the rest can be left empty.
+```lua
+Thread:Create "Frame" {
+    BackgroundColor3 = Thread:Animation(Color3.new(1,1,0),InfoTable); -- tweens smoothly to the color
+}
+```
+Above we have a tween that starts from the current Frame Color to the Goal
+```lua
+--test this code yourself in studio
+local Faye = require(...) -- set this to the right path
+return function(Target)
+    local Thread = Faye.new()
+
+    Thread:Create "Frame" {
+        Parent = Target;
+        BackgroundColor3 = Thread:Animation(  Color3.new(1,1,0)  ,  Thread.Info(.5)  ,  {From = Color3.new(1,0,0)}  ); -- Starts from red
+    }
+
+    return function()
+        Thread:Destroy()
+    end
+end
+```
+![Gif](https://gyazo.com/9cfa4070d03658f6c98b4f10b85c63de.gif)
+
+Rather than our goal, we can substitute it with a Faye Value, and everytime we update it, our Frame will react to its change
+```lua
+local Goal = Thread:Value(Color3.new(1,1,0))
+Thread:Create "Frame" {
+    Parent = Target;
+    BackgroundColor3 = Thread:Animation(  Goal  ,  Thread.Info(.5)  ,  {From = Color3.new(1,0,0)}  ); -- Starts from red
+    MouseEnter = function()
+        Goal:Set(Color3.new(0,0,1))
+    end,
+
+    MouseLeave = function()
+        Goal:Reset()
+    end
+}
+```
+![Gif](https://gyazo.com/c6b601305261de58015af47f4ee6f1b2.gif)
+:::note
+When using Faye values as Goal, the animation won't tween to the goal for the first iteration, it will always set the Instance's property to the Goal's initial value first, so if you want it to tween it to, you must specify the From in the Animation modifications table, then it will tween to the Goal rather than setting the object's property on initialization.
+:::
+### Quick animations
+If you just want to play animations and you don't want to setup reactivity, you can use the Faye's LoadAnimation utility, use it within a thread for the Thread to manage cleaning, but its not necessary, You can use it in any script in ur game.
+```lua
+Thread:LoadAnimation(  Entity  ,  {Size = UDim2.fromOffset(200,200)}  ,  Thread.Info(.2)  ):Play()
+```
+You can tween multiple properties in one object at the same time just like regular roblox tweening, the Info parameter is optional, but the Object and Goal table must be specified.
+:::info
+Like mentioned in the landing page, i did not cover all the functions here, for that go into the Api section
+:::

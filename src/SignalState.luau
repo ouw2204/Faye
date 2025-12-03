@@ -10,8 +10,8 @@ local mt = require(Signal.SignalMetatable)
     @within Thread
     @param Connections RBXScriptSignal | {RBXScriptSignal}
     @param func (...any) -> ()?
-    @param Thread Thread?
     @return SignalState
+    Creates a reactive signal that runs the provided function whenever any of the provided connections fire, this one deletes the old components before loading the new returned returned ones.
 ]=]
 
 return function(Connections: RBXScriptSignal | {RBXScriptSignal},func: (...any) -> ()?, Thread: Types.Thread?)

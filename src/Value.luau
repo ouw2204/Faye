@@ -8,8 +8,8 @@ local Counter = 0;
     @method Value
     @within Thread
     @param Initial any
-    @param Thread Thread?
     @return Value
+    Creates a Value object that can be used in Faye's reactive system.
 ]=]
 return function (Initial: any,Thread: Types.Thread?)
     local new = {__type = typeTxt,Id = typeTxt..Counter,Changed = Signal.new(),Initial = Initial, ValueType = Utility.tof(Initial),Thread = Thread,Value = Initial};

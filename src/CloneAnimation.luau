@@ -1,5 +1,13 @@
 local Types = require(script.Parent.Types)
 local Utility = require(script.Parent.Misc.FayeUtility)
+--[=[
+    @function CloneAnimation
+    @within Thread
+    @param Animaiton {any:any}
+    @param Modifications AnimationModifications
+    @return {any:any}?
+    Clones an animation table and applies any provided modifications.
+]=]
 return function (Animaiton: {any: any},Modifications: Types.AnimationModifications,Thread: Types.Thread?)
     if Animaiton == nil then return end;
     Animaiton = table.clone(Animaiton) -- clone the animation to not modify the original

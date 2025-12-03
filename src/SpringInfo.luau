@@ -10,6 +10,7 @@ local OtherTypes = require(script.Parent.Types)
     @param Reverse boolean?
     @param DelayTime number?
     @return SpringInfo
+    Creates a SpringInfo object that can be used in animations to define spring-like behavior.
 ]=]
 return function(Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?)
     local new = {

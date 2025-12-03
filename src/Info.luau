@@ -2,7 +2,7 @@
 local ThreadType = require(script.Parent.Types)
 
 --[=[
-    @method Info
+    @function Info
     @within Thread
     @param Time number?
     @param EasingStyle Enum.EasingStyle?

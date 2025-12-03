@@ -139,7 +139,6 @@ end
     @within Thread
     @param Value Types.Value
     @param Time number
-    @param Thread Types.Thread
     @return DelayValue
     Creates a new delay value object.
 ]=]

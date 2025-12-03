@@ -1,7 +1,3 @@
---[=[
-    @class Configure
-    [Allows configuration on an existing physical or none physical component.](/docs/Instancing/Create) Inherits method from [Create](/api/Create).
-]=]
 local Types = require(script.Parent.Types)
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
 
@@ -12,7 +8,6 @@ local mt = require(script.Parent.Misc.FayeInstance)
     @method Configure
     @within Thread
     @param Entity any
-    @param Thread {Add: (self: {},Entity: any) -> ()}?
     @return function
     [Allows configuration on an existing physical or none physical component.](/docs/Instancing/Create) Inherits method from [Create](/api/Create).
 ]=]

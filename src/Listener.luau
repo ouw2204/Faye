@@ -6,7 +6,6 @@ local Types = require(script.Parent.Types)
     @param Entity any
     @param Event(s) any
     @param Function function
-    @param Thread any?
     Connects the given function to the specified event(s) on the entity.
 ]=]
 

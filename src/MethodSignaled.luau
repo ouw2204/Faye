@@ -5,7 +5,6 @@ local Types = require(script.Parent.Types)
     @param Method string
     @param Index string
     @param RunOnInitialization boolean?
-    @param Thread Thread?
     Listener for methods, example: 'GetPropertyChangedSignal', 'GetAttributeChangedSignal', etc.
 ]=]
 local typetxt = script.Name;
