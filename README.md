@@ -9,12 +9,12 @@ Remember to occasionally check for new updates as there might be bug fixes.
 https://create.roblox.com/store/asset/74301103261718/Faye
 ### Wally
 ```
-Faye = "mountaindouw/faye@2.0.2" 
+Faye = "mountaindouw/faye@2.0.4" 
 ```
 ### Github
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.
 ## Update log
-### v2.0.3
+### v2.0.4
 - DelayValue changes
     - DelayValue doesn't require a Value anymore, you can set it to anything, but if its set to a value, it will react to that value's changes instead of its own.
 ### v2.0.2
