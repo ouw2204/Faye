@@ -233,8 +233,8 @@ function mt:DelayValue(Value: Types.Value, Time: number) : Types.DelayValue
     return DelayValue(Value,Time,self)
 end
 --Delay
-local DelayProperty = require(script.Delay)
-function mt:DelayProperty(Props: Types.Properties,Time: number,From: Types.Properties?) : Types.Delay
+local DelayProperty = require(script.DelayProperty)
+function mt:DelayProperty(Props: Types.Properties | any,Time: number,From: Types.Properties?) : Types.Delay
     return DelayProperty(Props,Time,From,self)
 end
 --Property value

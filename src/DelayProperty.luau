@@ -1,21 +1,17 @@
 local Types = require(script.Parent.Types)
 local Utility = require(script.Parent.Misc.FayeUtility)
---[=[
-    @class Delay
-    A class that represents a delay with properties and threading.
-]=]
-
 
 --[=[
-    @method Delay
+    @method DelayProperty
     @within Thread
-    @param Time number
     @param Props Types.Properties
-    @return Delay
-    Creates a new delay object.
+    @param Time number
+    @param From any
+    @return DelayProperty
+    Creates a new delay object that will compile the given properties after [Time] time.
 ]=]
 local typetxt = script.Name;
-return function(Props: Types.Properties,Time: number,From: any,Thread: Types.Thread?)
+return function(Props: Types.Properties | any,Time: number,From: any,Thread: Types.Thread?)
     if Time == nil or Props == nil then warn(`Time or properties is missing - {debug.traceback()}`); return end;
     local new = {
         Time = Time;

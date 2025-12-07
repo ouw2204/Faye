@@ -261,8 +261,8 @@ function m:Destroy()
         self.Changed:Destroy();
         self.Changed = nil;
     end 
-    Utility.tc(self)
     setmetatable(self,nil)
+    Utility.tc(self)
 end
 
 return m;

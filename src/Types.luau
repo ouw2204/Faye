@@ -59,6 +59,9 @@ export type AnimationModifications = {
 
 export type DelayValue = {
     Get: (self: DelayValue) -> ();
+	Set: (self: DelayValue, New: any) -> ();
+	Add: (self: DelayValue, Amount: any) -> ();
+	Remove: (self: DelayValue, Amount: any) -> ();
     Changed: RBXScriptSignal;
     SetTime: (self: DelayValue, Time: number) -> ();
 	Refresh: (self: DelayValue) -> ();
@@ -125,7 +128,7 @@ export type Thread = {
     InstancePropertySync: (self:Thread, Entity: Instance, Property: string) -> Value;
     InstanceAttributeSync: (self:Thread, Entity: Instance, Attribute: string) -> Value;
     DelayValue: (self: Thread, Value: Value?, Time: number?) -> DelayValue;
-    DelayProperty: (self: Thread, Props: Properties,Time: number,From: Properties?) -> ();
+    DelayProperty: (self: Thread, Props: Properties | any,Time: number,From: Properties?) -> ();
     SetTo: (self: Thread, Value: Value) -> {};
     Listener: (self: Thread, Entity: any, Event: string | {string}, func: (string,...any) -> ()) -> ();
     Add: (self: Thread,Entity: any) -> ();

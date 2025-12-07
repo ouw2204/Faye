@@ -5,6 +5,8 @@
 local Types = require(script.Parent.Types)
 local Signal = require(script.Parent.Packages.SimpleSignal);
 local Utility = require(script.Parent.Misc.FayeUtility)
+local ValueBase = require(script.Parent.Misc.ValueBase)
+local ValueClasses = require(script.Parent.Misc.ValueClasses)
 local typetxt = script.Name;
 local mt = {
     __type = typetxt;
@@ -42,15 +44,33 @@ function mt:Destroy()
         self.Custom = nil;
     end
     setmetatable(self,nil)
-    self.Initial = nil;
-    self.Value = nil;
-    self.DefaultTime = nil;
-    self.Time = nil;
-    self.Id = nil;
-    self.IsActive = nil;
     Utility.tc(self)
 end
+function mt:Add(Amount: any)
+    if self.valueIsValue then
+        self.Value:Add(Amount)
+    else
+        ValueBase.Add(self,Amount)
+    end
+end
+function mt:Remove(Amount: any)
+    if self.valueIsValue then
+        self.Value:Remove(Amount)
+    else
+        ValueBase.Remove(self,Amount)
+    end
+end
+function mt.__sub(self,value)
+    if value == nil then return self end;
+    self:Remove(value)
+    return self;
+end
 
+function mt.__add(self,value)
+    if value == nil then return self end;
+    self:Add(value)
+    return self;
+end
 --[=[
     @method SetTime
     @within DelayValue
@@ -64,7 +84,7 @@ function mt:SetTime(New: number)
 end
 --[=[
     @method For
-    @within Delay
+    @within DelayValue
     @param Value any
     @param Time number
     Sets a custom wait time for a value
@@ -85,9 +105,70 @@ end
 ]=]
 function mt:Get()
     if self.Value == nil then return end;
-    return self.Value:Get()
+    if self.valueIsValue then
+        return self.Value:Get()
+    else
+        return self.Value
+    end
 end
+--[=[
+    @method Set
+    @within DelayValue
+    @param newValue any
+]=]
+--< set main code
+function setValue(itm,newValue: any,NoDelay: boolean?)
+    if itm.Connection ~= nil and itm.Connection["Disconnect"] ~= nil then
+        itm.Connection:Disconnect()
+        itm.Connection = nil
+    end;
 
+    itm.ValueType = Utility.tof(newValue)
+    local valueIsTable = itm.ValueType == "table"
+
+    itm.valueIsValue = valueIsTable and ValueClasses[newValue.__type]
+    itm.Value = newValue
+    local function CallSignal(newValue: any,SkipDelay: boolean?)
+        if itm.SignalEnabled == false then return end;
+        itm.curentUsageId +=1;
+        local currentId = itm.curentUsageId;
+        local eqTime = itm.Time;
+        if newValue ~= nil and itm.Custom ~= nil and itm.Custom[newValue] ~= nil then
+            eqTime = itm.Custom[newValue];
+        end
+        if eqTime ~= nil and eqTime ~= 0 and SkipDelay == nil then
+            if not itm.IsActive then return end
+            task.wait(eqTime)
+            if not itm.IsActive then return end
+        end;
+        if itm.IsSensitive == nil or currentId == itm.curentUsageId then
+            itm.Changed:Fire(newValue)
+        end
+    end
+    if valueIsTable and itm.valueIsValue then
+        local init = newValue:Get()
+        if NoDelay == nil then
+            task.spawn(CallSignal,init)
+        else
+            CallSignal(init,true)
+        end
+        itm.Connection = newValue.Changed:Connect(function(newValue: any)
+            CallSignal(newValue)
+        end)
+        return init;
+    else
+        if NoDelay == nil then
+            task.spawn(CallSignal,newValue)
+        else
+            CallSignal(newValue,true)
+        end
+        return newValue;
+    end
+end
+--> main set code
+function mt:Set(newValue: any)
+    setValue(self,newValue)
+end
 --[=[
     @method Refresh
     @within DelayValue
@@ -143,11 +224,9 @@ end
     Creates a new delay value object.
 ]=]
 return function(Value: Types.Value, Time: number, Thread: Types.Thread)
-    if Value == nil then warn(`Value or Time parameter are missing - {debug.traceback()}`); return end;
-    if Utility.tof(Value) ~= "table" then warn(`Parameters must be of the format: Value: Value, Time: number - {debug.traceback()}`); return end;
+    
     Id += 1;
     local new = {
-        Initial = Value.Initial;
         Thread = Thread;
         Connection = nil;
         Value = Value;
@@ -158,24 +237,10 @@ return function(Value: Types.Value, Time: number, Thread: Types.Thread)
         IsActive = true;
         Changed = Signal.new();
     }
+    
     setmetatable(new,mt);
-    new.Connection = Value.Changed:Connect(function(newValue: any)
-        if new.SignalEnabled == false then return end;
-        new.curentUsageId +=1;
-        local currentId = new.curentUsageId;
-        local eqTime = new.Time;
-        if newValue ~= nil and new.Custom ~= nil and new.Custom[newValue] ~= nil then
-            eqTime = new.Custom[newValue];
-        end
-        if eqTime ~= nil and eqTime ~= 0 then
-            if not new.IsActive then return end
-            task.wait(eqTime)
-            if not new.IsActive then return end
-        end;
-        if new.IsSensitive == nil or currentId == new.curentUsageId then
-            new.Changed:Fire(newValue)
-        end
-    end)
+    new.Initial = setValue(new, Value,true)
+
     if Thread ~= nil then
         Utility.AddToThread(Thread,new)
     end

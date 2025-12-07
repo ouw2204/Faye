@@ -6,8 +6,8 @@ function mt:Destroy()
     if self.Connections ~= nil then
         Utility.ClearAllConnections(self.Connections,self.Connections.Count)
     end
-   Utility.tc(self);
-   setmetatable(self,nil);
+    Utility.tc(self);
+    setmetatable(self,nil);
 end
 function mt:Connect(Connection: any)
     if Connection == nil then return end;

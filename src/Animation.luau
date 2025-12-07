@@ -21,7 +21,7 @@ local Storage = require(script.Parent.Compile.Compilers.CompileAnimations.Player
 ]=]
 
 --[=[
-    @function Destroy
+    @method Destroy
     @within Animation
     Cleans up the animation object and removes it from any associated threads.
 ]=]
@@ -35,11 +35,11 @@ function mt:Destroy()
     if self.Thread ~= nil then
         Utility.RemoveFromThread(self.Thread,self)
     end
-    Utility.tc(self)
     setmetatable(self,nil);
+    Utility.tc(self)
 end
 --[=[
-    @function Stop
+    @method Stop
     @within Animation
     Stops the animation if it is currently playing.
 ]=]
@@ -56,7 +56,7 @@ function mt:Stop()
     end
 end
 --[=[
-    @function Skip
+    @method Skip
     @within Animation
     Immediately applies the animation's goal state to the target entity.
 ]=]

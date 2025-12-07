@@ -73,8 +73,8 @@ function parammt:Destroy()
     end
     self.__holder = nil;
     self.Call = nil;
-    Utility.tc(self)
     setmetatable(self,nil)
+    Utility.tc(self)
 end
 --[=[
     @method Call

@@ -14,5 +14,8 @@ Faye = "mountaindouw/faye@2.0.2"
 ### Github
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.
 ## Update log
+### v2.0.3
+- DelayValue changes
+    - DelayValue doesn't require a Value anymore, you can set it to anything, but if its set to a value, it will react to that value's changes instead of its own.
 ### v2.0.2
 Version at the creation of this documentation

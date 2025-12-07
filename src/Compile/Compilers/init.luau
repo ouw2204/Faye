@@ -124,7 +124,7 @@ local m = {
 	--> Do/State
 	SpecialThread = require(script.CompileSpecialThread);
 	
-	Delay = function(Entity, Index, Value, Compile)
+	DelayProperty = function(Entity, Index, Value, Compile)
 		local Init = Value.Init
 		local ToCompile = Value.ToCompile
 		if Init ~= nil then
