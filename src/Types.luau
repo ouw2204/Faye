@@ -87,7 +87,7 @@ export type SpaceTask = {
     AddParameter: (self: SpaceTask, Index: any,Value: any) -> ();
 }
 export type Space = {
-    Call: (self: Space) -> Space;
+    Call: (self: Space, Id: any) -> Space;
     Add: (self: Space, Params: {[any]: any}, Thread: Thread?,NoUnpack: boolean?) -> SpaceTask;
     Remove: (self: Space, Task: SpaceTask) -> ();
     Connect: (self: Space, Connection: RBXScriptSignal,Id: string) -> RBXScriptConnection;
