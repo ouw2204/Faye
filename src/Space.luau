@@ -19,7 +19,7 @@ parammt.__index = parammt;
     @param Id string
     Sets a unique ID for the task. This ID can be used to identify the task later.
 ]=]
-function parammt:SetId(Id: string)
+function parammt:SetId(Id: any)
     self.Id = Id;
     return self;
 end
@@ -149,7 +149,7 @@ end
     @param Id string?
     Connects a signal to space, pass an id if u only want that connection to fire a specific task.
 ]=]
-function mt:Connect(Connection: RBXScriptSignal,Id: string?)
+function mt:Connect(Connection: RBXScriptSignal,Id: any)
     if self.Cleaning then return end;
     if Id == nil then
         local connectedConnection = Connection:Connect(self.ReceiverFunction,self.Thread)

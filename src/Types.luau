@@ -82,7 +82,7 @@ export type SpaceTask = {
     Call: (self: SpaceTask) -> SpaceTask;
     Variables: {any: any};
     Parameters: {[any]: any};
-    SetId: (self: SpaceTask, Id: string) -> SpaceTask;
+    SetId: (self: SpaceTask, Id: any) -> SpaceTask;
     Connect: (self: SpaceTask, Connection: RBXScriptSignal) -> RBXScriptConnection;
     AddParameter: (self: SpaceTask, Index: any,Value: any) -> ();
 }
@@ -90,7 +90,7 @@ export type Space = {
     Call: (self: Space, Id: any) -> Space;
     Add: (self: Space, Params: {[any]: any}, Thread: Thread?,NoUnpack: boolean?) -> SpaceTask;
     Remove: (self: Space, Task: SpaceTask) -> ();
-    Connect: (self: Space, Connection: RBXScriptSignal,Id: string) -> RBXScriptConnection;
+    Connect: (self: Space, Connection: RBXScriptSignal,Id: any) -> RBXScriptConnection;
     Destroy: (self: Space) -> ();
 }
 export type PlayableAnimation = {
