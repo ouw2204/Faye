@@ -1,5 +1,5 @@
 local ValueClasses = require(script.Parent.Parent.Parent.Misc.ValueClasses)
-local Types = require(script.Parent.Parent.Parent.Types)
+local Types = require(script.Parent.Parent.Parent.FayeTypes)
 local Utility = require(script.Parent.Parent.Parent.Misc.FayeUtility)
 
 local tabletxt,niltxt,numbertxt,stringtxt,instancetxt,ValueBasetxt = "table","nil","number","string","Instance","ValueBase";

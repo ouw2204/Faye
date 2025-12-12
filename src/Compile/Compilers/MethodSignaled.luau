@@ -1,4 +1,4 @@
-local Types = require(script.Parent.Parent.Parent.Types)
+local Types = require(script.Parent.Parent.Parent.FayeTypes)
 local repeatedCompile = require(script.Parent.repeatedCompile)
 local tins = table.insert
 local Utility = require(script.Parent.Parent.Parent.Misc.FayeUtility)

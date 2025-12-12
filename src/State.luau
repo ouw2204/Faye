@@ -1,4 +1,4 @@
-local Types = require(script.Parent.Types)
+local Types = require(script.Parent.FayeTypes)
 local typetxt = script.Name;
 
 --[=[

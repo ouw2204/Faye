@@ -1,5 +1,5 @@
 
-local ThreadType = require(script.Parent.Types)
+local ThreadType = require(script.Parent.FayeTypes)
 
 --[=[
     @function Info

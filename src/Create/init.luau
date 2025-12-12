@@ -1,4 +1,4 @@
-local Types = require(script.Parent.Types)
+local Types = require(script.Parent.FayeTypes)
 local Defaults = require(script.Defaults)
 local tins = table.insert
 local tof = typeof

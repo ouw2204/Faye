@@ -1,7 +1,7 @@
 local m = {tof = typeof,max = math.max, tr = table.remove, tf = table.find, tins = table.insert,tc = table.clear,
 
 tabletxt = "table",numbertxt = "number",instanceTxt = "Instance",valueBaseTxt = "ValueBase",functiontxt = "function"}
-local Types = require(script.Parent.Parent.Types)
+local Types = require(script.Parent.Parent.FayeTypes)
 local Clean = require(script.Parent.Parent.Clean)
 local AddTxt = "Add";
 local RemoveTxt = "Remove";

@@ -1,4 +1,4 @@
-local Types = require(script.Parent.Types)
+local Types = require(script.Parent.FayeTypes)
 local Utility = require(script.Parent.Misc.FayeUtility)
 local typetxt,idtxt = "Animation","Anim_"
 local counter = 0;

@@ -1,5 +1,5 @@
 local tof = typeof
-local Types = require(script.Parent.Parent.Parent.Types)
+local Types = require(script.Parent.Parent.Parent.FayeTypes)
 local numbertxt,RBXScriptSignaltxt,tabletxt = "number","RBXScriptSignal","table"
 return function (Index: number,Ret: any,Ret2: any, Compile: () -> (), Entity: any)
 	if Ret ~= nil then

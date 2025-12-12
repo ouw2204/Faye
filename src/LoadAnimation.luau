@@ -1,4 +1,4 @@
-local Types = require(script.Parent.Types)
+local Types = require(script.Parent.FayeTypes)
 local Storage = require(script.Parent.Compile.Compilers.CompileAnimations.Player.AnimatorStorage)
 local OverlapFixer = require(script.Parent.Compile.Compilers.CompileAnimations.Player.OverlapFixer)
 local AnimPlayer = require(script.Parent.Compile.Compilers.CompileAnimations.Player)

@@ -1,5 +1,5 @@
 local Utility = require(script.Parent.Misc.FayeUtility)
-local Types = script.Parent.Types;
+local Types = script.Parent.FayeTypes;
 --[=[
     @method Reactive
     @within Thread

@@ -1,6 +1,6 @@
 local ValueBase = require(script.Parent.Misc.ValueBase);
 local Signal = require(script.Parent.Packages.SimpleSignal);
-local Types = require(script.Parent.Types)
+local Types = require(script.Parent.FayeTypes)
 local Utility = require(script.Parent.Misc.FayeUtility)
 local typeTxt = script.Name;
 

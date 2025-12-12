@@ -1,5 +1,5 @@
 local Signal = script.Parent.Signal
-local Types = require(script.Parent.Types)
+local Types = require(script.Parent.FayeTypes)
 local typetxt = 'Signal';
 local Utility = require(script.Parent.Misc.FayeUtility)
 local Runner = require(Signal.Runner)

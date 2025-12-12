@@ -7,7 +7,7 @@
 ]=]
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
 local Utility = require(script.Parent.Misc.FayeUtility)
-local types = require(script.Parent.Types)
+local types = require(script.Parent.FayeTypes)
 local typetxt = script.Name;
 return function(Value: any,Thread: types.Thread?) : any
     if Value == nil or Utility.tof(Value) ~= "table" or Value.__type == nil or ValueClasses[Value.__type] == nil then warn(`Pass a valid value object - {debug.traceback()}`); return end;

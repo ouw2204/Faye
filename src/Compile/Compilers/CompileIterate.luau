@@ -1,5 +1,5 @@
 
-local Types = require(script.Parent.Parent.Parent.Types)
+local Types = require(script.Parent.Parent.Parent.FayeTypes)
 local Utility = require(script.Parent.Parent.Parent.Misc.FayeUtility)
 local instancetxt,destroytxt,tabletxt,numbertxt = "Instance","Destroy","table","number"
 local ValueClasses = require(script.Parent.Parent.Parent.Misc.ValueClasses)

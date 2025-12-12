@@ -1,4 +1,4 @@
-local OtherTypes = require(script.Parent.Types)
+local OtherTypes = require(script.Parent.FayeTypes)
 
 --[=[
     @function SpringInfo

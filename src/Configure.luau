@@ -1,4 +1,4 @@
-local Types = require(script.Parent.Types)
+local Types = require(script.Parent.FayeTypes)
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
 
 local tins = table.insert

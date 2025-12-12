@@ -1,5 +1,5 @@
 local Utility = require(script.Parent.Misc.FayeUtility)
-local Types = require(script.Parent.Types)
+local Types = require(script.Parent.FayeTypes)
 --[=[
     @method Listener
     @within Thread

@@ -1,5 +1,5 @@
 local Utility = require(script.Parent.FayeUtility);
-local Types = require(script.Parent.Parent.Types)
+local Types = require(script.Parent.Parent.FayeTypes)
 
 return function (Compile: any,  res1: any,res2: any,Entity: Types.FayeInstance, Thread: Types.Thread)
 	if res1 == nil and res2 == nil then return end;

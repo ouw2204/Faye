@@ -178,6 +178,7 @@ export type Properties = {
 	TextBounds: any,
 	DisplayOrder: number?,
 	FontFace: any,
+	AutomaticCanvasSize: any,
 	ScrollBarImageColor3: any,
 	ScrollBarTransparency: any,
 	TopImage: any,

@@ -2,7 +2,7 @@
     @class DelayValue
     A class that represents a value with a delay and threading.
 ]=]
-local Types = require(script.Parent.Types)
+local Types = require(script.Parent.FayeTypes)
 local Signal = require(script.Parent.Packages.SimpleSignal);
 local Utility = require(script.Parent.Misc.FayeUtility)
 local ValueBase = require(script.Parent.Misc.ValueBase)
@@ -111,11 +111,7 @@ function mt:Get()
         return self.Value
     end
 end
---[=[
-    @method Set
-    @within DelayValue
-    @param newValue any
-]=]
+
 --< set main code
 function setValue(itm,newValue: any,NoDelay: boolean?)
     if itm.Connection ~= nil and itm.Connection["Disconnect"] ~= nil then
@@ -166,8 +162,16 @@ function setValue(itm,newValue: any,NoDelay: boolean?)
     end
 end
 --> main set code
+--[=[
+    @method Set
+    @within DelayValue
+    @param newValue any
+    Sets a new value.
+    @return DelayValue
+]=]
 function mt:Set(newValue: any)
     setValue(self,newValue)
+    return self
 end
 --[=[
     @method Refresh

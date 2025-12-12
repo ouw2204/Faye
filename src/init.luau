@@ -14,7 +14,7 @@ mt.__index = mt;
 local tins,tf,tr = table.insert,table.find,table.remove
 local destroytxt,tabletxt,cleantxt,instancetxt,functiontxt,rbxlscripttxt,threadtxt = "Destroy","table","Clean","Instance","function","RBXScriptConnection","thread"
 --types
-local Types = require(script.Types);
+local Types = require(script.FayeTypes);
 
 --methods
 local Create = require(script.Create)
@@ -379,7 +379,7 @@ return {
 } :: {
     new: () -> Types.Thread;
     
-
+    Types: typeof(Types);
 
     Create: (ClassName: string) -> (Properties: Types.Properties) -> Types.FayeInstance;
     Configure: (Entity: any) -> (Properties: Types.Properties) -> Types.FayeInstance;
