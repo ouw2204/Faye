@@ -25,10 +25,36 @@ The **Value:Get** function has a recursive property where if the value is a Faye
 ```lua
 print(Size.Value) -- the none recursive value
 ```
-### Special Faye Values
+## Special Faye Values
 Faye also offers some utilities that let you sync Values to properties and Attributes
 ```lua
 local Value = Thread:InstanceAttributeSync(Instance,"SomeAttribute") -- Attribute sync
 local Value = Thread:InstancePropertySync(Instance,"Size") -- Property sync
 ```
 You can use these special values like you would regular values, it has support for almost all functions if not all.
+
+## Useful Value functions
+You can use :Add , and :Remove to increment or decrement a Value's value, using + or - also works in their place.
+```lua
+local Value = Thread:Value(25)
+Value:Add(30)
+Value += 5 -- now the current value is 60
+Value:Remove(40)
+Value -= 10 -- now its 10
+Value = Value - 10 -- now its 0
+```
+This also works with table values
+```lua
+local tab = Thread:Value({
+    "Hello world"
+    "Second"
+})
+
+Tab -= "Second" -- removes second from the table
+```
+### Refreshing a Value
+If you made no changes to a value, but want to fire the signal so that it triggers reactivity, you can force this by doing
+```lua
+Value:Refresh();
+```
+There are more functions like this in the [Api](/api) section.

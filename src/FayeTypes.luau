@@ -40,7 +40,7 @@ export type Animation = {
     __animId: string;
 	Destroy: (self: Animation) -> ();
 	Stop: (self: Animation) -> ();
-	Skip: (self: Animation) -> PlayableAnimation;
+	Skip: (self: Animation) -> Animation;
 }
 export type Info = {Time: number; EasingStyle: Enum.EasingStyle; EasingDirection: Enum.EasingDirection; RepeatCount: number; Reverse: boolean; DelayTime: number}
 export type SpringInfo = {Time: number; Frequency: number; Damping: number; RepeatCount: number; Reverse: boolean; DelayTime: number}
@@ -93,13 +93,13 @@ export type Space = {
     Connect: (self: Space, Connection: RBXScriptSignal,Id: any) -> RBXScriptConnection;
     Destroy: (self: Space) -> ();
 }
-export type PlayableAnimation = {
-	Play: (self: PlayableAnimation) -> PlayableAnimation;
-	Stop: (self: PlayableAnimation) -> ();
-	Pause: (self: PlayableAnimation) -> PlayableAnimation;
-	Resume: (self: PlayableAnimation) -> PlayableAnimation;
-	Skip: (self: PlayableAnimation) -> PlayableAnimation;
-	Destroy: (self: PlayableAnimation) -> ();
+export type LoadAnimation = {
+	Play: (self: LoadAnimation) -> LoadAnimation;
+	Stop: (self: LoadAnimation) -> ();
+	Pause: (self: LoadAnimation) -> LoadAnimation;
+	Resume: (self: LoadAnimation) -> LoadAnimation;
+	Skip: (self: LoadAnimation) -> LoadAnimation;
+	Destroy: (self: LoadAnimation) -> ();
 	IsActive: boolean?;
 }
 export type YieldSafe = {
@@ -141,7 +141,7 @@ export type Thread = {
 	MethodSignaled: (self: Thread, Method: string, Index: string,RunOnInitialization: boolean?) -> ();
 	Spawn: (self: Thread, func: (...any) -> (),...any) -> thread;
 	Delay: (self: Thread,time: number, func: (...any) -> (),...any) -> thread;
-	LoadAnimation: (self: Thread, Entity: Instance,Goals: Properties, Info: (Info | SpringInfo)?) -> PlayableAnimation;
+	LoadAnimation: (self: Thread, Entity: Instance,Goals: Properties, Info: (Info | SpringInfo)?) -> LoadAnimation;
 	ModifyAnimation: (self: Thread, Animaiton: {any: any},Modifications: AnimationModifications) -> {any: any};
 	CloneAnimation: (self: Thread, Animaiton: {any: any},Modifications: AnimationModifications) -> {any: any};
 	Reactive: (self: Thread, func: (Grab: (Value: Instance | Value) -> any) -> ()) -> (() -> ())?;

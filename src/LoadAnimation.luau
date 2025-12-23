@@ -13,7 +13,7 @@ local Utility = require(script.Parent.Misc.FayeUtility)
     @param Entity Instance -- The instance to animate
     @param Goal Types.Properties -- The goal properties to animate to
     @param Info Types.Info? -- (Optional) The animation info
-    return PlayableAnimation -- The playable animation object
+    return LoadAnimation -- The playable animation object
 ]=]
 local mt = {};
 mt.__index = mt
@@ -177,7 +177,7 @@ function mt:Destroy(CameFromStop: boolean?)
     Utility.tc(self);
 end
 
-return function(Entity: Instance,Goals: Types.Properties,Info: (Types.Info | Types.SpringInfo)?, Thread: Types.Thread): Types.PlayableAnimation
+return function(Entity: Instance,Goals: Types.Properties,Info: (Types.Info | Types.SpringInfo)?, Thread: Types.Thread): Types.LoadAnimation
     if Entity == nil or Goals == nil  or Utility.tof(Goals) ~= Utility.tabletxt then warn("Was unable to create animation, check the parameters and retry!") return end;
     if Info == nil then Info = DefaultInfo end;
     if Entity.ClassName == nil then

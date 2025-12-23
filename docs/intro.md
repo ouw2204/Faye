@@ -1,11 +1,11 @@
 ---
 sidebar_position: 1
 ---
+# Introduction
 :::info Disclaimer
 I may not give useable code in my examples, so don't copy everything over thinking it will work.
 :::
-# Introduction
-Faye can be used in any way. You can also use the utility modules individually as you please. **Most Faye Utilities have a Thread parameter you can use to insert your own Cleaner module**(if used individually without a Faye Threader)
+Faye can be used in any way. You can also use the utility modules individually as you please. **Most Faye Utilities have a Thread parameter you can use to insert your own Cleaner module**(if used individually without a Faye Threader). <mark>You can also use roblox Instance values like how you would use Faye Values inside of Faye.</mark>
 ## Object Creation and Configuration
 You can create objects using the Create function
 ```lua

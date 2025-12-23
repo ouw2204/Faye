@@ -2,7 +2,7 @@
     @class Thread
     Threads help us contain/clean our components.
     ```lua
-    local Threader = require(Faye.Threader)
+    local Threader = require(Faye)
     
     local Thread = Threader();
     ```
@@ -344,6 +344,27 @@ local scriptName = script.Name;
 function mt.__tostring()
     return scriptName;
 end
+
+--< export types
+export type Thread = Types.Thread
+export type Value = Types.Value
+export type Properties = Types.Properties
+export type FayeInstance = Types.FayeInstance
+export type Info = Types.Info
+export type SpringInfo = Types.SpringInfo
+export type AnimationModifications = Types.AnimationModifications
+export type LoadAnimation = Types.LoadAnimation
+export type DelayValue = Types.DelayValue
+export type Delay = Types.Delay
+export type Space = Types.Space
+export type YieldSafe = Types.YieldSafe
+export type Signal = Types.Signal
+export type SpecialThreadParams = Types.SpecialThreadParams
+export type SpaceTask = Types.SpaceTask
+export type UserInputType = Types.UserInputType
+export type Animation = Types.Animation
+export type Connection = Types.Connection
+-->
 return {
     new = function()
         local new = {IsActive = true}
@@ -378,9 +399,6 @@ return {
     AdvancedIterate = AdvancedIterate;
 } :: {
     new: () -> Types.Thread;
-    
-    Types: typeof(Types);
-
     Create: (ClassName: string) -> (Properties: Types.Properties) -> Types.FayeInstance;
     Configure: (Entity: any) -> (Properties: Types.Properties) -> Types.FayeInstance;
     Value: (Initial: any) -> Types.Value;
@@ -403,7 +421,7 @@ return {
     Signal: (func: (Thread: Types.Thread, Entity: Instance, ...any) -> ()?) -> Types.Signal;
     SignalState: (any, func: (Thread: Types.Thread, Entity: Instance, ...any) -> ()) -> Types.Signal;
 	MethodSignaled: (Method: string, Index: string,RunOnInitialization: boolean?) -> ();
-	LoadAnimation: (Entity: Instance, Property: string,Goals: any, Info: (Types.Info | Types.SpringInfo)?) -> Types.PlayableAnimation;
+	LoadAnimation: (Entity: Instance, Property: string,Goals: any, Info: (Types.Info | Types.SpringInfo)?) -> Types.LoadAnimation;
 	ModifyAnimation: (Animaiton: {any: any},Modifications: Types.AnimationModifications) -> {any: any};
 	CloneAnimation: (Animaiton: {any: any},Modifications: Types.AnimationModifications) -> {any: any};
 	Reactive: (func: (Grab: (Value: Instance | Types.Value) -> any) -> ()) -> (() -> ())?;
