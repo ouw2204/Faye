@@ -92,7 +92,7 @@ return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile:
         Trigger = nil;
         Delete = nil;
     end
-    Trigger(firsttxt)
+    task.spawn(Trigger,firsttxt)
     Utility.AddToEntity(Instance,Delete)
     if Thread == nil then return end;
     EqThread = Thread;
