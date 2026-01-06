@@ -1,6 +1,6 @@
 [package]
 name = "mountaindouw/faye"
-version = "2.0.7"
+version = "2.0.8"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 

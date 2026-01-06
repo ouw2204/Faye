@@ -30,7 +30,7 @@ export type FayeInstance = {
 	--> new
 	Remove: (self: FayeInstance, Item: any) -> ();
 	Connect: (self: FayeInstance, Connection: RBXScriptSignal, Function: (...any) -> ()) -> RBXScriptConnection;
-	Add: (self: FayeInstance, Item: any, IsConnection: boolean) -> any;
+	Add: <T>(self: FayeInstance, Item: T, IsConnection: boolean) -> T;
 	ClearCache: (self: FayeInstance) -> ();
 	-->
 }
@@ -131,7 +131,7 @@ export type Thread = {
     DelayProperty: (self: Thread, Props: Properties | any,Time: number,From: Properties?) -> ();
     SetTo: (self: Thread, Value: Value) -> {};
     Listener: (self: Thread, Entity: any, Event: string | {string}, func: (string,...any) -> ()) -> ();
-    Add: (self: Thread,Entity: any) -> ();
+    Add: <T>(self: Thread,Entity: T) -> T;
     Remove: (self: Thread,Entity: any) -> ();
     Space: (self: Thread, func: (...any) -> ()) -> Space,
     YieldSafe: (self: Thread,func: (...any)-> (),DelayTime: number?) -> YieldSafe;

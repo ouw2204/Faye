@@ -11,8 +11,8 @@ local mt = require(script.Parent.Misc.FayeInstance)
     @return function
     [Allows configuration on an existing physical or none physical component.](/docs/Instancing/Create) Inherits method from [Create](/api/Create).
 ]=]
-local functiontxt,tabletxt,cleandelaytxt,parenttxt,numbertxt =
-	"function", "table", "CleanDelay", "Parent", "number"
+local functiontxt,tabletxt,cleandelaytxt,parenttxt,numbertxt,instancetxt =
+	"function", "table", "CleanDelay", "Parent", "number","Instance"
 return function(Entity: any, Thread: { Add: (self: {}, Entity: any) -> () }?)
 	return function(props: Types.Properties)
 		if tof(Entity) == "table" then
@@ -39,7 +39,7 @@ return function(Entity: any, Thread: { Add: (self: {}, Entity: any) -> () }?)
 		end
 		for i, v in pairs(props) do
 			local tov = tof(v)
-			if tov ~= functiontxt and tov ~= tabletxt and i ~= cleandelaytxt and i ~= parenttxt and tof(i) ~= numbertxt then
+			if tov ~= functiontxt and tov ~= tabletxt and tov ~= instancetxt and i ~= cleandelaytxt and i ~= parenttxt and tof(i) ~= numbertxt then
 				Entity[i] = v
 				props[i] = nil
 			else
