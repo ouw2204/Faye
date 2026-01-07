@@ -39,7 +39,7 @@ return function(Entity: any, Thread: { Add: (self: {}, Entity: any) -> () }?)
 		end
 		for i, v in pairs(props) do
 			local tov = tof(v)
-			if tov ~= functiontxt and tov ~= tabletxt and tov ~= instancetxt and i ~= cleandelaytxt and i ~= parenttxt and tof(i) ~= numbertxt then
+			if tov ~= functiontxt and tov ~= tabletxt and not (tov == instancetxt and v:IsA("ValueBase") ) and i ~= cleandelaytxt and i ~= parenttxt and tof(i) ~= numbertxt then
 				Entity[i] = v
 				props[i] = nil
 			else
