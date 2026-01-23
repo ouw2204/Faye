@@ -73,8 +73,7 @@ function parammt:Destroy()
     end
     self.__holder = nil;
     self.Call = nil;
-    setmetatable(self,nil)
-    Utility.tc(self)
+
 end
 --[=[
     @method Call
@@ -192,7 +191,7 @@ function mt:Destroy()
     end
     self.Tasks = nil;
     self.Cleaning = nil;
-    setmetatable(self,nil);
+
 end
 
 local Name = script.Name;

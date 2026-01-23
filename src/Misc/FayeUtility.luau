@@ -35,7 +35,7 @@ function  m.AddToEntity(Instance: Types.FayeInstance, Item: any): boolean
     end
 end
 function m.RemoveFromEntity(Instance: Types.Thread, Item: any): boolean
-    if Instance == nil or Item == nil then return end;
+    if Instance == nil or Item == nil then return false end;
     if Instance[RemoveTxt] then
         Instance:Remove(Item)
         return true;
@@ -82,7 +82,7 @@ function  m.AddToThread(Thread: Types.Thread, Item: any)
     end
 end
 local disconnecttxt = "Disconnect"
-function m.ClearAllConnections(Connections: {[number]: RBXScriptConnection},connectionsNumb: number)
+function m.ClearAllConnections(Connections: {[number]: RBXScriptConnection},connectionsNumb: number?)
     for i = connectionsNumb or #Connections,1,-1 do
         if Connections[i] ~= nil and Connections[i][disconnecttxt] ~= nil then
             Connections[i]:Disconnect();

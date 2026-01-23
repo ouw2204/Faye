@@ -29,7 +29,6 @@ function disconnectmt:Disconnect()
     self.__simplesignalconnection = nil;
     self.func = nil;
     self.signal = nil;
-    setmetatable(self,nil);
 end
 disconnectmt.Destroy = disconnectmt.Disconnect
 --Connect
@@ -56,7 +55,10 @@ function mt:Connect(func: () -> (),RemoveFromTableOnDisconnect: {[any]: any}?)
 end
 function mt:Once(func: () -> ())
     if self.Destroying == true then return end;
-    local t = setmetatable({func = func,signal = self,Once = true},disconnectmt)
+    local t; t = setmetatable({func = function(...)
+        func(...)
+        t:Disconnect()
+    end,signal = self,Once = true},disconnectmt)
     tins(self,t)
     return t;
 end
@@ -65,7 +67,6 @@ function mt:Destroy()
     if self.Destroying then return end;
     self.Destroying = true;
     self:DisconnectAll();
-    setmetatable(self,nil);
     self.Destroying = nil;
 end
 function mt:DisconnectAll()
@@ -77,20 +78,55 @@ function mt:DisconnectAll()
 end
  
 --Firing signal
-local disconnectxt = "Disconnect";
+local cur;
+local cr,cy,cc = coroutine.resume,coroutine.yield,coroutine.create
+local perform = function(func,...)
+
+    if func == nil then
+        return true
+    else
+        local currentcur = cur;
+        cur = nil;
+        func(...)
+        if cur == nil then
+            cur = currentcur;
+            return
+        else
+            return true
+        end
+    end
+
+end
+local runner = function()
+    while true do
+        if perform(cy()) then break end;
+    end
+end
+local zerocheck = 0;
+local increment = 1;
+local w = warn;
 function mt:Fire(...)
-    for i = #self,1,-1 do
+    local i = #self;
+    while i >zerocheck do
         local v = self[i];
         if v == nil then continue end;
-        task.spawn(v.func,...)
-        if v.Once == true and v[disconnectxt] ~= nil then
-            v:Disconnect();
+        if cur == nil then
+            cur = cc(runner)
+            cr(cur)
         end
+        local er,m = cr(cur,v.func,...)
+       
+        if not er then
+            cur = nil;
+            w(`Simple Signal Errored while firing: {m}`)
+        end
+        i -=increment
     end
 end
 -- no task.spawn
 function mt:BasicFire(...)
-    for i = #self, 1, -1 do
+    local i = #self;
+    while i >zerocheck do
         local v = self[i]
         if v == nil then
             continue
@@ -99,6 +135,7 @@ function mt:BasicFire(...)
         if v.Once == true and v.Disconnect then
             v:Disconnect()
         end
+        i -= increment
     end
 end
 --queus and waits for connections
@@ -113,7 +150,7 @@ function mt:SafeFire(...)
     end
 end
 
-function mt:Wait(timeout: number)
+function mt:Wait(timeout: number?)
     local thread = coroutine.running()
     local isFired = false
     local connection
@@ -127,7 +164,7 @@ function mt:Wait(timeout: number)
                 task.cancel(timeoutTask)
                 timeoutTask = nil;
             end
-            coroutine.resume(thread, ...)
+            cr(thread, ...)
         end
     end)
 
@@ -136,7 +173,7 @@ function mt:Wait(timeout: number)
             if not isFired then
                 isFired = true
                 connection:Disconnect()
-                coroutine.resume(thread, nil) -- Resume with nil to indicate a timeout
+                cr(thread, nil) -- Resume with nil to indicate a timeout
             end
         end)
     end
@@ -156,7 +193,7 @@ export type Signal = {
     Once: (self: Signal, func: (...any) -> ()) -> Connection,
     DisconnectAll: (self: Signal) -> (),
     Destroy: (self: Signal) -> (),
-    Wait: (self: Signal, timeout: number) -> any
+    Wait: (self: Signal, timeout: number?) -> any
 }
 return {
     new = function() : Signal

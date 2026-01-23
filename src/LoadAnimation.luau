@@ -173,8 +173,7 @@ function mt:Destroy(CameFromStop: boolean?)
     if self.Thread ~= nil then
         Utility.RemoveFromThread(self.Thread,self)
     end
-    setmetatable(self,nil)
-    Utility.tc(self);
+
 end
 
 return function(Entity: Instance,Goals: Types.Properties,Info: (Types.Info | Types.SpringInfo)?, Thread: Types.Thread): Types.LoadAnimation

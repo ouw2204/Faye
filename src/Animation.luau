@@ -35,8 +35,6 @@ function mt:Destroy()
     if self.Thread ~= nil then
         Utility.RemoveFromThread(self.Thread,self)
     end
-    setmetatable(self,nil);
-    Utility.tc(self)
 end
 --[=[
     @method Stop

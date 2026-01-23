@@ -5,6 +5,21 @@ sidebar_position: 1
 :::info Disclaimer
 I may not give useable code in my examples, so don't copy everything over thinking it will work.
 :::
+
+## Faye is a Tool, Not a Runtime
+Unlike other Roblox UI frameworks (Roact, Fusion, etc.) that have their own runtime, virtual DOM, or reconciliation system, <mark>Faye is a utility toolkit that works directly with native Roblox instances</mark>.
+
+**What this means:**
+- No virtual DOM or diffing overhead
+- You're always working with real Roblox instances
+- Mix and match Faye with regular Roblox code freely
+- Use only the utilities you need - everything is modular
+- No "Faye way" of doing things - it enhances your workflow, doesn't replace it
+
+Faye provides reactivity, lifecycle management, and animations as tools you can pick up and use, not as a framework that owns your UI.
+
+---
+
 Faye can be used in any way. You can also use the utility modules individually as you please. **Most Faye Utilities have a Thread parameter you can use to insert your own Cleaner module**(if used individually without a Faye Threader). <mark>You can also use roblox Instance values like how you would use Faye Values inside of Faye.</mark>
 ## Object Creation and Configuration
 You can create objects using the Create function

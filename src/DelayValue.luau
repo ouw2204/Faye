@@ -43,8 +43,7 @@ function mt:Destroy()
         Utility.tc(self.Custom)
         self.Custom = nil;
     end
-    setmetatable(self,nil)
-    Utility.tc(self)
+
 end
 function mt:Add(Amount: any)
     if self.valueIsValue then

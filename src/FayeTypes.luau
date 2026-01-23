@@ -1,4 +1,5 @@
 export type Value = {
+	__type: string;
     Set: (self: Value, Value: any,signalIsBasic: boolean?) -> ();
     Get: (self: Value) -> any;
     Add: (self: Value, Value: any,...any) -> ();
@@ -30,7 +31,7 @@ export type FayeInstance = {
 	--> new
 	Remove: (self: FayeInstance, Item: any) -> ();
 	Connect: (self: FayeInstance, Connection: RBXScriptSignal, Function: (...any) -> ()) -> RBXScriptConnection;
-	Add: <T>(self: FayeInstance, Item: T, IsConnection: boolean) -> T;
+	Add: <T>(self: FayeInstance, Item: T, IsConnection: boolean?) -> T;
 	ClearCache: (self: FayeInstance) -> ();
 	-->
 }
@@ -224,7 +225,7 @@ LineJoinMode: any,   -- Enum.LineJoinMode (Round/Bevel/Miter)
 StrokeSizingMode: any, -- Enum.StrokeSizingMode (FixedSize / maybe UDim variants)
 TextWrap: any,
 	-- >
-	
+	AutomaticSize: any;
 
 	CursorPosition: any;
 	MultiLine: any;

@@ -202,7 +202,7 @@ function m:Set(newValue: any, signalIsBasic: boolean?)
         self.Value = newValue;
         self.ValueType = Utility.tof(newValue)
         self.ValueTypeIsTable = self.ValueType == Utility.tabletxt
-        if self.SignalEnabled == true or self.SignalEnabled == nil then
+        if (self.SignalEnabled == true or self.SignalEnabled == nil) and self.Changed ~= nil then
             if signalIsBasic then
                 self.Changed:BasicFire(newValue)
             else
@@ -233,14 +233,14 @@ function m:ReCalibrate(Instance: Instance?,Property: string?)
         if self.IsAttribute == nil then
             self.Initial = self.Instance[self.Property];
             self.ChangeListener = self.Instance:GetPropertyChangedSignal(self.Property):Connect(function()
-                if self.SignalEnabled == nil or self.SignalEnabled == true then
+                if (self.SignalEnabled == nil or self.SignalEnabled == true) and self.Changed ~= nil then
                     self.Changed:Fire(self.Instance[self.Property])
                 end
             end)
         else
             self.Initial = self.Instance:GetAttribute(self.Property);
             self.ChangeListener = self.Instance:GetAttributeChangedSignal(self.Property):Connect(function()
-                if self.SignalEnabled == nil or self.SignalEnabled == true then
+                if (self.SignalEnabled == nil or self.SignalEnabled == true) and self.Changed ~= nil then
                     self.Changed:Fire(self.Instance:GetAttribute(self.Property))
                 end
             end)
@@ -261,8 +261,7 @@ function m:Destroy()
         self.Changed:Destroy();
         self.Changed = nil;
     end 
-    setmetatable(self,nil)
-    Utility.tc(self)
+
 end
 
 return m;

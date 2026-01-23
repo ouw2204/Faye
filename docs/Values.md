@@ -57,4 +57,29 @@ If you made no changes to a value, but want to fire the signal so that it trigge
 ```lua
 Value:Refresh();
 ```
+
+## Listening to Value changes
+Every Value has a `Changed` signal you can connect to directly:
+```lua
+local Health = Thread:Value(100)
+
+Thread:Connect(Health.Changed, function(newValue)
+    print("Health changed to:", newValue)
+end)
+```
+
+## Table Values with keys
+When working with table Values, you can add and remove with specific keys:
+```lua
+local Players = Thread:Value({})
+
+-- Add with key
+Players:Add("player1", {name = "Alice", score = 100})
+
+-- Remove by key
+Players:Remove("player1")
+```
+
+This is especially useful with [AdvancedIterate](./Iterate.md) which can react to individual key changes.
+
 There are more functions like this in the [Api](/api) section.

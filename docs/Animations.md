@@ -108,6 +108,39 @@ If you just want to play animations and you don't want to setup reactivity, you 
 Thread:LoadAnimation(  Entity  ,  {Size = UDim2.fromOffset(200,200)}  ,  Thread.Info(.2)  ):Play()
 ```
 You can tween multiple properties in one object at the same time just like regular roblox tweening, the Info parameter is optional, but the Object and Goal table must be specified.
+
+### LoadAnimation Methods
+```lua
+local anim = Thread:LoadAnimation(entity, {Size = UDim2.fromOffset(200, 200)}, Thread.Info(0.5))
+
+anim:Play()    -- Start the animation
+anim:Pause()   -- Pause at current position
+anim:Resume()  -- Resume from paused position
+anim:Stop()    -- Stop and reset
+anim:Skip()    -- Jump to end state immediately
+anim:Destroy() -- Clean up the animation object
+```
+
+### Example: Button hover animation
+```lua
+local button = Thread:Create "TextButton" {
+    Parent = parent,
+    Size = UDim2.fromOffset(100, 50),
+}
+
+local hoverAnim = Thread:LoadAnimation(button.Instance, {
+    Size = UDim2.fromOffset(110, 55)
+}, Thread.Info(0.2, Enum.EasingStyle.Quad))
+
+button.Instance.MouseEnter:Connect(function()
+    hoverAnim:Play()
+end)
+
+button.Instance.MouseLeave:Connect(function()
+    hoverAnim:Stop()
+end)
+```
+
 :::info
 You can reuse 1 animation utility on multiple objects
 :::

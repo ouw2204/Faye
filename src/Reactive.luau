@@ -1,5 +1,5 @@
 local Utility = require(script.Parent.Misc.FayeUtility)
-local Types = script.Parent.FayeTypes;
+local Types = require(script.Parent.FayeTypes);
 --[=[
     @method Reactive
     @within Thread
@@ -54,7 +54,7 @@ return function (func: (Grab: (Value: Instance | Types.Value) -> any) -> (),Thre
         Trigger = nil;
         Delete = nil;
     end
-    Trigger(firsttxt)
+    task.spawn(Trigger,firsttxt)
     if Thread ~= nil then
         Utility.AddToThread(Thread,Delete)
     else

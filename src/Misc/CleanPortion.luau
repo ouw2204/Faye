@@ -1,4 +1,4 @@
-local tof,tc = typeof,table.clear
+local tof = typeof
 local destroytxt,tabletxt,cleantxt,instancetxt,functiontxt,rbxlscripttxt,threadtxt = "Destroy","table","Clean","Instance","function","RBXScriptConnection","thread"
 return function (Scope: any?,Count: number?)
     for k = Count or #Scope, 1, -1 do
@@ -13,8 +13,6 @@ return function (Scope: any?,Count: number?)
                 elseif v[cleantxt] then
                     v:Clean()
                 end
-            else
-                tc(v)
             end
         elseif type == instancetxt then
             v:Destroy()

@@ -21,7 +21,6 @@ function Recursive(Scope,Count: number?)
 		CleanPortion(Scope,Count)
 		Scope.AnimationsAmount = nil
 		Scope.__Destroying = nil;
-		setmetatable(Scope, nil)
 	end
 end
 return function(Scope)

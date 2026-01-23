@@ -13,7 +13,6 @@ mt.__index = mt
     @class FayeInstance
     A faye instance class.
 ]=]
-local tc = table.clear
 function removefunc(t: Types.Thread, v: any)
 	if t == nil or v == nil then
 		return
@@ -357,7 +356,6 @@ function mt:Destroy()
 				self.CleanFunction = nil
 				self.OnClean = nil
 				self.InnerThread = nil
-				tc(self)
 			end)
 			self.CleanDelay = nil
 		else
@@ -366,13 +364,11 @@ function mt:Destroy()
 			self.CleanFunction = nil
 			self.OnClean = nil
 			self.InnerThread = nil
-			tc(self)
 		end
 	end
 	self.CleanDelay = nil
 	self.Props = nil
 	self.Thread = nil
-	setmetatable(self, nil)
 end
 
 local scriptName = script.Name

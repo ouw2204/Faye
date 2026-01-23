@@ -1,6 +1,6 @@
 [package]
 name = "mountaindouw/simplesignal"
-version = "1.1.8"
+version = "1.2.0"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 license = "MIT"

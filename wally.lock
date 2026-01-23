@@ -4,10 +4,10 @@ registry = "test"
 
 [[package]]
 name = "mountaindouw/faye"
-version = "1.9.8"
-dependencies = [["SimpleSignal", "mountaindouw/simplesignal@1.1.8"]]
+version = "2.0.9"
+dependencies = [["SimpleSignal", "mountaindouw/simplesignal@1.2.0"]]
 
 [[package]]
 name = "mountaindouw/simplesignal"
-version = "1.1.8"
+version = "1.2.0"
 dependencies = []
