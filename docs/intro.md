@@ -3,7 +3,7 @@ sidebar_position: 1
 ---
 # Introduction
 :::info Disclaimer
-I may not give useable code in my examples, so don't copy everything over thinking it will work.
+I may not give useable code in my examples, so don't copy everything over, thinking it will work.
 :::
 
 ## Faye is a Tool, Not a Runtime
