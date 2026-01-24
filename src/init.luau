@@ -187,7 +187,7 @@ end
     @param Entity any
     The entity to remove from the thread, meaning when the thread is cleaned it won't be cleaned with it.
 ]=]
-function mt:Remove(Entity: any,IsPriority: boolean?)
+function mt:Remove(Entity: any)
     if Entity == nil then return end;
     local find = tf(self,Entity)
     if find ~= nil then

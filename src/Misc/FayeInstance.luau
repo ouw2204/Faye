@@ -300,16 +300,29 @@ end
 
 
 function mt:Destroy()
+	local Removed = false;
 	if self.Thread ~= nil then
 		if self.Thread["Remove"] then
-			self.Thread:Remove(self)
+			Removed = self.Thread:Remove(self)
 		else
 			local Find = tf(self.Thread, self)
 			if Find ~= nil then
 				tr(self.Thread, Find)
+				Removed = true;
 			end
 		end
 	end
+	if not Removed and self.InnerThread ~= nil then
+		if self.InnerThread["Remove"] then
+			self.InnerThread:Remove(self)
+		else
+			local Find = tf(self.InnerThread, self)
+			if Find ~= nil then
+				tr(self.InnerThread, Find)
+			end
+		end
+	end
+	Removed = nil;
 	--< clear cache
 	if self.Cache ~= nil then
 		self:ClearCache();
