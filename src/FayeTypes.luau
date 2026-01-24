@@ -20,7 +20,7 @@ export type FayeInstance = {
 	Instance: Instance, Thread: Thread?, InnerThread: Thread?,
 	SetAttribute: (self: FayeInstance,Name: string,Value: any) -> FayeInstance,
 	GetAttribute: (self: FayeInstance,Name: string) -> any,
-	GetAttributes: (self: FayeInstance) -> {any: any};
+	GetAttributes: (self: FayeInstance) -> {[any]: any};
 	AddTag: (self: FayeInstance,Tag: string) -> FayeInstance,
 	RemoveTag: (self: FayeInstance,Tag: string) -> FayeInstance,
 	HasTag: (self: FayeInstance,Tag: string) -> boolean,
@@ -42,6 +42,7 @@ export type Animation = {
 	Destroy: (self: Animation) -> ();
 	Stop: (self: Animation) -> ();
 	Skip: (self: Animation) -> Animation;
+	AlwaysFrom: any;
 }
 export type Info = {Time: number; EasingStyle: Enum.EasingStyle; EasingDirection: Enum.EasingDirection; RepeatCount: number; Reverse: boolean; DelayTime: number}
 export type SpringInfo = {Time: number; Frequency: number; Damping: number; RepeatCount: number; Reverse: boolean; DelayTime: number}
@@ -81,7 +82,7 @@ export type Delay = {
 export type SpaceTask = {
     Destroy: (self: SpaceTask) -> ();
     Call: (self: SpaceTask) -> SpaceTask;
-    Variables: {any: any};
+    Variables: {[any]: any};
     Parameters: {[any]: any};
     SetId: (self: SpaceTask, Id: any) -> SpaceTask;
     Connect: (self: SpaceTask, Connection: RBXScriptSignal) -> RBXScriptConnection;
@@ -115,7 +116,7 @@ export type Thread = {
 	IsActive: boolean?;
     Create: (self: Thread, ClassName: string) -> (Properties: Properties) -> FayeInstance;
     Configure: (self: Thread, Entity: any) -> (Properties: Properties) -> FayeInstance;
-    Extend: (self: Thread) -> Thread;
+    Extend: (self: Thread,IsOrphan: boolean) -> Thread;
     Destroy: (self: Thread) -> ();
     Value: (self: Thread,Initial: any) -> Value;
     Animation: (self: Thread, Goal: any, Info: (Info | SpringInfo)?,Modifications: AnimationModifications?) -> Animation;
@@ -143,10 +144,10 @@ export type Thread = {
 	Spawn: (self: Thread, func: (...any) -> (),...any) -> thread;
 	Delay: (self: Thread,time: number, func: (...any) -> (),...any) -> thread;
 	LoadAnimation: (self: Thread, Entity: Instance,Goals: Properties, Info: (Info | SpringInfo)?) -> LoadAnimation;
-	ModifyAnimation: (self: Thread, Animaiton: {any: any},Modifications: AnimationModifications) -> {any: any};
-	CloneAnimation: (self: Thread, Animaiton: {any: any},Modifications: AnimationModifications) -> {any: any};
+	ModifyAnimation: (self: Thread, Animaiton: {[any]: any},Modifications: AnimationModifications) -> {[any]: any};
+	CloneAnimation: (self: Thread, Animaiton: {[any]: any},Modifications: AnimationModifications) -> {[any]: any};
 	Reactive: (self: Thread, func: (Grab: (Value: Instance | Value) -> any) -> ()) -> (() -> ())?;
-	CloneTable: (Table: {any: any}, cloneFunction: (Index: any, Value: any) -> (any, any)?) -> {any: any};
+	CloneTable: (Table: {[any]: any}, cloneFunction: (Index: any, Value: any) -> (any, any)?) -> {[any]: any};
 	Debris: (self: Thread, Item: any, Lifetime: number) -> ();
 	SpecialThread: (self:Thread, func: (InnerThread: Thread, Entity: Instance) -> (),Params: (SpecialThreadParams | number) ?) -> ();
 }
@@ -157,7 +158,6 @@ export type Properties = {
 	GroupColor3: any, -- Color3 value that tints all descendant GuiObjects
 	GroupTransparency: any, -- Number (0-1) that sets transparency for all descendants
 	AutoLocalize: any,
-
 	SizeOffset: any,
 	RootLocalizationTable: any,
 	ZIndexBehavior: any,
@@ -166,6 +166,7 @@ export type Properties = {
 	Video: any,
 	LayoutOrder: any,
 	ClearTextOnFocus: any,
+	IgnoreGuiInset: any,
 	Rotation: any,
 	Wraps: any,
 	CellSize: any,
@@ -263,7 +264,6 @@ ResetOnSpawn: any;
 	CameraType: any,
 	CFrame: any,
 	FieldOfView: any,
-	Focus: any,
 	TextWrapped: any,
 	TextXAlignment: any,
 	TextYAlignment: any,

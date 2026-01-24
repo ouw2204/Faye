@@ -123,11 +123,11 @@ function mt:Animation(Goal: any, Info: (Types.Info | Types.SpringInfo)?,Modifica
 end
 --| Animation functions
 local ModifyAnimation = require(script.ModifyAnimation)
-function mt.ModifyAnimation(Animaiton: {any: any},Modifications: Types.AnimationModifications?)
+function mt.ModifyAnimation(Animaiton: {[any]: any},Modifications: Types.AnimationModifications?)
     return ModifyAnimation(Animaiton,Modifications)
 end
 local CloneAnimation = require(script.CloneAnimation)
-function mt:CloneAnimation(Animaiton: {any: any},Modifications: Types.AnimationModifications?)
+function mt:CloneAnimation(Animaiton: {[any]: any},Modifications: Types.AnimationModifications?)
     return CloneAnimation(Animaiton,Modifications,self)
 end
 --|
@@ -283,7 +283,7 @@ function mt:Reactive(func: (Grab: (Value: Instance | Types.Value) -> any) -> ())
     return Reactive(func,self)
 end
 local CloneTable = require(script.CloneTable)
-function mt.CloneTable(Table: {any: any}, cloneFunction: (Index: any, Value: any) -> (any?, any?)?)
+function mt.CloneTable(Table: {[any]: any}, cloneFunction: (Index: any, Value: any) -> (any?, any?)?)
     return CloneTable(Table,cloneFunction)
 end
 local SpecialThread = require(script.SpecialThread)
@@ -397,33 +397,4 @@ return {
     Reactive = Reactive;
     CloneTable = CloneTable;
     AdvancedIterate = AdvancedIterate;
-} :: {
-    new: () -> Types.Thread;
-    Create: (ClassName: string) -> (Properties: Types.Properties) -> Types.FayeInstance;
-    Configure: (Entity: any) -> (Properties: Types.Properties) -> Types.FayeInstance;
-    Value: (Initial: any) -> Types.Value;
-    Animation: (Goal: any, Info: (Types.Info | Types.SpringInfo)?,Modifications: Types.AnimationModifications?) -> Animation;
-    Info: (Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Types.Info;
-    SpringInfo: (Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Types.SpringInfo;
-    Do: (func : (Grab: (Value: Instance | Types.Value) -> any,Entity: Instance?) -> ()) -> any;
-    State: (func : (Grab: (Value: Instance | Types.Value) -> any,Thread: Types.Thread, Entity: Instance?) -> ()) -> any;
-    Iterate: (Table: any,func: (Index: any,Value: any,InnerThread: Types.Thread,Entity: Instance) -> ()) -> ();
-    AdvancedIterate: (Table: any,func: (Index: any,Value: any,InnerThread: Types.Thread,Entity: Instance) -> ()) -> ();
-    InstancePropertySync: ( Entity: Instance, Property: string) -> Types.Value;
-    InstanceAttributeSync: ( Entity: Instance, Attribute: string) -> Types.Value;
-    DelayValue: (Value: Types.Value, Time: number) -> Types.DelayValue;
-    DelayProperty: (Props: Types.Properties,Time: number,From: Types.Properties?) -> Types.Delay;
-    SetTo: (Value: Types.Value) -> {};
-
-    Listener: (Entity: any, Event: string & {string}, func: (string,...any) -> ()) -> ();
-    Space: (func: (...any) -> ()) -> Types.Space,
-    YieldSafe: (func: (...any)-> (),DelayTime: number?) -> Types.YieldSafe;
-    Signal: (func: (Thread: Types.Thread, Entity: Instance, ...any) -> ()?) -> Types.Signal;
-    SignalState: (any, func: (Thread: Types.Thread, Entity: Instance, ...any) -> ()) -> Types.Signal;
-	MethodSignaled: (Method: string, Index: string,RunOnInitialization: boolean?) -> ();
-	LoadAnimation: (Entity: Instance, Property: string,Goals: any, Info: (Types.Info | Types.SpringInfo)?) -> Types.LoadAnimation;
-	ModifyAnimation: (Animaiton: {any: any},Modifications: Types.AnimationModifications) -> {any: any};
-	CloneAnimation: (Animaiton: {any: any},Modifications: Types.AnimationModifications) -> {any: any};
-	Reactive: (func: (Grab: (Value: Instance | Types.Value) -> any) -> ()) -> (() -> ())?;
-	CloneTable: (Table: {any: any}, cloneFunction: (Index: any, Value: any) -> (any?, any?)?) -> {any: any}
 }

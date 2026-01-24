@@ -66,7 +66,7 @@ function m.CallDestroy(Item: any)
         Clean(Item)
     end
 end
-function m.TableRemove(Table: {any: any}, Item: any)
+function m.TableRemove(Table: {[any]: any}, Item: any)
     if Table == nil or Item == nil then return end;
     local f = m.tf(Table,Item)
     if f ~= nil then

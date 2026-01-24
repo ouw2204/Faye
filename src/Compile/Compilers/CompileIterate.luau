@@ -8,7 +8,7 @@ local SupportedValues = {
     IntConstrainedValue = true;
     IntValue = true;
 }
-local function cleanIndividual(Holder: {any: any},Index: any)
+local function cleanIndividual(Holder: {[any]: any},Index: any)
     if Holder[Index] ~= nil then
         Utility.CallDestroy(Holder[Index])
         Holder[Index] = nil

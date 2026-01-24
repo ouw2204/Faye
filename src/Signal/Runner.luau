@@ -1,7 +1,7 @@
 local Utility = require(script.Parent.Parent.Misc.FayeUtility)
 local Compile = require(script.Parent.Parent.Compile)
 local connecttxt = "Connect"
-return function (new: {any: any}, Connections: RBXScriptSignal | {RBXScriptSignal}, func: (...any) -> () )
+return function (new: {[any]: any}, Connections: RBXScriptSignal | {RBXScriptSignal}, func: (...any) -> () )
     new.receiverFunc = function(...)
         if new.Entries ~= nil then
             for i = 1,new.Entries.Count do
