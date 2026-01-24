@@ -7,7 +7,7 @@ local Utility = require(script.Parent.Misc.FayeUtility)
     @return {any:any}?
     Clones a table. If a cloneFunction is provided, it will be used to determine how to clone each entry.
 ]=]
-return function (Table: {any: any}, cloneFunction: (Index: any, Value: any) -> (any?, any?)?)
+return function (Table: {[any]: any}, cloneFunction: (Index: any, Value: any) -> (any?, any?)?)
     if Table == nil or Utility.tof(Table) ~= Utility.tabletxt then return end;
     if cloneFunction ~= nil then
         local new = {};

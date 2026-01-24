@@ -9,7 +9,7 @@ local Types = require(script.Parent.FayeTypes)
     Connects the given function to the specified event(s) on the entity.
 ]=]
 
-return function(Entity: any, Event: any,Function: ([any]: any) -> (),Thread: Types.Thread) : ()
+return function(Entity: any, Event: any,Function: (...any) -> (),Thread: Types.Thread) : ()
     if Entity == nil or Event == nil or Function == nil then return end;
     if Utility.tof(Event) ~= "table" then
         Utility.Connect(Entity[Event],function(...)
