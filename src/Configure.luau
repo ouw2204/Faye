@@ -13,7 +13,7 @@ local mt = require(script.Parent.Misc.FayeInstance)
 ]=]
 local functiontxt,tabletxt,cleandelaytxt,parenttxt,numbertxt,instancetxt =
 	"function", "table", "CleanDelay", "Parent", "number","Instance"
-return function(Entity: any, Thread: { Add: (self: {}, Entity: any) -> () }?)
+return function(Entity: any, Thread: { Add: (self: {}, Entity: any) -> () }?): (props: Types.Properties) -> Types.FayeInstance
 	return function(props: Types.Properties)
 		if tof(Entity) == "table" then
 			if Entity.__type == "Instance" then
