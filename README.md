@@ -9,12 +9,12 @@ Remember to occasionally check for new updates as there might be bug fixes.
 https://create.roblox.com/store/asset/74301103261718/Faye
 ### Wally
 ```
-Faye = "mountaindouw/faye@2.1.2" 
+Faye = "mountaindouw/faye@2.1.4" 
 ```
 ### Github
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.
 ## Update log
-### v2.1.2
+### v2.1.4
 - Removed some manuel cleanups
 ### v2.0.7
 - Wrapped Do and State initial run into a task.spawn so it doesn't delay
