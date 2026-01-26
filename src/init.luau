@@ -370,7 +370,7 @@ return {
         local new = {IsActive = true}
         setmetatable(new,mt)
         return new;
-    end;
+    end :: Types.Thread;
     Animation = Animation;
     Create = Create;
     Configure = Configure;
