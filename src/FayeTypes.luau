@@ -116,7 +116,7 @@ export type Thread = {
 	IsActive: boolean?;
     Create: (self: Thread, ClassName: string) -> (Properties: Properties) -> FayeInstance;
     Configure: (self: Thread, Entity: any) -> (Properties: Properties) -> FayeInstance;
-    Extend: (self: Thread,IsOrphan: boolean) -> Thread;
+    Extend: (self: Thread,IsOrphan: boolean?) -> Thread;
     Destroy: (self: Thread) -> ();
     Value: (self: Thread,Initial: any) -> Value;
     Animation: (self: Thread, Goal: any, Info: (Info | SpringInfo)?,Modifications: AnimationModifications?) -> Animation;

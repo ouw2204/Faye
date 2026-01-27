@@ -34,13 +34,13 @@ end
     @return Thread
     Creates a sub-thread. Leave the NoLink to nil and the thread will be linked to the parent thread(will delete with parent), set NoLink to true for the thread to be independent.
 ]=]
-function mt:Extend(NoAttachment: boolean) : Types.Thread
+function mt:Extend(IsOrphan: boolean?) : Types.Thread
     --[[
         You shoudn't call this function as a replacement for thread creation, it will always have some type of connection to the parent thread wether or not it has a no deletion attachment to it.
     ]]
     local new: any = {IsActive = true};
     setmetatable(new,mt);
-    if NoAttachment == nil then
+    if IsOrphan == nil then
         new._isCleanAncestor = self._isCleanAncestor
         table.insert(self,new);
     end
