@@ -5,16 +5,18 @@ sidebar_position: 10
 Faye provides special props to control how instances are cleaned up.
 
 ## OnClean
-`OnClean` is called <mark>before the instance is destroyed</mark>. Use it for cleanup animations, final state changes, or logging.
+`OnClean` is called <mark>before the instance is destroyed</mark>. It behaves differently depending on whether `CleanDelay` is also present:
+
+### OnClean without CleanDelay
+When used on its own, `OnClean` adds the instance to its InnerThread and <mark>waits for all animations in the InnerThread to finish before destroying</mark>. This is the recommended way to do cleanup animations.
 
 ```lua
 Thread:Create "Frame" {
     Parent = parent,
 
     OnClean = function(InnerThread, Entity)
-        print("Frame is being destroyed!")
-
-        -- You can return props to compile (like animations)
+        -- Entity is added to InnerThread automatically
+        -- Faye waits for these animations to complete before destroying
         return {
             BackgroundTransparency = InnerThread:Animation(1, Thread.Info(0.3))
         }
@@ -22,13 +24,28 @@ Thread:Create "Frame" {
 }
 ```
 
+### OnClean with CleanDelay
+When both are present, <mark>`OnClean` becomes a `CleanFunction`</mark> - it runs during cleanup but the instance destruction is controlled by the `CleanDelay` timer instead of waiting for animations.
+
+```lua
+Thread:Create "Frame" {
+    Parent = parent,
+
+    OnClean = function(InnerThread, Entity)
+        -- This runs as a CleanFunction since CleanDelay is present
+        -- Destruction timing is controlled by CleanDelay, not animations
+        return {
+            BackgroundTransparency = InnerThread:Animation(1, Thread.Info(0.5))
+        }
+    end,
+
+    CleanDelay = 0.5
+}
+```
+
 The callback receives:
 - **InnerThread**: A dedicated thread for cleanup operations
 - **Entity**: The Roblox Instance being cleaned
-
-:::info
-When you return props from `OnClean`, Faye will wait for any animations to complete before actually destroying the instance.
-:::
 
 ## CleanDelay
 `CleanDelay` delays the destruction of an instance by a specified time (in seconds).
@@ -55,34 +72,21 @@ Thread:Create "Frame" {
 }
 ```
 
-## Combining OnClean and CleanDelay
-When both are used, `OnClean` runs first, then the instance waits for `CleanDelay` before being destroyed.
-
-```lua
-Thread:Create "Frame" {
-    Parent = parent,
-
-    OnClean = function(InnerThread, Entity)
-        -- Fade out animation
-        return {
-            BackgroundTransparency = InnerThread:Animation(1, Thread.Info(0.5))
-        }
-    end,
-
-    CleanDelay = 0.5 -- Match animation duration
-}
-```
-
-## CleanFunction (Legacy)
-`CleanFunction` is an alias for `OnClean`. They work the same way:
+## CleanFunction
+`CleanFunction` runs during cleanup but <mark>does not control when the instance is destroyed</mark>. Unlike `OnClean` (without CleanDelay), it won't wait for animations to finish.
 
 ```lua
 Thread:Create "Frame" {
     CleanFunction = function(InnerThread, Entity)
-        -- Same as OnClean
+        -- Runs during cleanup, but doesn't delay destruction
+        print("Cleaning up")
     end
 }
 ```
+
+:::info
+When you use `OnClean` together with `CleanDelay`, the `OnClean` is internally treated as a `CleanFunction`. Use `OnClean` alone if you want Faye to automatically wait for animations to finish.
+:::
 
 ## InnerThread
 When you use `OnClean` or `CleanDelay`, Faye automatically creates an `InnerThread` for the instance. This thread:
@@ -107,31 +111,15 @@ Thread:Create "Frame" {
 }
 ```
 
-## Animation Cleanup
-Faye tracks active animations and won't destroy a thread until animations complete (if `CleanWhenDone` is set):
-
-```lua
-Thread:Create "Frame" {
-    Size = Thread:Animation(UDim2.fromOffset(200, 200), Thread.Info(2)),
-
-    OnClean = function(InnerThread, Entity)
-        -- Faye waits for any InnerThread animations to finish
-        return {
-            Size = InnerThread:Animation(UDim2.fromOffset(0, 0), Thread.Info(0.5))
-        }
-    end
-}
-```
-
 ## Cleanup Order
 When a thread is destroyed:
 
 1. **Priority items** are cleaned first (connections added with `Thread:Add(item, true)`)
 2. **Regular items** are cleaned in reverse order (last added = first cleaned)
 3. **Child threads** are recursively cleaned
-4. **Instance cleanup** runs (`OnClean` callback if present)
-5. **CleanDelay** is waited (if present)
-6. **Instance destroyed**
+4. **Instance cleanup** runs (`CleanFunction` if present, then `OnClean` if present)
+5. For `OnClean` without `CleanDelay`: waits for all InnerThread animations to finish, then destroys
+6. For `CleanDelay`: waits the delay duration, then destroys
 
 ## Best Practices
 

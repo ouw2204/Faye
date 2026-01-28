@@ -56,8 +56,8 @@ local Notifications = Thread:Value({})
 Thread:Create "Frame" {
     Thread:SignalState(Notifications.Changed, function(InnerThread, Entity)
         -- Previous notifications are cleaned before this runs
-        return Thread:Iterate(Notifications, function(i, notif, Thread, Entity)
-            return Thread:Create "TextLabel" {
+        return InnerThread:Iterate(Notifications, function(i, notif, IterThread, Entity)
+            return IterThread:Create "TextLabel" {
                 Text = notif.message,
                 Parent = Entity
             }
