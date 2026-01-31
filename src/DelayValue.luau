@@ -136,7 +136,7 @@ function setValue(itm,newValue: any,NoDelay: boolean?)
             task.wait(eqTime)
             if not itm.IsActive then return end
         end;
-        if itm.IsSensitive == nil or currentId == itm.curentUsageId then
+        if (itm.IsSensitive == nil or currentId == itm.curentUsageId) and itm.Changed ~= nil then
             itm.Changed:Fire(newValue)
         end
     end

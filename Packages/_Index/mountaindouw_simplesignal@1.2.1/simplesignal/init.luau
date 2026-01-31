@@ -104,21 +104,21 @@ local runner = function()
 end
 local zerocheck = 0;
 local increment = 1;
-local w = warn;
+local caller = error
 function mt:Fire(...)
+    
     local i = #self;
     while i >zerocheck do
         local v = self[i];
         if v == nil then continue end;
         if cur == nil then
-            cur = cc(runner)
-            cr(cur)
+            cur = task.spawn(runner)
         end
         local er,m = cr(cur,v.func,...)
        
         if not er then
             cur = nil;
-            w(`Simple Signal Errored while firing: {m}`)
+            task.spawn(caller,`Simple Signal Errored while firing: {m} - {debug.traceback()}`)
         end
         i -=increment
     end

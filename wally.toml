@@ -1,8 +1,8 @@
 [package]
 name = "mountaindouw/faye"
-version = "2.1.6"
+version = "2.1.7"
 registry = "https://github.com/UpliftGames/wally-index"
 realm = "shared"
 
 [dependencies]
-SimpleSignal = "mountaindouw/simplesignal@1.2.0"
+SimpleSignal = "mountaindouw/simplesignal@1.2.1"

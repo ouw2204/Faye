@@ -61,7 +61,7 @@ export type AnimationModifications = {
 
 export type DelayValue = {
     Get: (self: DelayValue) -> ();
-	Set: (self: DelayValue, New: any) -> ();
+	Set: (self: DelayValue, New: any) -> DelayValue;
 	Add: (self: DelayValue, Amount: any) -> ();
 	Remove: (self: DelayValue, Amount: any) -> ();
     Changed: RBXScriptSignal;

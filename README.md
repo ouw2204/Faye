@@ -9,12 +9,12 @@ Remember to occasionally check for new updates as there might be bug fixes.
 https://create.roblox.com/store/asset/74301103261718/Faye
 ### Wally
 ```
-Faye = "mountaindouw/faye@2.1.6" 
+Faye = "mountaindouw/faye@2.1.7" 
 ```
 ### Github
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.
 ## Update log
-### v2.1.6
+### v2.1.7
 - Fixed faye.new not returning the Thread type
 ### v2.1.4
 - Removed some manuel cleanups
