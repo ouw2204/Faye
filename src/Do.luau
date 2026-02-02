@@ -7,7 +7,7 @@ local typetxt = "State";
     @return Do
     Creates a Do object that can be used in Faye's threading system to execute functions.
 ]=]
-return function(Function: (Grab: any,InnerThread: Types.Thread,Entity: Instance?) -> any,Thread: Types.Thread)
+return function(Function: (Grab: any,InnerThread: Types.Thread,Entity: Instance?) -> any)
     local new = {Func = Function, __type = typetxt};
     return new;
 end

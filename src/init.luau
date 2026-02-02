@@ -203,8 +203,8 @@ function mt:Remove(Entity: any)
 end
 --Do
 local Do = require(script.Do)
-function mt:Do(Function: (Grab: any, Entity: Instance) -> ())
-    return Do(Function,self)
+function mt:Do(Function: (Grab: any,InnerThread: Types.Thread, Entity: Instance?) -> ())
+    return Do(Function)
 end
 --Do
 local YieldSafe = require(script.YieldSafe)
@@ -214,8 +214,8 @@ end
 
 --State
 local State = require(script.State)
-function mt:State(Function: (Grab: any, InnerThread: Types.Thread,Entity: Instance) -> ())
-    return State(Function,self)
+function mt:State(Function: (Grab: any, InnerThread: Types.Thread,Entity: Instance?) -> ())
+    return State(Function)
 end
 --Iterate
 local Iterate = require(script.Iterate)
@@ -225,7 +225,7 @@ end
 --AdvancedIterate
 local AdvancedIterate = require(script.AdvancedIterate)
 function mt:AdvancedIterate(Table: any, Function: (Index: any,Value: any,InnerThread: Types.Thread?,Entity: Instance?) -> ())
-    return AdvancedIterate(Table,Function,self)
+    return AdvancedIterate(Table,Function)
 end
 --Delay value
 local DelayValue = require(script.DelayValue)
@@ -334,7 +334,7 @@ function  mt:Schedule(Time: number?,Item: any,...)
         d = task.delay(Time,func,...)
         self:Add(d)
     else
-        task.spawn(Time,func,...)
+        task.spawn(func,...)
     end
     return Item;
 end
@@ -370,7 +370,7 @@ return {
         local new = {IsActive = true}
         setmetatable(new,mt)
         return new;
-    end :: Types.Thread;
+    end :: () -> Types.Thread;
     Animation = Animation;
     Create = Create;
     Configure = Configure;
