@@ -182,7 +182,7 @@ export type Properties = {
 	FontFace: any,
 	AutomaticCanvasSize: any,
 	ScrollBarImageColor3: any,
-	ScrollBarTransparency: any,
+	ScrollBarImageTransparency: any,
 	TopImage: any,
 	MidImage: any,
 	BottomImage: any,
