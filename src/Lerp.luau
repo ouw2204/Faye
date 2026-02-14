@@ -32,7 +32,8 @@ end
 
 local nameString = script.Name;
 local Counter = 0;
-return function(To: any, Factor: number, From: any?, Thread: FayeTypes.Thread)
+return function(To: any, Factor: number?, From: any?, Thread: FayeTypes.Thread?)
+    if To == nil then return end;
     local new = setmetatable({To = To, Factor = Factor or .15, From = From, Thread = Thread, __lerpid = nameString..Counter},mt)
     Counter += 1;
     if Thread ~= nil then

@@ -62,7 +62,3 @@ Thread:Destroy()                 -- Clean everything
 | `Space.luau` | Task batching |
 | `Iterate.luau` / `AdvancedIterate.luau` | Reactive table iteration |
 | `Clean.luau` | Cleanup dispatcher (Instances, Connections, Functions, Tables, Threads) |
-
-## Version
-
-Current: 2.2.2 — published via Wally (`mountaindouw/faye@2.2.2`), Roblox Toolbox, and GitHub Releases.
