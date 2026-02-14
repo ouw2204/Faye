@@ -149,6 +149,7 @@ local m = {
 		end)
 	end,
 	Animation = require(script.CompileAnimations);
+	Lerp = require(script.CompileLerp);
 	Value = require(script.CompileValue)
 }
 

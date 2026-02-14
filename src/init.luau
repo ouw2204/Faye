@@ -121,6 +121,10 @@ local Animation = require(script.Animation)
 function mt:Animation(Goal: any, Info: (Types.Info | Types.SpringInfo)?,Modifications: Types.AnimationModifications?)
     return Animation(Goal,Info,Modifications,self);
 end
+local Lerp = require(script.Lerp)
+function mt:Lerp(To: any, Factor: number?, From: any?)
+    return Lerp(To,Factor,From,self);
+end
 --| Animation functions
 local ModifyAnimation = require(script.ModifyAnimation)
 function mt.ModifyAnimation(Animaiton: {[any]: any},Modifications: Types.AnimationModifications?)
@@ -364,6 +368,7 @@ export type SpaceTask = Types.SpaceTask
 export type UserInputType = Types.UserInputType
 export type Animation = Types.Animation
 export type Connection = Types.Connection
+export type Lerp = Types.Lerp
 -->
 return {
     new = function()
@@ -397,4 +402,5 @@ return {
     Reactive = Reactive;
     CloneTable = CloneTable;
     AdvancedIterate = AdvancedIterate;
+    Lerp = Lerp;
 }

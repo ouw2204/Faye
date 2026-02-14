@@ -9,7 +9,7 @@ local OverlapFixer = require(script.OverlapFixer)
 -- roblox services
 local RunService = game:GetService("RunService")
 local Tweenservice = game:GetService("TweenService")
-local Workspace = game:GetService("Workspace")
+
 
 -- anim functions
 local Lerps = require(script.Parent.Lerps)
@@ -106,8 +106,18 @@ function update(delta: number)
                 --| apply property
                 ApplyProperty(Anim.Entity,Anim.PropertyType,Anim.Property,Anim.To,Anim.Default,Pivot,Anim.Lerp,EndReached,Anim.IsBasic)
                 if Anim.Others ~= nil then
-                    for x = 1,Anim.Others.Count do
-                        ApplyProperty(Anim.Others[x].Entity,Anim.Others[x].PropertyType,Anim.Others[x].Property,Anim.To,Anim.Others[x].Default,Pivot,Anim.Others[x].Lerp,EndReached)
+                    for x = Anim.Others.Count,1,-1 do
+                        local Other = Anim.Others[x]
+                        if Other.Entity == nil or Other.Entity.Parent == nil then
+                            warn("Remove")
+                            Utility.tr(Anim.Others,x)
+                            Anim.Others.Count -= 1;
+                        else
+                            ApplyProperty(Other.Entity,Other.PropertyType,Other.Property,Anim.To,Other.Default,Pivot,Other.Lerp,EndReached)
+                        end
+                    end
+                    if Anim.Others.Count <= 0 then
+                        Anim.Others = nil;
                     end
                 end
                 --|> apply property
@@ -281,11 +291,6 @@ function  m.Remove(Id: string)
     Storage.Holder[Id] = nil;
     OverlapFixer.Remove(Anim.Entity,Anim.Property)
     Utility.TableRemove(Storage.Ids,Id)
-    if Anim.AnimLog then
-        Utility.tc(Anim.AnimLog)
-        Anim.AnimLog = nil;
-    end
-    Utility.tc(Anim)
     Storage.Count -= 1;
     if Storage.Count == 0 and Storage.Step ~= nil then
         Storage.Holder = nil;
@@ -307,7 +312,6 @@ function  m.Remove(Id: string)
             Anim.Others = nil;
         end
         Anim.Connection:Disconnect()
-        Utility.tc(Anim)
         Storage.RegularTweenCount -= 1;
         if Storage.RegularTweenCount == 0 then
             Storage.RegularTweenHolder = nil;

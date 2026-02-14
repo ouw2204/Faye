@@ -46,7 +46,11 @@ export type Animation = {
 }
 export type Info = {Time: number; EasingStyle: Enum.EasingStyle; EasingDirection: Enum.EasingDirection; RepeatCount: number; Reverse: boolean; DelayTime: number}
 export type SpringInfo = {Time: number; Frequency: number; Damping: number; RepeatCount: number; Reverse: boolean; DelayTime: number}
-
+export type Lerp = {
+	Destroy: (self: Animation) -> ();
+	Stop: (self: Animation) -> ();
+	Skip: (self: Animation) -> Animation;
+}
 export type Connection = {
     Disconnect: (self: Connection) -> ();
     Destroy: (self: Connection) -> ();
@@ -113,6 +117,7 @@ export type Signal = {
     Connect: (self: Signal, Connection: RBXScriptSignal) -> Signal;
 }
 export type Thread = {
+	Lerp: (To: any, Factor: number?) -> Lerp;
 	IsActive: boolean?;
     Create: (self: Thread, ClassName: string) -> (Properties: Properties) -> FayeInstance;
     Configure: (self: Thread, Entity: any) -> (Properties: Properties) -> FayeInstance;

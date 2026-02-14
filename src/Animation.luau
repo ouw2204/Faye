@@ -71,13 +71,17 @@ function mt:Skip()
             Entity = fetch.Main.Instance;
             if fetch.Others ~= nil then
                 for _,v in ipairs(fetch.Others) do
-                    v.Main.Instance[v.Property] = Goal
+                    if v.Main ~= nil and v.Main.Instance ~= nil and v.Main.Instance.Parent ~= nil then
+                        v.Main.Instance[v.Property] = Goal
+                    end
                 end
             end
         else
             if fetch.Others ~= nil then
                 for _,v in ipairs(fetch.Others) do
-                    v.Entity[v.Property] = Goal
+                    if v.Entity ~= nil and v.Entity.Parent ~= nil then
+                        v.Entity[v.Property] = Goal
+                    end
                 end
             end
         end

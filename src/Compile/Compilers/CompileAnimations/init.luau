@@ -10,7 +10,7 @@ local Tweenservice = game:GetService("TweenService")
 -- anim helpers
 local Lerps = require(script.Lerps)
 local AnimatorStorage = require(script.Player.AnimatorStorage)
-local destroytxt = "Destroy"
+
 return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation)
    local Thread = Entity.InnerThread or Entity.Thread;
    local PropertyType = Utility.tof(Entity.Instance[Index])
