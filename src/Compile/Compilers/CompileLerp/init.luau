@@ -1,7 +1,6 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local LerpPlayer = require(script.LerpPlayer)
-local FayeUtility = require(ReplicatedStorage.CAM.Faye.Misc.FayeUtility)
-local ValueClasses = require(ReplicatedStorage.CAM.Faye.Misc.ValueClasses)
+local FayeUtility = require(script.Parent.Parent.Parent.Misc.FayeUtility)
+local ValueClasses = require(script.Parent.Parent.Parent.Misc.ValueClasses)
 local Types = require(script.Parent.Parent.Parent.FayeTypes)
 return function (Entity: Types.FayeInstance, Index: any, Value: Types.Lerp)
     if Value.Loaded then

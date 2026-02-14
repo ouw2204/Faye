@@ -65,4 +65,4 @@ Thread:Destroy()                 -- Clean everything
 
 ## Version
 
-Current: 2.1.8 — published via Wally (`mountaindouw/faye@2.1.8`), Roblox Toolbox, and GitHub Releases.
+Current: 2.2.1 — published via Wally (`mountaindouw/faye@2.2.1`), Roblox Toolbox, and GitHub Releases.

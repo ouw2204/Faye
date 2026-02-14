@@ -1,6 +1,5 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
-local FayeUtility = require(ReplicatedStorage.CAM.Faye.Misc.FayeUtility)
+local FayeUtility = require(script.Parent.Parent.Parent.Parent.Misc.FayeUtility)
 
 
 local m = {

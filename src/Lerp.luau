@@ -1,5 +1,5 @@
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local FayeUtility = require(ReplicatedStorage.CAM.Faye.Misc.FayeUtility)
+local FayeUtility = require(script.Parent.Misc.FayeUtility)
 local FayeTypes = require(script.Parent.FayeTypes)
 local LerpPlayer = require(script.Parent.Compile.Compilers.CompileLerp.LerpPlayer)
 
