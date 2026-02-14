@@ -1,4 +1,3 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local FayeUtility = require(script.Parent.Misc.FayeUtility)
 local FayeTypes = require(script.Parent.FayeTypes)
 local LerpPlayer = require(script.Parent.Compile.Compilers.CompileLerp.LerpPlayer)
@@ -33,8 +32,8 @@ end
 
 local nameString = script.Name;
 local Counter = 0;
-return function(Value: any, Factor: number, From: any?, Thread: FayeTypes.Thread)
-    local new = setmetatable({To = Value, Factor = Factor or .15, From = From, Thread = Thread, __lerpid = nameString..Counter},mt)
+return function(To: any, Factor: number, From: any?, Thread: FayeTypes.Thread)
+    local new = setmetatable({To = To, Factor = Factor or .15, From = From, Thread = Thread, __lerpid = nameString..Counter},mt)
     Counter += 1;
     if Thread ~= nil then
         FayeUtility.AddToThread(Thread,new)

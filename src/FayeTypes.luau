@@ -117,7 +117,7 @@ export type Signal = {
     Connect: (self: Signal, Connection: RBXScriptSignal) -> Signal;
 }
 export type Thread = {
-	Lerp: (To: any, Factor: number?) -> Lerp;
+	Lerp: (self: Thread, To: any, Factor: number?) -> Lerp;
 	IsActive: boolean?;
     Create: (self: Thread, ClassName: string) -> (Properties: Properties) -> FayeInstance;
     Configure: (self: Thread, Entity: any) -> (Properties: Properties) -> FayeInstance;
