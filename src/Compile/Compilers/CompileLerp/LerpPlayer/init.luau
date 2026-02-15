@@ -1,6 +1,7 @@
 local RunService = game:GetService("RunService")
 local FayeUtility = require(script.Parent.Parent.Parent.Parent.Misc.FayeUtility)
---# TODO Add An anti collision so that the Lerps don't play over each other
+
+local Active = setmetatable({},{__mode = "k"}); -- weak
 
 local m = {
     Holder = {
@@ -60,6 +61,17 @@ function m.Add(id: string, Entity: Instance,Index: string,To: any,Factor: number
         Anim.To = To
         return
     end
+    -- Anti-collision: remove any existing lerp on the same Instance+Property
+    if Active[Entity] ~= nil and Active[Entity][Index] ~= nil then
+        local existingId = Active[Entity][Index]
+        if existingId ~= id then
+            m.Remove(existingId)
+        end
+    end
+    if Active[Entity] == nil then Active[Entity] = {Count = 0} end
+    Active[Entity].Count += 1
+    Active[Entity][Index] = id
+
     table.insert(m.Holder.Indexes,id)
     m.Holder.Anims[id] = {
         Entity = Entity;
@@ -83,6 +95,17 @@ end
 function m.Remove(id)
     local index = m.Find(id)
     if index ~= nil then
+        local Anim = m.Holder.Anims[id]
+        if Anim then
+            local t = Active[Anim.Entity]
+            if t and t[Anim.Property] == id then
+                t[Anim.Property] = nil
+                t.Count -= 1
+                if t.Count <= 0 then
+                    Active[Anim.Entity] = nil
+                end
+            end
+        end
         FayeUtility.tr(m.Holder.Indexes,index)
         m.Count -= 1;
         if m.Count == 0 then
