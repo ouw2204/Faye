@@ -61,11 +61,20 @@ function m.Add(id: string, Entity: Instance,Index: string,To: any,Factor: number
         Anim.To = To
         return
     end
-    -- Anti-collision: remove any existing lerp on the same Instance+Property
+    
     if Active[Entity] ~= nil and Active[Entity][Index] ~= nil then
         local existingId = Active[Entity][Index]
         if existingId ~= id then
-            m.Remove(existingId)
+            local existingAnim = m.Holder.Anims[existingId]
+            if existingAnim then
+                existingAnim.To = To
+                existingAnim.Factor = Factor
+                existingAnim.Delete = Delete
+                existingAnim.IsValue = IsValue
+                existingAnim.Workers = Workers
+                existingAnim.Last = true
+            end
+            return
         end
     end
     if Active[Entity] == nil then Active[Entity] = {Count = 0} end
