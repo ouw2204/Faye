@@ -24,6 +24,7 @@ return function (Entity: Types.FayeInstance, Index: any, Value: Types.Lerp)
         local InitialGoalType = FayeUtility.tof(Value.To)
         local IsInstanceValue = (InitialGoalType == FayeUtility.instanceTxt and Value.To:IsA(FayeUtility.valueBaseTxt))
         local IsValue = IsInstanceValue or ( InitialGoalType == FayeUtility.tabletxt and Value.To.__type ~= nil and ValueClasses[Value.To.__type])
+        local Initial = IsValue
         local Delete; Delete = function(IsReplayable)
 
             --<
@@ -31,6 +32,9 @@ return function (Entity: Types.FayeInstance, Index: any, Value: Types.Lerp)
             if not IsReplayable then
                 if Thread ~= nil then
                     FayeUtility.RemoveFromThread(Thread,Delete)
+                end
+                if goalConnectionsLength ~= nil and goalConnectionsLength > 0 then
+                    FayeUtility.ClearAllConnections(goalConnections,goalConnectionsLength)
                 end
                 Value.Loaded = nil;
                 Value.Workers = nil;
@@ -63,10 +67,14 @@ return function (Entity: Types.FayeInstance, Index: any, Value: Types.Lerp)
                 end
             else
                 if Entity ~= nil and Entity.Instance ~= nil then
-                    if IsValue and Value.From ~= nil and not Value.AppliedFrom then
+                    if Initial then
+                        Entity.Instance[Index] = Goal
+                        Initial = false
+                    elseif IsValue and Value.From ~= nil and not Value.AppliedFrom then
                         Entity.Instance[Index] = Value.From
                         Value.From = nil
                         Value.AppliedFrom = true;
+                        LerpPlayer.Add(id,Entity.Instance,Index,Goal,Value.Factor,IsValue,Delete,Value.Workers)
                     else
                         LerpPlayer.Add(id,Entity.Instance,Index,Goal,Value.Factor,IsValue,Delete,Value.Workers)
                     end
