@@ -151,8 +151,10 @@ end
 function mt:Connect(Connection: RBXScriptSignal,Id: any)
     if self.Cleaning then return end;
     if Id == nil then
-        local connectedConnection = Connection:Connect(self.ReceiverFunction,self.Thread)
-        Utility.AddToThread(self.Thread,connectedConnection)
+        local connectedConnection = Connection:Connect(self.ReceiverFunction)
+        if self.Thread ~= nil then
+            Utility.AddToThread(self.Thread,connectedConnection)
+        end
         return connectedConnection;
     else
         task.spawn(function()

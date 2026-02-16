@@ -213,7 +213,9 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
                         --|>
                     end
                     if Entity[Index] ~= Goal then
-                        Thread.AnimationsAmount = (Thread.AnimationsAmount or 0) + 1
+                        if Thread ~= nil then
+                            Thread.AnimationsAmount = (Thread.AnimationsAmount or 0) + 1
+                        end
                         local Initial = nil;
                         if Anim.From ~= nil and not UsedFrom then
                             Initial = Anim.From;
@@ -270,7 +272,9 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
         end)
     end
     Utility.AddToEntity(Entity,Delete)
-    Utility.AddToThread(Thread,Delete)
+    if Thread ~= nil then
+        Utility.AddToThread(Thread,Delete)
+    end
     
    end
 end

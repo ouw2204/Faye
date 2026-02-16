@@ -19,6 +19,7 @@ function m.RemoveFromThread(Thread: Types.Thread, Item: any)
     end
 end
 function m.ConnectToEntity(Instance: Types.FayeInstance, Connection: RBXScriptSignal, Function: (...any) -> ())
+    if Instance == nil then return false end;
     if Instance[ConnectTxt] ~= nil then
         Instance:Connect(Connection,Function)
         return true;
@@ -27,6 +28,7 @@ function m.ConnectToEntity(Instance: Types.FayeInstance, Connection: RBXScriptSi
     end
 end
 function  m.AddToEntity(Instance: Types.FayeInstance, Item: any): boolean
+    if Instance == nil then return false end;
     if Instance[AddTxt] then
         Instance:Add(Item)
         return true
@@ -75,6 +77,7 @@ function m.TableRemove(Table: {[any]: any}, Item: any)
     f = nil;
 end
 function  m.AddToThread(Thread: Types.Thread, Item: any)
+    if Thread == nil or Item == nil then return end;
     if Thread[AddTxt] then
         Thread:Add(Item)
     else

@@ -85,6 +85,8 @@ return function (Entity: Types.FayeInstance, Index: any, Value: Types.Lerp)
 
         
         FayeUtility.AddToEntity(Entity,Delete)
-        FayeUtility.AddToThread(Thread,Delete)
+        if Thread ~= nil then
+            FayeUtility.AddToThread(Thread,Delete)
+        end
     end
 end
