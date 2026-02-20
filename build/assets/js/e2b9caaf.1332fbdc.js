@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunkdocs=self.webpackChunkdocs||[]).push([[324],{84410:s=>{s.exports=JSON.parse('{"sourceUrl":"https://github.com/mountaindouw/Faye/blob/master","baseUrl":"/Faye/","classOrder":[],"apiCategories":[]}')}}]);
