@@ -11,9 +11,9 @@ local m = {
     Count = 0;
 };
 
-function updateFunction()
+function updateFunction(dt: number)
     for _,v in ipairs(m.Holder.Indexes) do
-        
+
         local Anim = m.Holder.Anims[v]
         if Anim.Last == false then
             m.Remove(v)
@@ -21,8 +21,9 @@ function updateFunction()
         end
         Anim.Last = false;
         if Anim.Entity ~= nil and Anim.Entity.Parent ~= nil  then
+            local factor = 1 - (1 - Anim.Factor) ^ (dt * 60)
             local before = Anim.Entity[Anim.Property]
-            Anim.Entity[Anim.Property] = before:Lerp(Anim.To,Anim.Factor);
+            Anim.Entity[Anim.Property] = before:Lerp(Anim.To,factor);
             local allDone = Anim.Entity[Anim.Property] == before
             if Anim.Workers then
                 for i = Anim.Workers.Count, 1, -1 do
@@ -32,7 +33,7 @@ function updateFunction()
                         Anim.Workers.Count -= 1
                     else
                         local wBefore = worker.Entity[worker.Property]
-                        worker.Entity[worker.Property] = wBefore:Lerp(Anim.To,Anim.Factor);
+                        worker.Entity[worker.Property] = wBefore:Lerp(Anim.To,factor);
                         if worker.Entity[worker.Property] ~= wBefore then
                             allDone = false
                         end
