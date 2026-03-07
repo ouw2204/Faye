@@ -88,6 +88,7 @@ export type SpaceTask = {
     Call: (self: SpaceTask) -> SpaceTask;
     Variables: {[any]: any};
     Parameters: {[any]: any};
+    SpaceIndex: number;
     SetId: (self: SpaceTask, Id: any) -> SpaceTask;
     Connect: (self: SpaceTask, Connection: RBXScriptSignal) -> RBXScriptConnection;
     AddParameter: (self: SpaceTask, Index: any,Value: any) -> ();
@@ -124,7 +125,7 @@ export type Thread = {
     Extend: (self: Thread,IsOrphan: boolean?) -> Thread;
     Destroy: (self: Thread) -> ();
     Value: (self: Thread,Initial: any) -> Value;
-    Animation: (self: Thread, Goal: any, Info: (Info | SpringInfo)?,Modifications: AnimationModifications?) -> Animation;
+    Animation: (self: Thread, Goal: any, Info: (Info | SpringInfo | Value)?,Modifications: AnimationModifications?) -> Animation;
     Info: (Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Info;
     SpringInfo: (Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> SpringInfo;
     Connect: (self: Thread, Cofnnection: RBXScriptSignal, func: (...any) -> ()) -> (),
@@ -316,7 +317,7 @@ ResetOnSpawn: any;
 	MaxDistance: any,
 	ExtentsOffset: any,
 	AlwaysOnTop: any,
-
+	Active: any,
 	-- UICorner
 	CornerRadius: any,
 

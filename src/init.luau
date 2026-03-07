@@ -118,7 +118,7 @@ end
 
 --Animation
 local Animation = require(script.Animation)
-function mt:Animation(Goal: any, Info: (Types.Info | Types.SpringInfo)?,Modifications: Types.AnimationModifications?)
+function mt:Animation(Goal: any, Info: (Types.Info | Types.SpringInfo | Types.Value)?,Modifications: Types.AnimationModifications?)
     return Animation(Goal,Info,Modifications,self);
 end
 local Lerp = require(script.Lerp)

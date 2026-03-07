@@ -82,16 +82,18 @@ end
 ]=]
 function mt:Call(Id: any)
     if self.Cleaning then return end;
-    for i = #self.Tasks,1,-1 do
-        if Id ~= nil then
-            if self.Tasks[i].Id == Id then
+    if self.Tasks ~= nil then
+        for i = #self.Tasks,1,-1 do
+            if Id ~= nil then
+                if self.Tasks[i].Id == Id then
+                    self.Tasks[i].Call();
+                    break
+                end
+            else
                 self.Tasks[i].Call();
-                break
             end
-        else
-            self.Tasks[i].Call();
         end
-    end
+    end;
     return self;
 end
 --[=[
@@ -125,6 +127,7 @@ function mt:Add(Params: {[any]: any},Thread: Types.Thread,NoUnpack: boolean?)
 
     setmetatable(Params,parammt);
     Utility.tins(self.Tasks,Params)
+    Params.SpaceIndex = #self.Tasks;
     return Params;
 end
 --[=[
@@ -170,6 +173,7 @@ function mt:Connect(Connection: RBXScriptSignal,Id: any)
                     return TaskConnection;
                 end
             end
+            return
         end)
     end
     return
@@ -188,9 +192,11 @@ function mt:Destroy()
         Utility.RemoveFromThread(self.Thread,self)
         self.Thread = nil;
     end
-    for i = #self.Tasks,1,-1 do
-        self.Tasks[i]:Destroy();
-    end
+    if self.Tasks ~= nil then
+        for i = #self.Tasks,1,-1 do
+            self.Tasks[i]:Destroy();
+        end
+    end;
     self.Tasks = nil;
     self.Cleaning = nil;
 
