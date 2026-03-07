@@ -9,11 +9,13 @@ Remember to occasionally check for new updates as there might be bug fixes.
 https://create.roblox.com/store/asset/74301103261718/Faye
 ### Wally
 ```
-Faye = "mountaindouw/faye@2.2.7"
+Faye = "ouw2204/faye@2.3.0"
 ```
 ### Github
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.
 ## Update log
+### 2.3.0
+- Added a SpaceIndex property to Space tasks
 ### 2.2.7
 - Lerp is no longer effected by the client's FPS
 ### v2.2.0

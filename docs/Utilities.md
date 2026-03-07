@@ -91,6 +91,7 @@ task:Connect(signal)         -- Auto-call when signal fires
 task:Call()                  -- Execute this task
 task:AddParameter(value)     -- Add parameter
 task:Destroy()               -- Remove from space
+task.SpaceIndex              -- The task's index in the Space (set on Add)
 ```
 
 ### Space methods
