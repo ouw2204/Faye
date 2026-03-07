@@ -1,5 +1,5 @@
 local ValueBase = require(script.Parent.Misc.ValueBase);
-local Signal = require(script.Parent.Packages.simplesigal);
+local Signal = require(script.Parent.Packages.simplesignal);
 local Types = require(script.Parent.FayeTypes)
 local Utility = require(script.Parent.Misc.FayeUtility)
 local typeTxt = "InstancePropertySync";
