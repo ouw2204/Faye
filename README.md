@@ -13,17 +13,3 @@ Faye = "ouw2204/faye@2.3.2"
 ```
 ### Github
 The [releases](https://github.com/ProphetOuw/Faye/releases) page.
-## Update log
-### 2.3.0
-- Added a SpaceIndex property to Space tasks
-### 2.2.7
-- Lerp is no longer effected by the client's FPS
-### v2.2.0
-- Added Lerp system (`Thread:Lerp`) — smooth linear interpolation with exponential decay
-- Lerp supports reactive Values as goals for automatic replay
-- Lerp Workers — multiple instances can share a single Lerp
-- Lerp `From` parameter for setting initial position
-- Lerp methods: `Skip`, `Stop`, `Destroy`
-- Lerp completion detection with automatic cleanup
-### v2.1.8
-- Fixed types
