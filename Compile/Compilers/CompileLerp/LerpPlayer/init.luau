@@ -2,6 +2,13 @@ local RunService = game:GetService("RunService")
 local FayeUtility = require(script.Parent.Parent.Parent.Parent.Misc.FayeUtility)
 
 local Active = setmetatable({},{__mode = "k"}); -- weak
+local numbertxt = "number"
+local function lerpValue(from, to, alpha)
+    if type(from) == numbertxt then
+        return from + (to - from) * alpha
+    end
+    return from:Lerp(to, alpha)
+end
 
 local m = {
     Holder = {
@@ -23,7 +30,7 @@ function updateFunction(dt: number)
         if Anim.Entity ~= nil and Anim.Entity.Parent ~= nil  then
             local factor = 1 - (1 - Anim.Factor) ^ (dt * 60)
             local before = Anim.Entity[Anim.Property]
-            Anim.Entity[Anim.Property] = before:Lerp(Anim.To,factor);
+            Anim.Entity[Anim.Property] = lerpValue(before,Anim.To,factor);
             local allDone = Anim.Entity[Anim.Property] == before
             if Anim.Workers then
                 for i = Anim.Workers.Count, 1, -1 do
@@ -33,7 +40,7 @@ function updateFunction(dt: number)
                         Anim.Workers.Count -= 1
                     else
                         local wBefore = worker.Entity[worker.Property]
-                        worker.Entity[worker.Property] = wBefore:Lerp(Anim.To,factor);
+                        worker.Entity[worker.Property] = lerpValue(wBefore,Anim.To,factor);
                         if worker.Entity[worker.Property] ~= wBefore then
                             allDone = false
                         end
