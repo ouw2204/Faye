@@ -3,8 +3,9 @@ local FayeUtility = require(script.Parent.Parent.Parent.Parent.Misc.FayeUtility)
 
 local Active = setmetatable({},{__mode = "k"}); -- weak
 local numbertxt = "number"
+local tof = typeof
 local function lerpValue(from, to, alpha)
-    if type(from) == numbertxt then
+    if tof(from) == numbertxt then
         return from + (to - from) * alpha
     end
     return from:Lerp(to, alpha)

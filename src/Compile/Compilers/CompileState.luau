@@ -52,6 +52,9 @@ return function (Instance: Types.FayeInstance,Index, State: Types.Value,Compile:
     
     Grab = function(Value: any)
         if Value == nil then return end;
+        if Utility.tof(Value) == "table" and Value.__type == "Instance" then
+            Value = Value.Instance;
+        end
         if Log == nil then Log = {}; Connections = {} end;
         if Value.ClassName ~= nil then
             if Log[Value] == nil then
