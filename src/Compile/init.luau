@@ -50,7 +50,21 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
         elseif tov == tablestr then
             local Type = v.__type and (ValueClasses[v.__type] and Valuestr or v.__type)
 
-            if Type and Compilers[Type] then
+            if Type == Instancestr and v.Instance then
+                local inst = v.Instance
+                if toi == numberstr then
+                    inst.Parent = Entity.Instance
+                    if InstanceThread ~= nil then
+                        if InstanceThread[Addstr] ~= nil then
+                            InstanceThread:Add(inst)
+                        else
+                            tins(InstanceThread,inst);
+                        end
+                    end
+                elseif inst:IsA(valuebasestr) then
+                    Compilers.Value(Entity, i, inst)
+                end
+            elseif Type and Compilers[Type] then
                 Compilers[Type](Entity, i, v, Recursive)
             else
                 Recursive(Entity, v,InstanceThread)
