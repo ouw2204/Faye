@@ -1,0 +1,18 @@
+{
+  "name": "Faye-Remastered",
+  "tree": {
+    "$className": "DataModel",
+
+    "ReplicatedStorage": {
+      "CAM": {
+        "$className": "Folder",
+        "Faye": {
+          "$path": "src",
+          "Packages": {
+            "$path": "Packages"
+          }
+        }
+      }
+    }
+  }
+}
