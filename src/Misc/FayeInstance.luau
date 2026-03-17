@@ -238,7 +238,6 @@ function mt:Compile()
 	else
 		self:Destroy()
 	end
-	return self
 end
 
 --[=[

@@ -50,9 +50,7 @@ return function (Entity: Types.FayeInstance, Index: any, Value: Types.Lerp)
             local IsTable = GaolType == FayeUtility.tabletxt
             local IsInstance = not IsTable and GaolType == FayeUtility.instanceTxt and Goal:IsA(FayeUtility.valueBaseTxt)
             if IsTable or IsInstance then
-                if IsTable and Goal.Instance and Goal.__type == FayeUtility.instanceTxt then
-                    mainGoalFunc(Goal.Instance,Position)
-                elseif IsInstance or (Goal.__type ~= nil and ValueClasses[Goal.__type]) then
+                if IsInstance or (Goal.__type ~= nil and ValueClasses[Goal.__type]) then
                     if goalConnections == nil then goalConnections = {} end;
                     goalConnectionsLength = Position;
                     goalConnections[Position] = Goal.Changed:Connect(function(NewGoal: any)

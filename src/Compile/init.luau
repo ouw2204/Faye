@@ -2,21 +2,17 @@ local to = typeof
 local sf = string.find
 local sb = string.sub
 --local tc = table.clear
+local banned = {
+    Value = true;
+    Lerp = true;
+}
 local tins = table.insert
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
 local Compilers = require(script.Compilers)
 local tablestr,numberstr,functionstr,RBXScriptSignalstr = "table","number","function","RBXScriptSignal"
 local OnChangedInitstr,OnChangedstr,Valuestr,Instancestr,Addstr,valuebasestr = "OnChangedInit","OnChanged","Value","Instance","Add","ValueBase"
 local Aftertxt,BeforeTxt = "After","Before"
-local banned = {
-    Value = true;
-    Lerp = true;
-}
 local UseCompile = require(script.Parent.Misc.UseCompilePassRecursiveness)
-local bannedprimary = {
-    Value = true;
-    Lerp = true;
-}
 local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any}, Props: any,InstanceThread: any)
     -- Main loop
     if Props[BeforeTxt] then
@@ -35,11 +31,7 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
         local tov = to(v)
         local toi = --[[tov == "table" and v.__type and to(v.__type) or]] to(i)
         local compilerFunc = (toi ~= tablestr and Compilers[i]) or nil
-<<<<<<< HEAD
         if compilerFunc and not banned[i] then
-=======
-        if compilerFunc and bannedprimary[i] == nil then
->>>>>>> 771e1d21c5da1a5b78cd8507f15643a609e29351
             compilerFunc(Entity, i, v, Recursive)
         elseif tov == Instancestr then
             --> instance compile
@@ -62,23 +54,7 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
         elseif tov == tablestr then
             local Type = v.__type and (ValueClasses[v.__type] and Valuestr or v.__type)
 
-            if Type == Instancestr and v.Instance then
-                local inst = v.Instance
-                if toi == numberstr then
-                    inst.Parent = Entity.Instance
-                    if InstanceThread ~= nil then
-                        if InstanceThread[Addstr] ~= nil then
-                            InstanceThread:Add(inst)
-                        else
-                            tins(InstanceThread,inst);
-                        end
-                    end
-                elseif inst:IsA(valuebasestr) then
-                    Compilers.Value(Entity, i, inst)
-                else
-                    Entity.Instance[i] = inst
-                end
-            elseif Type and Compilers[Type] then
+            if Type and Compilers[Type] then
                 Compilers[Type](Entity, i, v, Recursive)
             else
                 Recursive(Entity, v,InstanceThread)
@@ -110,6 +86,7 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
                     else
                         Entity.Instance[i] = v
                     end
+                    
                 end
             end
         end

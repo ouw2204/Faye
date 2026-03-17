@@ -29,10 +29,6 @@ function mt:Destroy()
         FayeUtility.RemoveFromThread(self.Thread,self)
     end
 end
-local nn = script.Name;
-function mt.__tostring()
-    return nn
-end
 
 local nameString = script.Name;
 local Counter = 0;
