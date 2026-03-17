@@ -8,6 +8,10 @@ local Compilers = require(script.Compilers)
 local tablestr,numberstr,functionstr,RBXScriptSignalstr = "table","number","function","RBXScriptSignal"
 local OnChangedInitstr,OnChangedstr,Valuestr,Instancestr,Addstr,valuebasestr = "OnChangedInit","OnChanged","Value","Instance","Add","ValueBase"
 local Aftertxt,BeforeTxt = "After","Before"
+local banned = {
+    Value = true;
+    Lerp = true;
+}
 local UseCompile = require(script.Parent.Misc.UseCompilePassRecursiveness)
 local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any}, Props: any,InstanceThread: any)
     -- Main loop
@@ -27,7 +31,7 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
         local tov = to(v)
         local toi = --[[tov == "table" and v.__type and to(v.__type) or]] to(i)
         local compilerFunc = (toi ~= tablestr and Compilers[i]) or nil
-        if compilerFunc then
+        if compilerFunc and not banned[i] then
             compilerFunc(Entity, i, v, Recursive)
         elseif tov == Instancestr then
             --> instance compile
