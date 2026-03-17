@@ -185,9 +185,7 @@ return function(Entity: Types.FayeInstance, Index: string, Anim: Types.Animation
         local IsTable = GaolType == Utility.tabletxt
         local IsInstance = not IsTable and GaolType == Utility.instanceTxt and Goal:IsA(Utility.valueBaseTxt)
         if IsTable or IsInstance then
-            if IsTable and Goal.Instance and Goal.__type == Utility.instanceTxt then
-                mainGoalFunc(Goal.Instance,Position,NoAnim)
-            elseif IsInstance or (Goal.__type ~= nil and ValueClasses[Goal.__type]) then
+            if IsInstance or (Goal.__type ~= nil and ValueClasses[Goal.__type]) then
                 if goalConnections == nil then goalConnections = {} end;
                 goalConnectionsLength = Position;
                 goalConnections[Position] = Goal.Changed:Connect(function(NewGoal: any)
