@@ -10,7 +10,6 @@ local OnChangedInitstr,OnChangedstr,Valuestr,Instancestr,Addstr,valuebasestr = "
 local Aftertxt,BeforeTxt = "After","Before"
 local UseCompile = require(script.Parent.Misc.UseCompilePassRecursiveness)
 local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any}, Props: any,InstanceThread: any)
-    warn(Entity,Props)
     -- Main loop
     if Props[BeforeTxt] then
         local Beforetype = to(Props.Before)
@@ -28,7 +27,7 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
         local tov = to(v)
         local toi = --[[tov == "table" and v.__type and to(v.__type) or]] to(i)
         local compilerFunc = (toi ~= tablestr and Compilers[i]) or nil
-        if compilerFunc and not (tov == tablestr and v.__type ~= nil) then
+        if compilerFunc then
             compilerFunc(Entity, i, v, Recursive)
         elseif tov == Instancestr then
             --> instance compile
@@ -64,6 +63,8 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
                     end
                 elseif inst:IsA(valuebasestr) then
                     Compilers.Value(Entity, i, inst)
+                else
+                    Entity.Instance[i] = inst
                 end
             elseif Type and Compilers[Type] then
                 Compilers[Type](Entity, i, v, Recursive)
