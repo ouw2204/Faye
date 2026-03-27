@@ -13,6 +13,7 @@ local tablestr,numberstr,functionstr,RBXScriptSignalstr = "table","number","func
 local OnChangedInitstr,OnChangedstr,Valuestr,Instancestr,Addstr,valuebasestr = "OnChangedInit","OnChanged","Value","Instance","Add","ValueBase"
 local Aftertxt,BeforeTxt = "After","Before"
 local UseCompile = require(script.Parent.Misc.UseCompilePassRecursiveness)
+local MethodSignaledstr = "MethodSignaled"
 local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any}, Props: any,InstanceThread: any)
     -- Main loop
     if Props[BeforeTxt] then
@@ -26,13 +27,19 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
             Recursive(Entity, Props.Before,InstanceThread)
         end
     end
+    local deferredSignals = nil
     for i, v in pairs(Props) do
         if i == Aftertxt or i == BeforeTxt then continue end;
         local tov = to(v)
         local toi = --[[tov == "table" and v.__type and to(v.__type) or]] to(i)
         local compilerFunc = (toi ~= tablestr and Compilers[i]) or nil
         if compilerFunc and not banned[i] then
-            compilerFunc(Entity, i, v, Recursive)
+            if i == MethodSignaledstr then
+                if deferredSignals == nil then deferredSignals = {} end
+                tins(deferredSignals, {i, v})
+            else
+                compilerFunc(Entity, i, v, Recursive)
+            end
         elseif tov == Instancestr then
             --> instance compile
             if toi == numberstr then
@@ -70,11 +77,8 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
             else
                 local onChangedIndex = sf(i, OnChangedstr)
                 if onChangedIndex then
-                    local prop = sb(i, 1, onChangedIndex - 1) -- Adjusting for Lua's 1-based index
-                    local Init = sf(i, OnChangedInitstr) ~= nil
-                    if Props then
-                        Compilers.OnChanged(Entity, prop, v, Recursive, Init)
-                    end
+                    if deferredSignals == nil then deferredSignals = {} end
+                    tins(deferredSignals, {i, v})
                 elseif to(Entity.Instance[i]) == RBXScriptSignalstr then
                     Compilers.EventCompiler(Entity, i, v,Recursive)
                 else
@@ -86,8 +90,22 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
                     else
                         Entity.Instance[i] = v
                     end
-                    
+
                 end
+            end
+        end
+    end
+    -- Compile OnChanged/OnChangedInit/MethodSignaled signals last
+    if deferredSignals ~= nil then
+        for _, entry in deferredSignals do
+            local i, v = entry[1], entry[2]
+            if i == MethodSignaledstr then
+                Compilers.MethodSignaled(Entity, i, v, Recursive)
+            else
+                local onChangedIndex = sf(i, OnChangedstr)
+                local prop = sb(i, 1, onChangedIndex - 1)
+                local Init = sf(i, OnChangedInitstr) ~= nil
+                Compilers.OnChanged(Entity, prop, v, Recursive, Init)
             end
         end
     end

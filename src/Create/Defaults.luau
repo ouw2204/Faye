@@ -5,6 +5,9 @@ local m = {
         Instance.BorderSizePixel = 0;
         Instance.BorderColor3 = Color3.new(0,0,0);
     end;
+    BillboardGui = function(Instance)
+        Instance.Size = UDim2.fromOffset(100,100);
+    end;
     VideoFrame = function(Instance)
         Instance.BackgroundColor3 = Color3.new(1,1,1);
         Instance.Size = UDim2.fromOffset(100,100);

@@ -148,6 +148,7 @@ export type Thread = {
     SignalState: (self: Thread,any, func: (Thread: Thread, Entity: Instance, ...any) -> ()) -> Signal;
 	MethodSignaled: (self: Thread, Method: string, Index: string,RunOnInitialization: boolean?) -> ();
 	Spawn: (self: Thread, func: (...any) -> (),...any) -> thread;
+	Defer: (self: Thread, func: (...any) -> (),...any) -> thread;
 	Delay: (self: Thread,time: number, func: (...any) -> (),...any) -> thread;
 	LoadAnimation: (self: Thread, Entity: Instance,Goals: Properties, Info: (Info | SpringInfo)?) -> LoadAnimation;
 	ModifyAnimation: (self: Thread, Animaiton: {[any]: any},Modifications: AnimationModifications) -> {[any]: any};

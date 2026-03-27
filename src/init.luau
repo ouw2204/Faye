@@ -69,6 +69,25 @@ function mt:Spawn(func: (...any) -> (),...)
 end
 --[=[
     @within Thread
+    @method Defer
+    Similar to Task.defer, not to be used within a compileable table.
+]=]
+function mt:Defer(func: (...any) -> (),...)
+    if func == nil then return end;
+    local Yielded = false;
+    local tsk; tsk = task.defer(function(...)
+        func(...)
+        Yielded = true;
+        if tsk ~= nil and self[removetxt] ~= nil then
+            self:Remove(tsk)
+        end
+    end,...)
+    if Yielded == false then
+        self:Add(tsk)
+    end
+end
+--[=[
+    @within Thread
     @method Delay
     Similar to Task.Delay, not to be used within a compileable table.
 ]=]
