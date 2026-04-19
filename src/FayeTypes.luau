@@ -1,37 +1,39 @@
 export type Value = {
 	__type: string;
-    Set: (self: Value, Value: any,signalIsBasic: boolean?) -> ();
+    Set: (self: Value, Value: any,signalIsBasic: boolean?) -> any;
     Get: (self: Value) -> any;
     Add: (self: Value, Value: any,...any) -> ();
     Remove: (self: Value,Value: any) -> ();
     Initial: any;
     Value: any;
+    ValueType: string;
     ReCalibrate: (self: Value, Instance: Instance?, Property: string?) -> ();
     Changed: RBXScriptSignal;
     Reset: (self: Value) -> any;
-    Compare: (Value: any) -> boolean;
+    Compare: (self: Value, Value: any) -> boolean;
     Destroy: (self: Value) -> ();
     Refresh: (self: Value) -> ();
+    SetSignalEnabled: (self: Value, Enabled: boolean) -> ();
     GetItem: (self: Value,Index: any) -> any;
-    ItemExists: (self: Value, Entity: any) -> ();
+    ItemExists: (self: Value, Entity: any) -> boolean;
 }
 export type FayeInstance = {
 	Props: {[any]: any}?;
 	Instance: Instance, Thread: Thread?, InnerThread: Thread?,
 	SetAttribute: (self: FayeInstance,Name: string,Value: any) -> FayeInstance,
 	GetAttribute: (self: FayeInstance,Name: string) -> any,
-	GetAttributes: (self: FayeInstance) -> {[any]: any};
+	GetAttributes: (self: FayeInstance) -> {[string]: any};
 	AddTag: (self: FayeInstance,Tag: string) -> FayeInstance,
 	RemoveTag: (self: FayeInstance,Tag: string) -> FayeInstance,
 	HasTag: (self: FayeInstance,Tag: string) -> boolean,
 	GetTags: (self: FayeInstance) -> {string};
 	Clone: (self: FayeInstance) -> Instance;
 	Destroy: (self: FayeInstance) -> ();
-	Compile: (self: FayeInstance) -> ();
+	Compile: (self: FayeInstance) -> FayeInstance;
 	--> new
 	Remove: (self: FayeInstance, Item: any) -> ();
 	Connect: (self: FayeInstance, Connection: RBXScriptSignal, Function: (...any) -> ()) -> RBXScriptConnection;
-	Add: <T>(self: FayeInstance, Item: T, IsConnection: boolean?) -> T;
+	Add: <T>(self: FayeInstance, Item: T, IsPriority: boolean?) -> T;
 	ClearCache: (self: FayeInstance) -> ();
 	-->
 }
@@ -39,17 +41,24 @@ export type UserInputType = typeof(game:GetService("UserInputService"));
 
 export type Animation = {
     __animId: string;
+    Goal: any;
+    Info: (Info | SpringInfo)?;
+    Thread: Thread?;
 	Destroy: (self: Animation) -> ();
 	Stop: (self: Animation) -> ();
-	Skip: (self: Animation) -> Animation;
+	Skip: (self: Animation) -> ();
 	AlwaysFrom: any;
 }
 export type Info = {Time: number; EasingStyle: Enum.EasingStyle; EasingDirection: Enum.EasingDirection; RepeatCount: number; Reverse: boolean; DelayTime: number}
 export type SpringInfo = {Time: number; Frequency: number; Damping: number; RepeatCount: number; Reverse: boolean; DelayTime: number}
 export type Lerp = {
-	Destroy: (self: Animation) -> ();
-	Stop: (self: Animation) -> ();
-	Skip: (self: Animation) -> Animation;
+    To: any;
+    Factor: number;
+    From: any?;
+    Thread: Thread?;
+	Destroy: (self: Lerp) -> ();
+	Stop: (self: Lerp) -> ();
+	Skip: (self: Lerp) -> ();
 }
 export type Connection = {
     Disconnect: (self: Connection) -> ();
@@ -64,13 +73,18 @@ export type AnimationModifications = {
 }
 
 export type DelayValue = {
-    Get: (self: DelayValue) -> ();
+    Initial: any;
+    Value: any;
+    Time: number;
+    DefaultTime: number;
+    Get: (self: DelayValue) -> any;
 	Set: (self: DelayValue, New: any) -> DelayValue;
 	Add: (self: DelayValue, Amount: any) -> ();
 	Remove: (self: DelayValue, Amount: any) -> ();
     Changed: RBXScriptSignal;
-    SetTime: (self: DelayValue, Time: number) -> ();
+    SetTime: (self: DelayValue, Time: number) -> DelayValue;
 	Refresh: (self: DelayValue) -> ();
+    SetSignalEnabled: (self: DelayValue, Enabled: boolean) -> ();
     Sensitive: (self: DelayValue) -> DelayValue;
     ResetTime: (self: DelayValue) -> ();
     For: (self: DelayValue, Value: any, Time: number?) -> DelayValue;
@@ -114,12 +128,13 @@ export type YieldSafe = {
 }
 export type Signal = {
     Destroy: (self: Signal) -> ();
-    Call: (...any) -> Signal;
+    Call: (self: Signal, ...any) -> Signal;
     Connect: (self: Signal, Connection: RBXScriptSignal) -> Signal;
 }
 export type Thread = {
-	Lerp: (self: Thread, To: any, Factor: number?) -> Lerp;
+	Lerp: (self: Thread, To: any, Factor: number?, From: any?) -> Lerp;
 	IsActive: boolean?;
+	ParentThread: Thread?;
     Create: (self: Thread, ClassName: string) -> (Properties: Properties) -> FayeInstance;
     Configure: (self: Thread, Entity: any) -> (Properties: Properties) -> FayeInstance;
     Extend: (self: Thread,IsOrphan: boolean?) -> Thread;
@@ -128,35 +143,35 @@ export type Thread = {
     Animation: (self: Thread, Goal: any, Info: (Info | SpringInfo | Value)?,Modifications: AnimationModifications?) -> Animation;
     Info: (Time: number?,EasingStyle: Enum.EasingStyle?,EasingDirection: Enum.EasingDirection?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> Info;
     SpringInfo: (Time: number?,Frequency: number?,Damping: number?, RepeatCount: number?,Reverse: boolean?,DelayTime: number?) -> SpringInfo;
-    Connect: (self: Thread, Cofnnection: RBXScriptSignal, func: (...any) -> ()) -> (),
+    Connect: (self: Thread, Connection: RBXScriptSignal, func: (...any) -> ()) -> RBXScriptConnection,
     Do: (self: Thread, func : (Grab: (Value: Instance | Value) -> any,Thread: Thread, Entity: Instance?) -> ()) -> any;
     State: (self: Thread, func : (Grab: (Value: Instance | Value) -> any,Thread: Thread, Entity: Instance?) -> ()) -> any;
-    Iterate: (self: Thread, Table: any,func: (Index: any,Value: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
-	AdvancedIterate: (self: Thread, Table: any,func: (Index: any,Value: any,InnerThread: Thread,Entity: Instance) -> ()) -> ();
+    Iterate: (self: Thread, Table: any,func: (Index: any,Value: any,InnerThread: Thread?,Entity: Instance?) -> ()) -> ();
+	AdvancedIterate: (self: Thread, Table: any,func: (Index: any,Value: any,InnerThread: Thread?,Entity: Instance?) -> ()) -> ();
     InstancePropertySync: (self:Thread, Entity: Instance, Property: string) -> Value;
     InstanceAttributeSync: (self:Thread, Entity: Instance, Attribute: string) -> Value;
     DelayValue: (self: Thread, Value: Value?, Time: number?) -> DelayValue;
-    DelayProperty: (self: Thread, Props: Properties | any,Time: number,From: Properties?) -> ();
-    SetTo: (self: Thread, Value: Value) -> {};
+    DelayProperty: (self: Thread, Props: Properties | any,Time: number,From: Properties?) -> Delay;
+    SetTo: (self: Thread, Value: Value) -> any;
     Listener: (self: Thread, Entity: any, Event: string | {string}, func: (string,...any) -> ()) -> ();
-    Add: <T>(self: Thread,Entity: T) -> T;
-    Remove: (self: Thread,Entity: any) -> ();
+    Add: <T>(self: Thread,Entity: T, IsPriority: boolean?) -> T;
+    Remove: (self: Thread,Entity: any) -> boolean?;
     Space: (self: Thread, func: (...any) -> ()) -> Space,
     YieldSafe: (self: Thread,func: (...any)-> (),DelayTime: number?) -> YieldSafe;
     Schedule: (self: Thread,Time: number?,Item: any,...any) -> any;
-    Signal: (self: Thread,any,func: (Thread: Thread, Entity: Instance, ...any) -> ()?) -> Signal;
-    SignalState: (self: Thread,any, func: (Thread: Thread, Entity: Instance, ...any) -> ()) -> Signal;
+    Signal: (self: Thread, Connections: RBXScriptSignal | {RBXScriptSignal}, func: ((...any) -> ())?) -> Signal;
+    SignalState: (self: Thread, Connections: RBXScriptSignal | {RBXScriptSignal}, func: ((...any) -> ())?) -> Signal;
 	MethodSignaled: (self: Thread, Method: string, Index: string,RunOnInitialization: boolean?) -> ();
-	Spawn: (self: Thread, func: (...any) -> (),...any) -> thread;
-	Defer: (self: Thread, func: (...any) -> (),...any) -> thread;
-	Delay: (self: Thread,time: number, func: (...any) -> (),...any) -> thread;
+	Spawn: (self: Thread, func: (...any) -> (),...any) -> ();
+	Defer: (self: Thread, func: (...any) -> (),...any) -> ();
+	Delay: (self: Thread,time: number, func: (...any) -> (),...any) -> ();
 	LoadAnimation: (self: Thread, Entity: Instance,Goals: Properties, Info: (Info | SpringInfo)?) -> LoadAnimation;
-	ModifyAnimation: (self: Thread, Animaiton: {[any]: any},Modifications: AnimationModifications) -> {[any]: any};
-	CloneAnimation: (self: Thread, Animaiton: {[any]: any},Modifications: AnimationModifications) -> {[any]: any};
-	Reactive: (self: Thread, func: (Grab: (Value: Instance | Value) -> any) -> ()) -> (() -> ())?;
-	CloneTable: (Table: {[any]: any}, cloneFunction: (Index: any, Value: any) -> (any, any)?) -> {[any]: any};
+	ModifyAnimation: (Animation: {[any]: any},Modifications: AnimationModifications) -> {[any]: any};
+	CloneAnimation: (self: Thread, Animation: {[any]: any},Modifications: AnimationModifications?) -> {[any]: any};
+	Reactive: (self: Thread, func: (Grab: (Value: Instance | Value) -> any) -> ()) -> ();
+	CloneTable: (Table: {[any]: any}, cloneFunction: ((Index: any, Value: any) -> (any, any))?) -> {[any]: any};
 	Debris: (self: Thread, Item: any, Lifetime: number) -> ();
-	SpecialThread: (self:Thread, func: (InnerThread: Thread, Entity: Instance) -> (),Params: (SpecialThreadParams | number) ?) -> ();
+	SpecialThread: (self:Thread, func: (InnerThread: Thread, Entity: Instance) -> (),Params: (SpecialThreadParams | number)?) -> ();
 }
 
 export type Properties = {
@@ -359,6 +374,13 @@ ResetOnSpawn: any;
 	KeyframeReached: (Entity: Instance, ...any) -> ()?, -- Triggered when a specific keyframe is reached
 	-- part events
 	TagAdded: (Entity: Instance, ...any) -> ()?,
-	TagRemoved: (Entity: Instance, ...any) -> ()?
+	TagRemoved: (Entity: Instance, ...any) -> ()?,
+
+	-- Highlight Properties
+	DepthMode: any,
+	FillColor: any,
+	FillTransparency: any,
+	OutlineColor: any,
+	OutlineTransparency: any,
 }
 return nil;

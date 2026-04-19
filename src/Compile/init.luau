@@ -9,11 +9,14 @@ local banned = {
 local tins = table.insert
 local ValueClasses = require(script.Parent.Misc.ValueClasses)
 local Compilers = require(script.Compilers)
-local tablestr,numberstr,functionstr,RBXScriptSignalstr = "table","number","function","RBXScriptSignal"
+local tablestr,numberstr,functionstr,RBXScriptSignalstr,stringstr = "table","number","function","RBXScriptSignal","string"
 local OnChangedInitstr,OnChangedstr,Valuestr,Instancestr,Addstr,valuebasestr = "OnChangedInit","OnChanged","Value","Instance","Add","ValueBase"
 local Aftertxt,BeforeTxt = "After","Before"
 local UseCompile = require(script.Parent.Misc.UseCompilePassRecursiveness)
 local MethodSignaledstr = "MethodSignaled"
+-- Caches whether `<ClassName>.<propName>` resolves to an RBXScriptSignal so we don't
+-- pay a real Roblox property read on every unknown key in the slow path.
+local signalCache = {}
 local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any}, Props: any,InstanceThread: any)
     -- Main loop
     if Props[BeforeTxt] then
@@ -28,10 +31,18 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
         end
     end
     local deferredSignals = nil
-    for i, v in pairs(Props) do
+    local Inst = Entity.Instance
+    for i, v in Props do
         if i == Aftertxt or i == BeforeTxt then continue end;
         local tov = to(v)
         local toi = --[[tov == "table" and v.__type and to(v.__type) or]] to(i)
+        -- Fast path: string-keyed scalar property with no compiler and not an OnChanged signal.
+        -- Covers the common `Size = ...`, `BackgroundColor3 = ...`, etc. case in one branch.
+        if toi == stringstr and tov ~= tablestr and tov ~= functionstr and tov ~= Instancestr
+           and (Compilers[i] == nil or banned[i]) and sb(i, 1, 2) ~= "On" then
+            Inst[i] = v
+            continue
+        end
         local compilerFunc = (toi ~= tablestr and Compilers[i]) or nil
         if compilerFunc and not banned[i] then
             if i == MethodSignaledstr then
@@ -44,7 +55,7 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
             --> instance compile
             if toi == numberstr then
                 --object parenting
-                v.Parent = Entity.Instance
+                v.Parent = Inst
                 if InstanceThread ~= nil then
                     if InstanceThread[Addstr] ~= nil then
                         InstanceThread:Add(v)
@@ -70,27 +81,37 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
             Compilers[i.__type](Entity, i, v, Recursive)
         else
             if tov == functionstr and toi == numberstr then
-                local ret,ret2 = v(Entity.Instance)
+                local ret,ret2 = v(Inst)
                 if ret then
                     UseCompile(Recursive, ret,ret2,Entity,Entity.InnerThread or Entity.Thread)
                 end
             else
-                local onChangedIndex = sf(i, OnChangedstr)
+                local onChangedIndex = sf(i, OnChangedstr, 1, true)
                 if onChangedIndex then
                     if deferredSignals == nil then deferredSignals = {} end
                     tins(deferredSignals, {i, v})
-                elseif to(Entity.Instance[i]) == RBXScriptSignalstr then
-                    Compilers.EventCompiler(Entity, i, v,Recursive)
                 else
-                    if tov == functionstr then
-                        local result = v(Entity.Instance)
+                    local className = Inst.ClassName
+                    local cache = signalCache[className]
+                    if cache == nil then
+                        cache = {}
+                        signalCache[className] = cache
+                    end
+                    local isSignal = cache[i]
+                    if isSignal == nil then
+                        isSignal = to(Inst[i]) == RBXScriptSignalstr
+                        cache[i] = isSignal
+                    end
+                    if isSignal then
+                        Compilers.EventCompiler(Entity, i, v, Recursive)
+                    elseif tov == functionstr then
+                        local result = v(Inst)
                         if result ~= nil then
-                            Entity.Instance[i] = result;
+                            Inst[i] = result;
                         end
                     else
-                        Entity.Instance[i] = v
+                        Inst[i] = v
                     end
-
                 end
             end
         end
@@ -102,9 +123,9 @@ local function Recursive(Entity: {Instance: any, Thread: any, InnerThread: any},
             if i == MethodSignaledstr then
                 Compilers.MethodSignaled(Entity, i, v, Recursive)
             else
-                local onChangedIndex = sf(i, OnChangedstr)
+                local onChangedIndex = sf(i, OnChangedstr, 1, true)
                 local prop = sb(i, 1, onChangedIndex - 1)
-                local Init = sf(i, OnChangedInitstr) ~= nil
+                local Init = sf(i, OnChangedInitstr, 1, true) ~= nil
                 Compilers.OnChanged(Entity, prop, v, Recursive, Init)
             end
         end

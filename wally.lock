@@ -9,5 +9,5 @@ dependencies = []
 
 [[package]]
 name = "ouw2204/faye"
-version = "2.4.3"
+version = "2.4.4"
 dependencies = [["simplesignal", "mountaindouw/simplesignal@1.2.3"]]
